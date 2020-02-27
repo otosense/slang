@@ -1,18 +1,19 @@
-# Sla: Light weight tools to build signal  languages
+# Slang: Light weight tools to build signal languages
 
-Humans developed systems of symbols to transmit many forms of information.
-Natural spoken language, 
-with it's words and structure (let's call it grammar without digging further into the concept).
-Written scripts to symbolize either the sounds of the spoken words, or the ideas they mean to symbolize, 
-Western classical music codified it's (narrow) view of music to. 
+Slang (for "Signal Language") is a framework that provides tools to transform a signals into a structured sequences of symbols: Id est a (formal) language. 
+
+Humans developed systems of symbols to transmit many forms of information. For instance,
+- Natural spoken language, with it's words and structure (let's call it grammar without digging further into the concept).
+- Written scripts to symbolize either the sounds of the spoken words, or the ideas they mean to symbolize. 
+- Western classical music codified it's (narrow) view of music to. 
 Enough so that the essentials of a musical piece could be communicated in written form.
 
 Symbols, though not fully faithful representatives of what they symbolize, 
-can go a long way in communicating what's essential -- weather it's meaning, feeling, or how to make pizza.
+can go a long way in communicating what's essential -- whether it's meaning, feeling, or how to make pizza.
 What is more; what the symbols (say words) themselves lack in accuracy, 
 their combination and context make up for. 
 
-We'd like to provide that ability for signals -- focusing on sound mainly, but keeping generalization in mind.
+We'd like to provide that ability for signal. Note we will focus on sound mainly, since sound recognition is the birthplace of Slang, and it makes communicating ideas simpler and possibly more intuitive. But we keep generalization in mind.
 
 ## A story to paint the horizon
 
