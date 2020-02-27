@@ -1,19 +1,29 @@
 # Slang: Light weight tools to build signal languages
 
-Slang is an approach to sound/signal machine learning that takes a language-like approach too the problem. Here, signals are structured into annotated parts relating to eachother. That is, the raw stream of information is transformed into a structured stream of symbols: Id est a (formal) language. 
+Slang is a structural approach to sound/signal machine learning. 
+Here, signals are structured into inter-related annotated parts. 
+The signal's stream is transformed into a stream of symbols with associated 
+qualifications, quantifications and/or relations that can be used to analyze, interpret, and 
+communicate the signal's informational content: 
+A language.
 
-Humans developed systems of symbols to transmit many forms of information. For instance,
-- Natural spoken language, with it's words and structure (let's call it grammar without digging further into the concept).
+Us humans have developed many systems of symbols to represent or transmit various forms of information. 
+For instance,
+- Natural spoken language, from phonemes to morphemes, to words and meta-word structures (simply put, grammar).
 - Written scripts to symbolize either the sounds of the spoken words, or the ideas they mean to symbolize. 
-- Western classical music codified it's (narrow) view of music to. 
-Enough so that the essentials of a musical piece could be communicated in written form.
+- Similarly, various musical notation evolved in different times and parts of the world. 
+These codified what was considered to be the essentials of musical expression, in
+such a way that it could be communicated in written form.
 
 Symbols, though not fully faithful representatives of what they symbolize, 
 can go a long way in communicating what's essential -- whether it's meaning, feeling, or how to make pizza.
 What is more; what the symbols (say words) themselves lack in accuracy, 
 their combination and context make up for. 
 
-We'd like to provide that ability for signal. Note we will focus on sound mainly, since sound recognition is the birthplace of Slang, and it makes communicating ideas simpler and possibly more intuitive. But we keep generalization in mind.
+Slang's objective is to provide that ability for signal. 
+Note we will focus on sound mainly, since sound recognition is the birthplace of Slang, 
+and it makes communicating ideas simpler and possibly more intuitive. 
+But we keep generalization in mind.
 
 ## A story to paint the horizon
 
@@ -24,6 +34,9 @@ It has learned the syntax of the local language, unsupervised.
 
 Now show it examples of concrete things people are talking about (this is called "grounding a language"), 
 and it will now be able to develop semantics.
+
+The common thread through this learning evolutiion is the ability to detect and annotate patterns 
+and relate these patterns to each other from lower to higher levels of abstraction. 
 
 # Sound Language
 
@@ -64,8 +77,14 @@ These sound generating activities can be expressed through ontologies
 and sequential rules composed from other semantical elements.
  
 
-This approach has been coined as “syntactical pattern recognition” or “grammar induction”. These techniques have been used in Chinese character recognition [​4​], analysis of textures [​10​], medical diagnosis (heart disease detection) [​16​], visual scene recognition [​22​], movement recognition in video [​19​], activity monitoring in video [​19​], and closer to sound (since uni-dimensional time-series), seismic signal analysis (eg. in oil detection) [​8​] and ECG analysis [​18​, ​16​].
-As far as we know, no research has been carried out to apply syntactical pattern recognition techniques to general sound recognition, and we intend to take inspiration in this literature in an effort to derive semantics from sound.
+This approach has been coined as “syntactical pattern recognition” or “grammar induction”. These techniques have been 
+used in Chinese character recognition [​4​], analysis of textures [​10​], medical diagnosis (heart disease detection) [​16​],
+ visual scene recognition [​22​], movement recognition in video [​19​], activity monitoring in video [​19​], 
+ and closer to sound (since uni-dimensional time-series), seismic signal analysis (eg. in oil detection) [​8​] 
+ and ECG analysis [​18​, ​16​].
+As far as we know, no research has been carried out to apply syntactical pattern recognition techniques 
+to general sound recognition, and we intend to take inspiration in this literature in an effort to derive semantics 
+from sound.
 
 # Semantic Structure
 
@@ -115,7 +134,10 @@ characteristics of sound — such as intensity and spectral features — but do 
 such as autocorrelation and intensity monotonicity. 
 These wide-range characteristics will be captured through combinatorial analysis later on.
 The frame features are then quantized to a discrete set of symbols [6]. 
-Vector quantization will map the frame features to a finite number of symbols that will represent all frame features within a bounded region. These symbols, which we will call “snips” (short for “sound nips”) will play the role of our sound language alphabet. We record statistical information about the feature space covered by each snip in order to qualify and quantify feature-based relationships.
+Vector quantization will map the frame features to a finite number of symbols that will represent all frame features 
+within a bounded region. These symbols, which we will call “snips” (short for “sound nips”) will play the role of our 
+sound language alphabet. We record statistical information about the feature space covered by each snip in order to 
+qualify and quantify feature-based relationships.
 
 ## Snips network
 
@@ -145,11 +167,17 @@ opens the possibility to merge codebooks or translate (at least approximately) o
 
 # Snips Annotations
 
-In our framework, annotations replace both chunk features and semantic labels. An annotation specifies a segment of sound and a property associated to it. Since we now represent sound by a sequence of snips, the segment can be specified by a {sound source id, offset snip index, end snip index} triple, and annotations can be grouped or merged to optimize indexing, storage and retrieval needs. The property of an annotation can be any data that provides information about the segment.
+In our framework, annotations replace both chunk features and semantic labels. An annotation specifies a segment of 
+sound and a property associated to it. Since we now represent sound by a sequence of snips, the segment can be specified 
+by a {sound source id, offset snip index, end snip index} triple, and annotations can be grouped or merged to optimize 
+indexing, storage and retrieval needs. The property of an annotation can be any data that provides information about 
+the segment.
 
 Annotations serve a purpose on both sides of the machine learning process: 
 - Marking sound segments with acoustical information that may allow models to link sound to meaning. 
-- Acquiring precise “supervised data”. Precise because (a) unlike a chunked approach, we can delineate exactly what part of the sound we are labeling and (b) we are not limited by single labels, but can express any multi-faceted and even structured details about sound segments.
+- Acquiring precise “supervised data”. Precise because (a) unlike a chunked approach, we can delineate exactly what 
+part of the sound we are labeling and (b) we are not limited by single labels, but can express any multi-faceted and 
+even structured details about sound segments.
 
 Annotations may include:
 - **Frequent snip sub-sequences**​: If they are frequent enough, they are important enough to note whether for negative 
@@ -169,8 +197,8 @@ features that assume significance only over some period of time, but these can b
 link to the original frame features statistics and only those with highest significance and utility need to be recorded 
 (for example only high autocorrelation).
 - **Semantic annotations**: On the other end of the sound-to-semantics spectrum we can annotate low level semantic 
-identifiers (such as `cling`, `chop` and `splash`) , wide-range segments with words describing a sound-generating activity 
-(such as `cooking`), and context, which is crucial to the proper interpretation of sound events. 
+identifiers (such as `cling`, `chop` and `splash`) , wide-range segments with words describing a sound-generating 
+activity (such as `cooking`), and context, which is crucial to the proper interpretation of sound events. 
 These annotations are typically generated by a semi-supervised process — though inferred semantic annotations 
 can be useful to quickly access and validate possible categories of interest.
 Well indexed, this annotation system provides the ability to retrieve audio, 
@@ -222,10 +250,15 @@ reached this means a detection has been made.
 
 References 
 
-[1] Aucouturier, J.-J., Defreville, B. and Pachet F.: “The bag-of-frames approach to audio pattern recognition: A sufficient model for urban soundscapes but not for polyphonic music.” In: Journal of the Acoustical Society of America 122.2, pp 881–891 (2007) 	
-[2] Ehsan Amid, Annamaria Mesaros, Kalle Palomaki, Jorma Laaksonen, Mikko Kurimo, “Unsupervised feature extraction for multimedia event detection and ranking using audio content” - 2014 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) - (2014)
+[1] Aucouturier, J.-J., Defreville, B. and Pachet F.: “The bag-of-frames approach to audio pattern recognition: 
+A sufficient model for urban soundscapes but not for polyphonic music.” 
+In: Journal of the Acoustical Society of America 122.2, pp 881–891 (2007) 	
+[2] Ehsan Amid, Annamaria Mesaros, Kalle Palomaki, Jorma Laaksonen, Mikko Kurimo, 
+“Unsupervised feature extraction for multimedia event detection and ranking using audio content” 
+- 2014 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP) - (2014)
 
-[3] V. Carletti, P. Foggia, G. Percannella, A. Saggese, N. Strisciuglio, and M. Vento, “Audio surveillance using a bag of aural words classifier,” Proc. of AVSS, pp. 81–86, 2013. 
+[3] V. Carletti, P. Foggia, G. Percannella, A. Saggese, N. Strisciuglio, and M. Vento, 
+“Audio surveillance using a bag of aural words classifier,” Proc. of AVSS, pp. 81–86, 2013. 
 
 [4] K. S. Fu, “Syntactic Pattern Recognition and Applications.” Prentice Hall, 1982.
 
@@ -233,34 +266,45 @@ References
 
 [6] R.M. Gray, “Vector Quantization,”IEEE ASSP Magazine, Vol. 1, 1984 .
 
-[7] T.Heittola, A.Mesaros, A.Eronen, and T.Virtanen, “Context- dependent sound event detection,” EURASIP Journal on Audio, Speech, and Music Processing, 2013.
+[7] T.Heittola, A.Mesaros, A.Eronen, and T.Virtanen, “Context- dependent sound event detection,” 
+EURASIP Journal on Audio, Speech, and Music Processing, 2013.
 
-[8] K.Y. Huang, “Syntactic Pattern Recognition for Seismic Oil Exploration”, Series in Machine Percep. Artificial Intelligence, v. 46.
+[8] K.Y. Huang, “Syntactic Pattern Recognition for Seismic Oil Exploration”, 
+Series in Machine Percep. Artificial Intelligence, v. 46.
 
 [9] D. Jurafsky, “Speech and language processing”, 2nd edition, Prentice Hall, 2008.
 
-[10] B. Julesz, "Textons, the elements of texture perceptions, and their interactions", Nature, vol 290., pp. 91-97, 1981.
+[10] B. Julesz, "Textons, the elements of texture perceptions, and their interactions", 
+Nature, vol 290., pp. 91-97, 1981.
 
-[11] WaveNet: “A Generative Model for Raw Audio”, Aaron van den Oord, Sander Dieleman, Heiga Zen, Karen Simonyan, Oriol Vinyals, Alex Graves, Nal Kalchbrenner, Andrew Senior, Koray Kavukcuoglu, 2016, https://arxiv.org/abs/1609.03499
+[11] WaveNet: “A Generative Model for Raw Audio”, Aaron van den Oord, Sander Dieleman, Heiga Zen, Karen Simonyan, 
+Oriol Vinyals, Alex Graves, Nal Kalchbrenner, Andrew Senior, Koray Kavukcuoglu, 2016, https://arxiv.org/abs/1609.03499
 
-[12] S. Kim, S. Sundaram, P. Georgiou, and S. Narayanan, “An N -gram model for unstructured audio signals toward information retrieval,” in Multimedia Signal Processing, 2010 IEEE International Workshop on, 2010. 
+[12] S. Kim, S. Sundaram, P. Georgiou, and S. Narayanan, “An N -gram model for unstructured audio signals toward 
+information retrieval,” in Multimedia Signal Processing, 2010 IEEE International Workshop on, 2010. 
 
 [13]  Stephanie Pancoast and Murat Akbacak, “Bag-of- Audio-Words Approach for Multimedia Event Classification”.
 
-[14] S. Pancoast and M. Akbacak, “N-gram extension for bag-of-audio-words,” in Proc. of the 38th IEEE International Conference on Acoustics,Speech and Signal Processing(ICASSP). Vancouver, Canada: IEEE, 2013, pp. 778–782. 
+[14] S. Pancoast and M. Akbacak, “N-gram extension for bag-of-audio-words,” in Proc. of the 38th IEEE International 
+Conference on Acoustics,Speech and Signal Processing(ICASSP). Vancouver, Canada: IEEE, 2013, pp. 778–782. 
 
-[15]  H.Phan, A.Mertins, “Exploring superframe co-occurrence for acoustic event recognition,” in Proc. EUSIPCO, 2014, pp. 631– 635. 
+[15]  H.Phan, A.Mertins, “Exploring superframe co-occurrence for acoustic event recognition,” in Proc. EUSIPCO, 2014, 
+pp. 631– 635. 
 
 [16] Meyer-Baese, Schmid., “Pattern Recognition and Signal analysis in Medical Imaging”.
 
-[17] L. Su, C. Yeh, J. Liu, J. Wang, and Y. Yang. “A Systematic Evaluation of the Bag-of-Frames Representation for Music Information Retrieval”, IEEE Transaction on Multimedia, Vol 16, N. 5, 2014.
+[17] L. Su, C. Yeh, J. Liu, J. Wang, and Y. Yang. “A Systematic Evaluation of the Bag-of-Frames Representation for 
+Music Information Retrieval”, IEEE Transaction on Multimedia, Vol 16, N. 5, 2014.
 
-[18] P. Trahanias, E. Skordalakis, Syntactic Pattern Recognition of the ECG, IEEE transactions on pattern analysis and machine intelligence, v. 12, No. 7, 1990.
+[18] P. Trahanias, E. Skordalakis, Syntactic Pattern Recognition of the ECG, IEEE transactions on pattern analysis 
+and machine intelligence, v. 12, No. 7, 1990.
 
-[19] N.N Vo, A. Bobick, “From stochastic grammar to Bayes network: probabilistic parsing of complex activity”, CVPR 2014.
+[19] N.N Vo, A. Bobick, “From stochastic grammar to Bayes network: probabilistic parsing of complex activity”, 
+CVPR 2014.
 
 [20] J. T. L Wang, M. Zaki and others, “Data mining in Bioinformatics”, Springer, 2005.
 
 [21] C. Yu, D. H. Ballard, “On the integration of grounding language and learning objects”, AAAI, 2004. 
 
-[22] S-C. Zhu, D. Mumford, “A stochastic Grammar of Images”, Foundations and trends in Computer Vision and Graphics, 2006
+[22] S-C. Zhu, D. Mumford, “A stochastic Grammar of Images”, 
+Foundations and trends in Computer Vision and Graphics, 2006
