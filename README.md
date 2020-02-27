@@ -7,7 +7,7 @@ qualifications, quantifications and/or relations that can be used to analyze, in
 communicate the signal's informational content: 
 A language.
 
-Us humans have developed many systems of symbols to represent or transmit various forms of information. 
+We humans have developed many systems of symbols to represent or transmit various forms of information. 
 For instance,
 - Natural spoken language, from phonemes to morphemes, to words and meta-word structures (simply put, grammar).
 - Written scripts to symbolize either the sounds of the spoken words, or the ideas they mean to symbolize. 
