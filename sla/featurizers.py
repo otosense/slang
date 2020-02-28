@@ -2,6 +2,8 @@ from numpy import hanning, kaiser, abs, diff, array, std
 from numpy.fft import rfft
 from functools import wraps, partial
 
+from sla.chunkers import DFLT_CHK_SIZE
+
 
 def identity_func(x):
     """The identify (a.k.a. transparent) function that returns it's input as is."""
@@ -101,7 +103,7 @@ mk_wf_to_spectr.w_kaiser = _mk_wf_to_spectr_w_kaiser
 DFLT_WF_TO_SPECTR = mk_wf_to_spectr()
 
 ########################################################################################################################
-# Making a default nipper
+# Some silly featurizer to play with
 
 from bisect import bisect_left
 
@@ -124,39 +126,138 @@ def _rms_zcr_to_levels(rms, zcr):
             bisect_left(_zcr_level_dividers, zcr))
 
 
-def rms_zcr_nipper(fv):
+def rms_zcr_quantizer(fv):
     rms, zcr = fv
     rms_level, zero_crossing_level = _rms_zcr_to_levels(rms, zcr)
     return rms_level * _n_levels + zero_crossing_level
 
 
-#
-# def _zcr_level(chk):
-#     return bisect_left(_zcr_level_dividers, _zero_crossing_ratio(chk))
-#
-#
-# def _rms_level(chk):
-#     return bisect_left(_rms_level_dividers, std(chk))
-#
-#
-#
-# def _rms_and_crossing_levels(chk):
-#     rms_level = int(min(_n_levels - 1, _n_levels * std(chk) / 500))
-#     return rms_level, _zcr_level(chk)
-#
-#
-# def _rms_and_crossing_levels(chk):
-#     rms_level = int(min(_n_levels - 1, _n_levels * std(chk) / 500))
-#     return rms_level, _zcr_level(chk)
-#
-#
-# def rms_zcr_to_levels(rms, zcr):
-#     return bisect_left(_rms_level_dividers, rms), bisect_left(_zcr_level_dividers, zcr)
-#
-# def rms_and_crossing_nipper(chk):
-#     rms_level, zero_crossing_level = _rms_and_crossing_levels(chk)
-#     return rms_level * _n_levels + zero_crossing_level
-
-
 DFLT_FEATURIZER = rms_zcr
-DFLT_NIPPER = rms_zcr_nipper
+DFLT_QUANTIZER = rms_zcr_quantizer
+
+import numpy as np
+from typing import Union, Iterable
+
+
+def mk_spectral_moment_featurizer(n_moments=100,
+                                  preproc: callable = None,
+                                  fft_func: callable = rfft,
+                                  postproc: callable = abs):
+    wf_to_spectr = mk_wf_to_spectr(preproc, fft_func, postproc)
+    moments = np.arange(1, n_moments + 1)
+    n_moments = len(moments)
+    std_exponents = np.arange(1, n_moments + 1)
+
+    if n_moments > 2:
+        def moment_featurizer(wf):
+            a = wf_to_spectr(wf)
+            a_std = np.std(a)
+            m = moment(a, moments) / (a_std ** std_exponents)
+            m[0] = np.mean(a)
+            m[1] = a_std
+            return m
+    elif n_moments == 2:
+        def moment_featurizer(wf):
+            a = wf_to_spectr(wf)
+            return np.array([np.mean(a), np.std(a)])
+    elif n_moments == 1:
+        def moment_featurizer(wf):
+            a = wf_to_spectr(wf)
+            return np.array([np.mean(a)])
+    else:
+        raise ValueError(f"n_moments should be a positive integer. Instead, was {n_moments}")
+
+    return moment_featurizer
+
+
+def _chk_asarray(a, axis):
+    if axis is None:
+        a = np.ravel(a)
+        outaxis = 0
+    else:
+        a = np.asarray(a)
+        outaxis = axis
+
+    if a.ndim == 0:
+        a = np.atleast_1d(a)
+
+    return a, outaxis
+
+
+def moment(a, moment: Union[int, Iterable] = 1, axis=0):
+    r"""Calculate the nth moment about the mean for a sample.
+    Taken from scipy.stats
+
+    Examples
+    --------
+    >>> moment([1, 2, 3, 4, 5], moment=1)
+    0.0
+    >>> moment([1, 2, 3, 4, 5], moment=2)
+    2.0
+    """
+    a, axis = _chk_asarray(a, axis)
+
+    if a.size == 0:
+        # empty array, return nan(s) with shape matching `moment`
+        if np.isscalar(moment):
+            return np.nan
+        else:
+            return np.full(np.asarray(moment).shape, np.nan, dtype=np.float64)
+
+    # for array_like moment input, return a value for each.
+    if not np.isscalar(moment):
+        mmnt = [_moment(a, i, axis) for i in moment]
+        return np.array(mmnt)
+    else:
+        return _moment(a, moment, axis)
+
+
+def _moment(a, moment, axis):
+    if np.abs(moment - np.round(moment)) > 0:
+        raise ValueError("All moment parameters must be integers")
+
+    if moment == 0:
+        # When moment equals 0, the result is 1, by definition.
+        shape = list(a.shape)
+        del shape[axis]
+        if shape:
+            # return an actual array of the appropriate shape
+            return np.ones(shape, dtype=float)
+        else:
+            # the input was 1D, so return a scalar instead of a rank-0 array
+            return 1.0
+
+    elif moment == 1:
+        # By definition the first moment about the mean is 0.
+        shape = list(a.shape)
+        del shape[axis]
+        if shape:
+            # return an actual array of the appropriate shape
+            return np.zeros(shape, dtype=float)
+        else:
+            # the input was 1D, so return a scalar instead of a rank-0 array
+            return np.float64(0.0)
+    else:
+        # Exponentiation by squares: form exponent sequence
+        n_list = [moment]
+        current_n = moment
+        while current_n > 2:
+            if current_n % 2:
+                current_n = (current_n - 1) / 2
+            else:
+                current_n /= 2
+            n_list.append(current_n)
+
+        # Starting point for exponentiation by squares
+        a_zero_mean = a - np.expand_dims(np.mean(a, axis), axis)
+        if n_list[-1] == 1:
+            s = a_zero_mean.copy()
+        else:
+            s = a_zero_mean ** 2
+
+        # Perform multiplications
+        for n in n_list[-2::-1]:
+            s = s ** 2
+            if n % 2:
+                s *= a_zero_mean
+        return np.mean(s, axis)

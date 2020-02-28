@@ -22,3 +22,4 @@ def str_of_snips(snips):
 
 def snips_of_str(snips):
     return array(snip_of_unichr_code[list(map(ord, snips))])
+

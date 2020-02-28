@@ -3,7 +3,7 @@ from functools import partial
 
 inf = float('inf')
 
-DFLT_TILE_SIZE = 2048
+DFLT_CHK_SIZE = 2048
 
 
 def _validate_chk_size(chk_size):
@@ -234,4 +234,4 @@ def fixed_step_chunker(it, chk_size, chk_step=None, start_at=None, stop_at=None,
                 chk = chk[chk_step:]
 
 
-DFLT_CHUNKER = partial(fixed_step_chunker, chk_size=DFLT_TILE_SIZE)
+DFLT_CHUNKER = partial(fixed_step_chunker, chk_size=DFLT_CHK_SIZE)

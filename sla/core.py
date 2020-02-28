@@ -2,7 +2,7 @@
 # from functools import partial
 
 from sla.chunkers import DFLT_CHUNKER
-from sla.featurizers import DFLT_FEATURIZER, DFLT_NIPPER
+from sla.featurizers import DFLT_FEATURIZER, DFLT_QUANTIZER
 
 
 class Snipper:
@@ -11,7 +11,7 @@ class Snipper:
     are given, but usually the user should specify these, and usually these are learned from data.
     """
 
-    def __init__(self, wf_to_chk=DFLT_CHUNKER, chk_to_fv=DFLT_FEATURIZER, fv_to_snip=DFLT_NIPPER):
+    def __init__(self, wf_to_chk=DFLT_CHUNKER, chk_to_fv=DFLT_FEATURIZER, fv_to_snip=DFLT_QUANTIZER):
         self.wf_to_chk = wf_to_chk
         self.chk_to_fv = chk_to_fv
         self.fv_to_snip = fv_to_snip
