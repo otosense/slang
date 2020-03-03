@@ -70,6 +70,14 @@ def tag_slice_iter_from_slices_of_tag_dict(slices_of_tag):
 #
 #     return dict(snip_count_for_tag)
 
+def tag_snip_count_dict_from_tags_and_snips(tags, snips):
+    snip_count_for_tag = defaultdict(dict)
+
+    for (tag, snip), count in Counter(zip(tags, snips)).items():
+        snip_count_for_tag[tag][snip] = count
+
+    return dict(snip_count_for_tag)
+
 
 def df_of_snip_count_for_tag(snip_count_for_tag, string_of_snips=None, fillna=0, tag_order=None):
     """
@@ -80,6 +88,9 @@ def df_of_snip_count_for_tag(snip_count_for_tag, string_of_snips=None, fillna=0,
     :param tag_order: Serves both to specify an order of the tags, and to specify a subset of tags if we don't want all
     :return: A dataframe of snip (in rows) counts for each tag (in columns)
     """
+    if isinstance(snip_count_for_tag, tuple) and len(snip_count_for_tag) == 2:
+        snip_count_for_tag = tag_snip_count_dict_from_tags_and_snips(*snip_count_for_tag)
+
     df = pd.DataFrame(snip_count_for_tag).fillna(fillna)
     if tag_order is not None:
         df = df[tag_order]
@@ -252,3 +263,41 @@ def plot_tag_scores_for_snips(snips_of_tag, snip_tag_score_df, tag_order=None,
 
         plt.axis('tight')
         plt.ylabel(tag, fontsize=ylabel_font_size, rotation=ylabel_rotation)
+
+#
+# def tag_order_from_snip_tag_counts(snip_tag_counts):
+#     # TODO: Sort
+#     snip_order = snip_order_from_snip_count_df(snip_tag_counts)
+#     tag_order = list(snip_tag_counts['tag'].unique())
+#     return snip_order, tag_order
+#
+#
+# from ut.util.uiter import running_mean
+# from functools import reduce
+#
+# smoothing_window_size_chk = 10
+#
+# snip_order, tag_order = tag_order_from_snip_tag_counts(snip_tag_counts)
+# n_tags = len(tag_order)
+#
+# all_snips = reduce(lambda x, y: x + y, snips_of_tag.values(), [])
+#
+# plt.figure(figsize=(24, 18));
+#
+# tag_snips_cursor = 0
+# for i, tag in enumerate(tag_order, 1):
+#     plt.subplot(n_tags, 1, i);
+#     snip_scores = list(running_mean(scores_of_snips(tag, all_snips, log_bayes_factor), smoothing_window_size_chk))
+#     plt.plot(snip_scores, '-');
+#     plt.plot([0, len(snip_scores)], [0, 0], ':k')
+#
+#     n_tag_snips = len(snips_of_tag[tag])
+#     these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]
+#     tag_snips_idx = list(range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores)))
+#     plt.plot(tag_snips_idx, these_snip_scores, 'k-');
+#     tag_snips_cursor += n_tag_snips
+#
+#     plt.axis('tight')
+#     plt.ylabel(tag, fontsize=15, rotation=0);
+#
+#
