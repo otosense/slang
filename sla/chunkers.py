@@ -1,9 +1,23 @@
 from itertools import islice
 from functools import partial
+from typing import Iterable
 
 inf = float('inf')
 
 DFLT_CHK_SIZE = 2048
+
+
+def simple_chunker(a: Iterable, chk_size: int):
+    """
+    >>> a = range(6)
+    >>> list(simple_chunker(a, 3))
+    [(0, 1, 2), (3, 4, 5)]
+    >>> list(simple_chunker(a, 2))
+    [(0, 1), (2, 3), (4, 5)]
+    >>> list(simple_chunker(a, 1))
+    [(0,), (1,), (2,), (3,), (4,), (5,)]
+    """
+    return zip(*([iter(a)] * chk_size))
 
 
 def _validate_chk_size(chk_size):
@@ -184,7 +198,7 @@ def fixed_step_chunker(it, chk_size, chk_step=None, start_at=None, stop_at=None,
     chk_step, start_at = _validate_fixed_step_chunker_args(chk_size, chk_step, start_at, stop_at)
 
     # if the input is a list
-    if hasattr(it, '__getslice__'):
+    if hasattr(it, '__getitem__'):
 
         if stop_at is None:
             stop_at = len(it)
