@@ -1,42 +1,11 @@
 from collections import defaultdict, Counter
 from functools import reduce
-from collections import deque
 import matplotlib.pylab as plt
 
 import numpy as np
-
 import pandas as pd
 
-
-def running_mean(it, chk_size=2):
-    """
-    Running mean (moving average) on iterator.
-    Note: When input it is list-like, ut.stats.smooth.sliders version of running_mean is 4 times more efficient with
-    big (but not too big, because happens in RAM) inputs.
-    :param it: iterable
-    :param chk_size: width of the window to take means from
-    :return:
-    """
-    it = iter(it)
-    if chk_size > 1:
-        c = 0
-        fifo = deque([], maxlen=chk_size)
-        for i, x in enumerate(it, 1):
-            fifo.append(x)
-            c += x
-            if i >= chk_size:
-                break
-
-        yield c / chk_size
-
-        for x in it:
-            c += x - fifo[0]  # NOTE: seems faster than fifo.popleft
-            fifo.append(x)
-            yield c / chk_size
-
-    else:
-        for x in it:
-            yield x
+from sla.util import running_mean_gen, running_mean
 
 
 def tag_slice_iter_from_slices_of_tag_dict(slices_of_tag):
@@ -251,7 +220,7 @@ def plot_tag_scores_for_snips(snips_of_tag, snip_tag_score_df, tag_order=None,
     for i, tag in enumerate(tag_order, 1):
         plt.subplot(n_tags, 1, i)
 
-        snip_scores = list(running_mean(scores_of_snips(tag, all_snips), smoothing_window_size))
+        snip_scores = list(running_mean_gen(scores_of_snips(tag, all_snips), smoothing_window_size))
         plt.plot(snip_scores, '-')
         plt.plot([0, len(snip_scores)], [0, 0], ':k')
 
@@ -264,40 +233,78 @@ def plot_tag_scores_for_snips(snips_of_tag, snip_tag_score_df, tag_order=None,
         plt.axis('tight')
         plt.ylabel(tag, fontsize=ylabel_font_size, rotation=ylabel_rotation)
 
-#
-# def tag_order_from_snip_tag_counts(snip_tag_counts):
-#     # TODO: Sort
-#     snip_order = snip_order_from_snip_count_df(snip_tag_counts)
-#     tag_order = list(snip_tag_counts['tag'].unique())
+
+def tags_and_snips_to_snip_of_tag(tags, snips):
+    snips_of_tag = defaultdict(list)
+
+    for tag, snip in zip(tags, snips):
+        snips_of_tag[tag].append(snip)
+
+    return dict(snips_of_tag)
+
+
+# def _tag_order_from_df(df_with_tags_as_columns_and_snips_as_indices):
+#     snip_order = df_with_tags_as_columns_and_snips_as_indices.index.values
+#     tag_order = df_with_tags_as_columns_and_snips_as_indices.columns.values
 #     return snip_order, tag_order
+
+
+# def scores_of_snips(tag, snips, snip_log_bayes_factor_of_tag):
+#     lbf_for_tag = snip_log_bayes_factor_of_tag[tag]
+#     if isinstance(snip_log_bayes_factor_of_tag, pd.DataFrame):
+#         log_bayes_factor_for_snip = lbf_for_tag.loc.__getitem__
+#     elif hasattr(lbf_for_tag, '__getitem__'):
+#         log_bayes_factor_for_snip = lbf_for_tag.__getitem__
+#     else:
+#         assert callable(lbf_for_tag), "At this point lbf_for_tag can only be callable"
+#         log_bayes_factor_for_snip = lbf_for_tag
 #
-#
-# from ut.util.uiter import running_mean
-# from functools import reduce
-#
-# smoothing_window_size_chk = 10
-#
-# snip_order, tag_order = tag_order_from_snip_tag_counts(snip_tag_counts)
-# n_tags = len(tag_order)
-#
-# all_snips = reduce(lambda x, y: x + y, snips_of_tag.values(), [])
-#
-# plt.figure(figsize=(24, 18));
-#
-# tag_snips_cursor = 0
-# for i, tag in enumerate(tag_order, 1):
-#     plt.subplot(n_tags, 1, i);
-#     snip_scores = list(running_mean(scores_of_snips(tag, all_snips, log_bayes_factor), smoothing_window_size_chk))
-#     plt.plot(snip_scores, '-');
-#     plt.plot([0, len(snip_scores)], [0, 0], ':k')
-#
-#     n_tag_snips = len(snips_of_tag[tag])
-#     these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]
-#     tag_snips_idx = list(range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores)))
-#     plt.plot(tag_snips_idx, these_snip_scores, 'k-');
-#     tag_snips_cursor += n_tag_snips
-#
-#     plt.axis('tight')
-#     plt.ylabel(tag, fontsize=15, rotation=0);
-#
-#
+#     return list(map(log_bayes_factor_for_snip, snips))
+
+
+def scores_of_snips(tag, snips, snip_log_bayes_factor_of_tag):
+    return list(map(snip_log_bayes_factor_of_tag.loc.__getitem__, snips))
+
+
+def plot_smoothed_log_bayes_factors(snips_of_tag, snip_log_bayes_factor_of_tag, smoothing_window_size_chk=1,
+                                    tags=None):
+    # dflt_snip_order, dflt_tag_order = _tag_order_from_df(snip_tag_counts)
+    if tags:
+        snip_log_bayes_factor_of_tag = snip_log_bayes_factor_of_tag[tags]
+    else:
+        tags = list(snip_log_bayes_factor_of_tag.columns)
+    n_tags = len(tags)
+
+    all_snips = reduce(lambda x, y: x + y, snips_of_tag.values(), [])
+
+    plt.figure(figsize=(24, 18))
+
+    tag_snips_cursor = 0
+    for i, tag in enumerate(tags, 1):
+        plt.subplot(n_tags, 1, i)
+        snip_scores = list(
+            running_mean(scores_of_snips(tag, all_snips, snip_log_bayes_factor_of_tag), smoothing_window_size_chk))
+        plt.plot(snip_scores, '-')
+        plt.plot([0, len(snip_scores)], [0, 0], ':k')
+
+        n_tag_snips = len(snips_of_tag[tag])
+        these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]
+        tag_snips_idx = list(range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores)))
+        plt.plot(tag_snips_idx, these_snip_scores, 'k-')
+        tag_snips_cursor += n_tag_snips
+
+        plt.axis('tight')
+        plt.ylabel(tag, fontsize=15, rotation=0)
+
+
+def snip_scores_from_lookup(snips, snip_to_score):
+    if isinstance(snip_to_score, (pd.Series, dict)):
+        snip_to_score = snip_to_score.__getitem__
+    elif isinstance(snip_to_score, pd.DataFrame):
+        _snip_to_score = {k: snip_to_score[k].loc.__getitem__ for k in list(snip_to_score.columns)}
+        snip_to_score = lambda snip: {k: lookup(snip) for k, lookup in _snip_to_score}
+    return map(snip_to_score, snips)
+
+    # assert isinstance(snip_to_score, pd.DataFrame), \
+    #     "snip_to_score needs to be DataFrame whose index values are snips and columns are the different score kinds " \
+    #     "you want to compute"
