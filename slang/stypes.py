@@ -1,6 +1,4 @@
-import attr
-from typing import Callable, Union, Iterable, Any, List, Tuple
-import typing as ty
+from typing import Callable, Union, Any, List, Tuple
 from numpy import ndarray, int16, int32, float32, float64
 # Note I'm using Tuple to denote fixed sized sequences and List to denote a sliceable unbounded sized iterator and
 # tuple as a fixed

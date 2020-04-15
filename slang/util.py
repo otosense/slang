@@ -1,7 +1,7 @@
 from collections import deque
 from itertools import islice
 import numpy as np
-from numpy import array, nan, empty, arange, unique, ones
+from numpy import array, nan, arange, unique, ones
 from slang.util_data import displayable_unichr
 
 ####### Seeing snips ###################################################################################################

@@ -2,8 +2,6 @@ from numpy import hanning, kaiser, abs, diff, array, std
 from numpy.fft import rfft
 from functools import wraps, partial
 
-from slang.chunkers import DFLT_CHK_SIZE
-
 
 def identity_func(x):
     """The identify (a.k.a. transparent) function that returns it's input as is."""

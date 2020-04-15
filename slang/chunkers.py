@@ -1,7 +1,6 @@
-from itertools import islice, dropwhile, chain
+from itertools import islice, chain
 from functools import partial
 from typing import Iterable
-from collections import deque
 
 inf = float('inf')
 
