@@ -7,20 +7,21 @@ def readme():
 
 
 setup(
-    name='sla',
+    name='slang',
     version='0.0.1',
-    description='Light tools to develop languages for signals',
+    description='Tools to generate language-structure from signals.',
     long_description=readme(),
     long_description_content_type="text/markdown",
-    url='https://github.com/thorwhalen',
+    url='https://github.com/thorwhalen/slang',
     author='Thor Whalen',
     license='Apache',
     packages=find_packages(),
     install_requires=[],
     include_package_data=True,
     zip_safe=False,
-    download_url='https://github.com/i2mint/py2store/archive/v0.0.5.zip',
-    keywords=['sound recognition', 'machine learning', 'language', 'audio', 'signal processing'],
+    # download_url='https://github.com/i2mint/py2store/archive/v0.0.5.zip',
+    keywords=['sound recognition', 'machine learning', 'language', 'audio', 'signal processing',
+              'natural language processing', 'NLP', 'text mining'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
