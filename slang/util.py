@@ -28,11 +28,12 @@ def str_to_snips(snips_str):
     return array(snip_of_unichr_code[list(map(ord, snips_str))])
 
 
-snips_of_str = str_to_snips  # alias for backcompatibility
-str_of_snips = snips_to_str  # alias for backcompatibility
-
+snips_of_str = str_to_snips  # alias for back-compatibility
+str_of_snips = snips_to_str  # alias for back-compatibility
 
 ####### Misc ###########################################################################################################
+ddir = lambda obj: [x for x in dir(obj) if not x.startswith('_')]
+
 
 def balanced_sample_maker(key_to_tag, max_n_keys_per_tag=7, random=False):
     """making a sample of the data (when you want to just test quickly)

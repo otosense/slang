@@ -10,44 +10,6 @@ from slang.featurizers import DFLT_FEATURIZER, DFLT_QUANTIZER
 WfCallback = Optional[Callable[[Waveform], Any]]
 
 
-class Snipper:
-    """A base class that implements the wf->chk->fv->snip pipeline.
-    Default functions for wf_to_chk (a.k.a. chunker), chk_to_fv (a.k.a. featurizer) and fv_to_snip (a.k.a. nipper)
-    are given, but usually the user should specify these, and usually these are learned from data.
-    """
-
-    def __init__(self,
-                 wf_to_chks: Chunker = DFLT_CHUNKER,
-                 chk_to_fv: Featurizer = DFLT_FEATURIZER,
-                 fv_to_snip: Quantizer = DFLT_QUANTIZER):
-        self.wf_to_chks = wf_to_chks
-        self.chk_to_fv = chk_to_fv
-        self.fv_to_snip = fv_to_snip
-
-    def wf_to_snips(self, wf: Waveform) -> Snips:
-        # warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")
-        for chk in self.wf_to_chks(wf):
-            fv = self.chk_to_fv(chk)
-            yield self.fv_to_snip(fv)
-
-    snips_of_wf = wf_to_snips  # alias for backcompatibility
-
-    def wf_to_fvs(self, wf: Waveform) -> FVs:
-        for chk in self.wf_to_chks(wf):
-            yield self.chk_to_fv(chk)
-
-    def chk_to_snip(self, chk: Chunk) -> Snip:
-        return self.fv_to_snip(self.chk_to_fv(chk))
-
-    def wf_to_snips(self, wf: Waveform) -> Snips:
-        for chk in self.wf_to_chks(wf):
-            fv = self.chk_to_fv(chk)
-            yield self.fv_to_snip(fv)
-
-    def __call__(self, wf: Waveform) -> Snips:
-        return self.wf_to_snips(wf)
-
-
 class KvDataSource:
     def __init__(self, kv_store, key_to_tag=None, key_filt=None):
         self.kv_store = kv_store
@@ -107,3 +69,41 @@ class KvDataSource:
 
     def fv_tag_pairs(self, wf_to_chks, chk_to_fv):
         return ((fv, tag) for _, tag, fv in self.key_tag_fvs_gen(wf_to_chks, chk_to_fv))
+
+
+class Snipper:
+    """A base class that implements the wf->chk->fv->snip pipeline.
+    Default functions for wf_to_chk (a.k.a. chunker), chk_to_fv (a.k.a. featurizer) and fv_to_snip (a.k.a. nipper)
+    are given, but usually the user should specify these, and usually these are learned from data.
+    """
+
+    def __init__(self,
+                 wf_to_chks: Chunker = DFLT_CHUNKER,
+                 chk_to_fv: Featurizer = DFLT_FEATURIZER,
+                 fv_to_snip: Quantizer = DFLT_QUANTIZER):
+        self.wf_to_chks = wf_to_chks
+        self.chk_to_fv = chk_to_fv
+        self.fv_to_snip = fv_to_snip
+
+    def wf_to_snips(self, wf: Waveform) -> Snips:
+        # warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")
+        for chk in self.wf_to_chks(wf):
+            fv = self.chk_to_fv(chk)
+            yield self.fv_to_snip(fv)
+
+    snips_of_wf = wf_to_snips  # alias for back-compatibility
+
+    def wf_to_fvs(self, wf: Waveform) -> FVs:
+        for chk in self.wf_to_chks(wf):
+            yield self.chk_to_fv(chk)
+
+    def chk_to_snip(self, chk: Chunk) -> Snip:
+        return self.fv_to_snip(self.chk_to_fv(chk))
+
+    def wf_to_snips(self, wf: Waveform) -> Snips:
+        for chk in self.wf_to_chks(wf):
+            fv = self.chk_to_fv(chk)
+            yield self.fv_to_snip(fv)
+
+    def __call__(self, wf: Waveform) -> Snips:
+        return self.wf_to_snips(wf)

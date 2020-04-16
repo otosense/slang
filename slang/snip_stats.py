@@ -157,21 +157,6 @@ class TagSnipStats:
                                                 tag_snips_format_str))
 
 
-def mk_bayes_factors_caller(kind='asis'):
-    if kind == 'predict_proba':
-        def bayes_factor_call(self, snip):
-            return self.predict_proba([snip])[0]
-    elif kind == 'tag_probs':
-        def bayes_factor_call(self, snip):
-            return {tag: prob for tag, prob in zip(self.classes_, self.predict_proba([snip])[0])}
-    elif kind == 'predict':
-        def bayes_factor_call(self, snip):
-            return self.predict([snip])[0]
-    else:
-        raise ValueError(f"Unknown kind: {kind}")
-    return mk_bayes_factors_caller
-
-
 class BayesFactors:
     """BayesFactors classifier with sklearn-like interface. predict_probas are the log2 of the bayes factor.
     It is sklearn-like, but to avoid depending on sklearn, it isn't a subclass of BaseEstimator and ClassifierMixin.
@@ -179,17 +164,10 @@ class BayesFactors:
     a `classes_` attribute that indices the columns of the `predict_proba` matrix.
     """
 
-    def __init__(self, pseudocount=0, tag_order=None, alphabet_size=None,
-                 caller='predict'):
+    def __init__(self, pseudocount=0, tag_order=None, alphabet_size=None):
         self.pseudocount = pseudocount
         self.tag_order = tag_order
         self.alphabet_size = alphabet_size  # TODO: Use to tell TagSnipStats it should fill until there
-        if isinstance(caller, str):
-            self.caller_kind = caller
-            self.caller = mk_bayes_factors_caller(self.caller_kind)
-        else:
-            self.caller_kind = caller.__name__
-            self.caller = caller
 
     def fit(self, snips, tags):
         self.tag_snip_stats = TagSnipStats(snips, tags, fillna=self.pseudocount, tag_order=self.tag_order)
@@ -219,8 +197,35 @@ class BayesFactors:
         indices = self.predict_proba(snips).argmax(axis=1)
         return self.classes_[indices]
 
+
+def mk_model_caller(kind='asis'):
+    if kind == 'predict_proba':
+        def model_caller(self, snip):
+            return self.predict_proba([snip])[0]
+    elif kind == 'tag_probs':
+        def model_caller(self, snip):
+            return {tag: prob for tag, prob in zip(self.classes_, self.predict_proba([snip])[0])}
+    elif kind == 'predict':
+        def model_caller(self, snip):
+            return self.predict([snip])[0]
+    else:
+        raise ValueError(f"Unknown kind: {kind}")
+    return model_caller
+
+
+class PredictProbaBF(BayesFactors):
     def __call__(self, snip):
-        return self.caller(self, snip)
+        return self.predict_proba([snip])[0]
+
+
+class TagProbsBF(BayesFactors):
+    def __call__(self, snip):
+        return {tag: prob for tag, prob in zip(self.classes_, self.predict_proba([snip])[0])}
+
+
+class PredictBF(BayesFactors):
+    def __call__(self, snip):
+        return self.predict([snip])[0]
 
 
 def tag_slice_iter_from_slices_of_tag_dict(slices_of_tag):
