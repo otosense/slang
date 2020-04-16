@@ -8,7 +8,7 @@ def readme():
 
 setup(
     name='slang',
-    version='0.0.1',
+    version='0.0.2',
     description='Tools to endow signals with language-like structure.',
     long_description=readme(),
     long_description_content_type="text/markdown",
