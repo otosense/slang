@@ -1,7 +1,8 @@
-from collections import deque
+from collections import deque, defaultdict
 from itertools import islice
 import numpy as np
 from numpy import array, nan, arange, unique, ones
+from numpy.random import choice
 from slang.util_data import displayable_unichr
 
 ####### Seeing snips ###################################################################################################
@@ -19,15 +20,46 @@ def snip_to_str(snip):
     return chr(unichr_code_of_snip[snip])
 
 
-def str_of_snips(snips):
+def snips_to_str(snips):
     return ''.join(map(chr, unichr_code_of_snip[list(snips)]))
 
 
-def snips_of_str(snips):
-    return array(snip_of_unichr_code[list(map(ord, snips))])
+def str_to_snips(snips_str):
+    return array(snip_of_unichr_code[list(map(ord, snips_str))])
+
+
+snips_of_str = str_to_snips  # alias for backcompatibility
+str_of_snips = snips_to_str  # alias for backcompatibility
 
 
 ####### Misc ###########################################################################################################
+
+def balanced_sample_maker(key_to_tag, max_n_keys_per_tag=7, random=False):
+    """making a sample of the data (when you want to just test quickly)
+
+    >>> mk_sample = balanced_sample_maker(key_to_tag=lambda k: k.split('/')[0],
+    ...                                   max_n_keys_per_tag=2,
+    ...                                   random=False)
+    >>> mk_sample(['good/1', 'bad/1', 'good/2', 'good/3', 'good/4', 'bad/2', 'good/5', 'bad/3'])
+    ['good/1', 'good/2', 'bad/1', 'bad/2']
+    """
+
+    def mk_balanced_sample(keys):
+        sample = defaultdict(list)
+        for k in keys:
+            sample[key_to_tag(k)].append(k)
+        counts = {k: len(v) for k, v in sample.items()}
+        min_count = min(max_n_keys_per_tag, min(counts.values()))
+        sample_keys = list()
+        if random is False:
+            for k in sample:
+                sample_keys.extend(sample[k][:min_count])
+        else:
+            for k in sample:
+                sample_keys.extend(choice(sample[k], size=min_count, replace=False))
+        return sample_keys
+
+    return mk_balanced_sample
 
 
 import operator
@@ -226,7 +258,8 @@ def running_mean_gen(it, chk_size=2, chk_step=1):  # TODO: A version of this wit
     >>> list(running_mean([-1, -2, -3, -4], 3))
     [-2.0, -3.0]
     """
-
+    if chk_step is None:
+        chk_step = chk_size
     if chk_step > 1:
         # TODO: perhaps there's a more efficient way. A way that would sum the values of every step and add them in bulk
         yield from islice(running_mean(it, chk_size), None, None, chk_step)

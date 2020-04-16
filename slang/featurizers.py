@@ -1,7 +1,11 @@
 from numpy import hanning, kaiser, abs, diff, array, std
 from numpy.fft import rfft
 from functools import wraps, partial
+from slang.stypes import Chunk, Chunks, Featurizer
 
+
+########################################################################################################################
+# FFT
 
 def identity_func(x):
     """The identify (a.k.a. transparent) function that returns it's input as is."""
@@ -99,6 +103,39 @@ mk_wf_to_spectr.w_hanning = _mk_wf_to_spectr_w_hanning
 mk_wf_to_spectr.w_kaiser = _mk_wf_to_spectr_w_kaiser
 
 DFLT_WF_TO_SPECTR = mk_wf_to_spectr()
+
+########################################################################################################################
+# Spectral Projectors
+from numpy import dot
+
+mat_mult = dot
+
+
+class NotFittedError(ValueError, AttributeError): ...
+
+
+# Featurizer
+class SpectralProjector:
+    def __init__(self, scalings_, chk_to_spectr=DFLT_WF_TO_SPECTR):
+        self.scalings_ = scalings_
+        self.chk_to_spectr = chk_to_spectr
+
+    @property
+    def fv_length(self):
+        return self.scalings_.shape[1]
+
+    def spectr_mat(self, chks: Chunks):
+        return array(list(self.chk_to_spectr(chk) for chk in chks))
+
+    def transform(self, chks: Chunks):
+        return mat_mult(self.spectr_mat(chks), self.scalings_)
+
+    def fv_of_chk(self, chk):
+        return mat_mult(self.chk_to_spectr(chk), self.scalings_)
+
+    def __call__(self, chk: Chunk):
+        return list(self.chk_to_spectr(chk))
+
 
 ########################################################################################################################
 # Some silly featurizer to play with

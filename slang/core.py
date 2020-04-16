@@ -24,11 +24,13 @@ class Snipper:
         self.chk_to_fv = chk_to_fv
         self.fv_to_snip = fv_to_snip
 
-    def snips_of_wf(self, wf: Waveform) -> Snips:
-        warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")
+    def wf_to_snips(self, wf: Waveform) -> Snips:
+        # warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")
         for chk in self.wf_to_chks(wf):
             fv = self.chk_to_fv(chk)
             yield self.fv_to_snip(fv)
+
+    snips_of_wf = wf_to_snips  # alias for backcompatibility
 
     def wf_to_fvs(self, wf: Waveform) -> FVs:
         for chk in self.wf_to_chks(wf):
@@ -43,16 +45,19 @@ class Snipper:
             yield self.fv_to_snip(fv)
 
     def __call__(self, wf: Waveform) -> Snips:
-        return self.snips_of_wf(wf)
+        return self.wf_to_snips(wf)
 
 
 class KvDataSource:
-    def __init__(self, kv_store, key_to_tag=None):
+    def __init__(self, kv_store, key_to_tag=None, key_filt=None):
         self.kv_store = kv_store
         self.key_to_tag = key_to_tag
+        self.key_filt = key_filt
 
     def key_wf_gen(self):
-        return iter(self.kv_store.items())
+        kv_store = self.kv_store
+        for k in filter(self.key_filt, self.kv_store):
+            yield k, kv_store[k]
 
     def key_tag_wf_gen(self, wf_callback: WfCallback = None, iterate_over_wf_callaback_output=False):
         assert self.key_to_tag is not None, "You need to have a key_to_tag function to do that!"
@@ -83,3 +88,22 @@ class KvDataSource:
             return list(fv_to_snip(chk_to_fv(chk)) for chk in wf_to_chk(wf))
 
         yield from self.key_tag_wf_gen(wf_callback=wf_to_snips, iterate_over_wf_callaback_output=True)
+
+    def key_chks_gen(self, wf_to_chk):
+        for k, wf in self.key_wf_gen():
+            for chk in wf_to_chk:
+                yield k, chk
+
+    def key_fvs_gen(self, wf_to_chk, chk_to_fv):
+        for k, chk in self.key_chks_gen(wf_to_chk):
+            yield k, chk_to_fv(chk)
+
+    def key_snips_gen(self, wf_to_chk, chk_to_fv, fv_to_snip):
+        for k, fv in self.key_fvs_gen(wf_to_chk, chk_to_fv):
+            yield k, fv_to_snip(fv)
+
+    def chk_tag_pairs(self, wf_to_chks):
+        return ((chk, tag) for _, tag, chk in self.key_tag_chks_gen(wf_to_chks))
+
+    def fv_tag_pairs(self, wf_to_chks, chk_to_fv):
+        return ((fv, tag) for _, tag, fv in self.key_tag_fvs_gen(wf_to_chks, chk_to_fv))
