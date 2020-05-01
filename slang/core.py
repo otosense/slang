@@ -10,6 +10,71 @@ from slang.featurizers import DFLT_FEATURIZER, DFLT_QUANTIZER
 WfCallback = Optional[Callable[[Waveform], Any]]
 
 
+class TagWfStore:
+    def __init__(self, wf_store, key_to_tag=None, key_filt=None):
+        self.wf_store = wf_store
+        self.key_to_tag = key_to_tag
+        self.key_filt = key_filt
+
+    def key_wf_gen(self):
+        pass
+
+    def wfs(self):
+        pass
+
+    def tag_wfs(self):
+        pass
+
+
+from py2store.util import lazyprop
+
+
+class WfSource:
+    def __init__(self, wfs, key_filt=None):
+        self.wfs = wfs
+        self.key_filt = key_filt
+
+    @lazyprop
+    def keys(self):
+        return tuple(filter(self.key_filt, self.wfs))
+
+    def wf_gen(self):
+        for k in self.keys:
+            yield self.wfs[k]
+
+    def key_wf_gen(self):
+        for k in self.keys:
+            yield k, self.wfs[k]
+
+
+class AnnotedWfSource(WfSource):
+    def __init__(self, wfs, annots=None, key_filt=None):
+        super().__init__(wfs, key_filt)
+        self.annots = annots
+
+    @lazyprop
+    def keys(self):
+        annots_keys = set(self.annots)
+        return tuple([k for k in super().keys() if k in annots_keys])
+
+    def annots_gen(self):
+        for k in self.keys:
+            yield self.annots[k]
+
+    def annot_wf_gen(self):
+        for k in self.keys:
+            yield self.annots[k], self.wfs[k]
+
+    def key_annot_wf_gen(self):
+        for k in self.keys:
+            yield self.annots[k], self.wfs[k]
+
+
+# Notes:
+"""
+- key_to_tag not general enough because tag not general enough. Sometimes it's not a categorical.
+    Sometimes it's multiple. Sometimes we have context information that needs to be associated with the annot. 
+"""
 class KvDataSource:
     def __init__(self, kv_store, key_to_tag=None, key_filt=None):
         self.kv_store = kv_store
