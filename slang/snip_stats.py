@@ -197,6 +197,9 @@ class BayesFactors:
         indices = self.predict_proba(snips).argmax(axis=1)
         return self.classes_[indices]
 
+    def __call__(self, snip):
+        return self.predict_proba([snip])[0]
+
 
 def mk_model_caller(kind='asis'):
     if kind == 'predict_proba':
