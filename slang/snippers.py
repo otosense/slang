@@ -80,46 +80,60 @@ class ClassificationSnipper(Snipper):
     }
 
     @classmethod
-    def mk_component(cls, obj, role=None):
+    def mk_component(cls, obj, role=None, assert_func=None):
         if isinstance(obj, type):
-            return obj()
+            obj = obj()
         elif not callable(obj):
             assert isinstance(obj, dict)
-            return cls.dflt_cls_of_name.get(role)(**obj)
+            obj = cls.dflt_cls_of_name.get(role)(**obj)
         else:
-            return obj  # as is
+            pass  # as is
+        if assert_func is not None:
+            assert assert_func(obj)
+        return obj
 
     def __init__(self, wf_to_chks=DfltWfToChk(),
                  chk_to_fv=DfltChkToFv,
                  fv_to_snip=DfltFvToSnip,
                  snip_to_score=BayesFactors):
 
-        for obj_role in ['wf_to_chks', 'chk_to_fv', 'fv_to_snip', 'snip_to_score']:
-            obj = self.mk_component(locals()[obj_role], obj_role)
-            assert callable(obj)
-            setattr(self, obj_role, obj)
+        wf_to_chks = self.mk_component(wf_to_chks, 'wf_to_chks', assert_func=callable)
+        chk_to_fv = self.mk_component(chk_to_fv, 'chk_to_fv', assert_func=callable)
+        fv_to_snip = self.mk_component(fv_to_snip, 'fv_to_snip', assert_func=callable)
+        snip_to_score = self.mk_component(snip_to_score, 'snip_to_score', assert_func=callable)
 
-        # Note: Equivalent to below:
-        # self.wf_to_chks = self.mk_component(wf_to_chks, 'wf_to_chks')
-        # self.chk_to_fv = self.mk_component(chk_to_fv, 'chk_to_fv')
-        # self.fv_to_snip = self.mk_component(fv_to_snip, 'fv_to_snip')
-        # self.snip_to_score = self.mk_component(snip_to_score, 'snip_to_score')
+        super().__init__(wf_to_chks, chk_to_fv, fv_to_snip)
+        self.snip_to_score = snip_to_score
 
-        assert hasattr(self.chk_to_fv, 'fit')
-        assert hasattr(self.fv_to_snip, 'fit')
-        assert hasattr(self.snip_to_score, 'fit')
+        # TODO: Find a more concise way to take care of block above. Like... (but not working)
+        # _locals = locals()
+        # for obj_role in ['wf_to_chks', 'chk_to_fv', 'fv_to_snip', 'snip_to_score']:
+        #     _locals[obj_role] = self.mk_component(_locals[obj_role], obj_role, assert_func=callable)
+
+    # TODO: Make the next four methods more DRY
+    def fit_wf_to_chks(self, *chks_tags):
+        if hasattr(self.wf_to_chks, 'fit'):
+            chks, tags = _get_pairs(chks_tags)  # need to generalize to situations with no tags
+            self.wf_to_chks.fit(chks, tags)
+        return self
 
     def fit_chk_to_fv(self, *chks_tags):
-        chks, tags = _get_pairs(chks_tags)
-        self.chk_to_fv.fit(chks, tags)
+        if hasattr(self.chk_to_fv, 'fit'):
+            chks, tags = _get_pairs(chks_tags)
+            self.chk_to_fv.fit(chks, tags)
+        return self
 
     def fit_fv_to_snip(self, *fvs_tags):
-        fvs, tags = _get_pairs(fvs_tags)
-        self.fv_to_snip.fit(fvs, tags)
+        if hasattr(self.fv_to_snip, 'fit'):
+            fvs, tags = _get_pairs(fvs_tags)
+            self.fv_to_snip.fit(fvs, tags)
+        return self
 
     def fit_snip_to_score(self, *snips_tags):
-        snips, tags = _get_pairs(snips_tags)
-        self.snip_to_score.fit(snips, tags)
+        if hasattr(self.snip_to_score, 'fit'):
+            snips, tags = _get_pairs(snips_tags)
+            self.snip_to_score.fit(snips, tags)
+        return self
 
     # def snips_of_wf(self, wf: Waveform) -> Snips:
     #     warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")
