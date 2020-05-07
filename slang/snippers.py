@@ -36,12 +36,17 @@ class DfltFvToSnip(KMeans):
         return self.predict([fv])[0]
 
 
-def is_iterable(o):
-    try:
-        iter(o)
-        return True
-    except TypeError:
-        return False
+from collections.abc import Iterable
+
+
+def is_iterable(x):
+    """Similar in nature to :func:`callable`, ``is_iterable`` returns
+    ``True`` if an object is `iterable`_, ``False`` if not.
+    >>> is_iterable([])
+    True
+    >>> is_iterable(1)
+    False"""
+    return isinstance(x, Iterable)
 
 
 def _get_pairs(iterables):
