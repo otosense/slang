@@ -47,7 +47,7 @@ source -> [chunker] --> chk -> [featurizer] -> fv -> [quantizer] -> snip -> [led
 ```
 
 - `source`: A streaming signal source
-- `chunker`: Is fed the signal stream and creates a stream of signal chunks of fixed size. Parametrized by chunk size (`chk_size` -- typically between 0.01s and 0.1s) and chunk step (`chk_step` -- by default same as `chk_size`).
+- `chunker`: Is fed the signal stream and creates a stream of signal chunks of fixed size. Parametrized by chunk size and other things, particular to the kind of chunker.
 - `featurizer`: Takes a chunk and returns a feature vector 'fv'.
 - `quantizer`: Compute a symbol (call it "snip" -- think _letter_, _phone_ or _atom_) from an `fv` -- the `snip` (say an integer) is from a finite set of snips.
 - `ledger`: Lookup information about the snip in a ledger and output the associated `stats`.
