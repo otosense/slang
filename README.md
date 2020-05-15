@@ -38,6 +38,30 @@ and it will now be able to develop semantics.
 The common thread through this learning evolutiion is the ability to detect and annotate patterns 
 and relate these patterns to each other from lower to higher levels of abstraction. 
 
+## Okay, but what does a pipeline look like in slang
+
+Here are the ingredients of a typical _running_ (as opposed to _learning_) pipeline.
+
+```
+source -> [chunker] --> chk -> [featurizer] -> fv -> [quantizer] -> snip -> [ledger] -> stats -> [aggregator] -> aggr -> [trigger]
+```
+
+- `source`: A streaming signal source
+- `chunker`: Is fed the signal stream and creates a stream of signal chunks of fixed size. Parametrized by chunk size and other things, particular to the kind of chunker.
+- `featurizer`: Takes a chunk and returns a feature vector 'fv'.
+- `quantizer`: Compute a symbol (call it "snip" -- think _letter_, _phone_ or _atom_) from an `fv` -- the `snip` (say an integer) is from a finite set of snips.
+- `ledger`: Lookup information about the snip in a ledger and output the associated `stats`.
+- `aggregator`: Over one or several observed windows, update incrementally some aggregates of the streaming `stats`.
+- `trigger`: Given a condition on the aggregates, trigger some action.
+
+The source stream is fed to the `chunker`, creating a stream of `chk`s, which are transformed into an stream of `stats`s by doing:
+```
+stats = lookup(quantizer(mat_mult(chk_to_spectr(chk))))
+```
+for every `chk` created by `source+chunker`.
+
+Over one or several observed windows, update incrementally some aggregates of the streaming `stats`, and given a condition on every new aggregate, trigger some action.
+
 # Sound Language
 
 Not surprisingly, speech recognition is the sub-domain of sound recognition 
