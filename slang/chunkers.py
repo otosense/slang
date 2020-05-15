@@ -7,17 +7,85 @@ inf = float('inf')
 DFLT_CHK_SIZE = 2048
 
 
-def simple_chunker(a: Iterable, chk_size: int):
-    """Simple fixed chunk size chunker. Step is the same as size (so no gap or overlap).
-    >>> a = range(6)
-    >>> list(simple_chunker(a, 3))
-    [(0, 1, 2), (3, 4, 5)]
-    >>> list(simple_chunker(a, 2))
-    [(0, 1), (2, 3), (4, 5)]
-    >>> list(simple_chunker(a, 1))
-    [(0,), (1,), (2,), (3,), (4,), (5,)]
+def mk_chunker(chk_size=DFLT_CHK_SIZE, chk_step=None, *, use_numpy_reshape=None):
     """
-    return zip(*([iter(a)] * chk_size))
+    Generator of (fixed size and fixed step) chunks of an iterable.
+    This function-making function will try to choose an optimized chunker for you depending on the parameters and
+    environment (if you have numpy and chk_size==chk_step, it's the fastest).
+
+    Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the type that is yield.
+
+    :param chk_size: Size of chunk (default 2048)
+    :param chk_step: Size of step (step of sliding window). If not specified, will be taken to be chk_size
+    :param use_numpy_reshape: If None (default), will use numpy (reshape) if numpy is importable.
+        If True, will try to use numpy.reshape systematically.
+        If False, will not use numpy.reshape, even if numpy present.
+    :return: A generator of chunks (numpy.arrays, tuples, or lists, depending on the context)
+
+    >>> a = range(6)
+    >>> chunker = mk_chunker(3)
+    >>> list(chunker(a))
+    [array([0, 1, 2]), array([3, 4, 5])]
+    >>> list(mk_chunker(2)(a))
+    [array([0, 1]), array([2, 3]), array([4, 5])]
+    >>> list(tuple(x) for x in mk_chunker(1)(a))
+    [(0,), (1,), (2,), (3,), (4,), (5,)]
+    >>>
+    >>> chunker = mk_chunker(4, 2)
+    >>> list(chunker(a))
+    [[0, 1, 2, 3], [2, 3, 4, 5]]
+    """
+
+    chk_step = chk_step or chk_size  # default to chk_size == chk_step
+
+    if chk_step == chk_size:
+        if (use_numpy_reshape is None) or (use_numpy_reshape is True):
+            try:
+                from numpy import reshape
+                use_numpy_reshape = True
+            except ImportError:
+                if use_numpy_reshape is True:
+                    raise  # make sure the user knows she doesn't have numpy
+                use_numpy_reshape = False
+
+        if use_numpy_reshape:
+            def chunker(a):
+                n = len(a)
+                yield from reshape(a[:(n - (n % chk_size))], (-1, chk_size))
+        else:
+            def chunker(a):
+                yield from zip(*([iter(a)] * chk_size))
+    else:
+        def chunker(a):
+            yield from fixed_step_chunker(a, chk_size, chk_step)
+
+    return chunker
+
+
+def simple_fixed_step_chunker(it, chk_size, chk_step=None):
+    """
+    Generates chunks of fixed size and step.
+    Yields chunks as lists.
+    """
+    from itertools import islice
+
+    if chk_step == chk_size:
+        yield from map(list, zip(*([iter(it)] * chk_step)))
+    elif chk_step < chk_size:
+
+        chk = list(islice(it, chk_size))
+
+        while len(chk) == chk_size:
+            yield chk
+            chk = chk[chk_step:] + list(islice(it, chk_step))
+
+    else:
+        chk = list(islice(it, chk_size))
+        gap = chk_step - chk_size
+
+        while len(chk) == chk_size:
+            yield chk
+            chk = list(islice(it, gap, gap + chk_size))
 
 
 def _validate_chk_size(chk_size):
