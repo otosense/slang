@@ -167,11 +167,15 @@ class BayesFactors:
     def __init__(self, pseudocount=0, tag_order=None, alphabet_size=None):
         self.pseudocount = pseudocount
         self.tag_order = tag_order
-        self.alphabet_size = alphabet_size  # TODO: Use to tell TagSnipStats it should fill until there
+        self._alphabet_size = alphabet_size  # TODO: Use to tell TagSnipStats it should fill until there
+
+    @lazyprop
+    def alphabet_size(self):
+        return self._alphabet_size or self.log_bayes_factor_.index.max()
 
     def fit(self, snips, tags):
         self.tag_snip_stats = TagSnipStats(snips, tags, fillna=self.pseudocount, tag_order=self.tag_order)
-        self.log_bayes_factor_ = self.tag_snip_stats.log_bayes_factor
+        self.log_bayes_factor_ = self.tag_snip_stats.log_bayes_factor.sort_index()
         self.classes_ = self.tag_snip_stats.tag_order
         return self
 
@@ -197,6 +201,10 @@ class BayesFactors:
         indices = self.predict_proba(snips).argmax(axis=1)
         return self.classes_[indices]
 
+    def _diagnosis(self):
+        assert set(np.diff(sorted(self.log_bayes_factor_.index))) == {1}, "some snips are missing!"
+
+    # TODO: self.snip_to_score([0]) blows up, but self.snip_to_score([0, 1, 2]) gives me a score (should blow up)
     def __call__(self, snip):
         return self.predict_proba([snip])[0]
 

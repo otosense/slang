@@ -116,25 +116,29 @@ class ClassificationSnipper(Snipper):
         #     _locals[obj_role] = self.mk_component(_locals[obj_role], obj_role, assert_func=callable)
 
     # TODO: Make the next four methods more DRY
-    def fit_wf_to_chks(self, *chks_tags):
+    def fit_wf_to_chks(self, *wfs_tags):
+        assert len(wfs_tags) in {1, 2}
         if hasattr(self.wf_to_chks, 'fit'):
-            chks, tags = _get_pairs(chks_tags)  # need to generalize to situations with no tags
+            chks, tags = _get_pairs(wfs_tags)  # need to generalize to situations with no tags
             self.wf_to_chks.fit(chks, tags)
         return self
 
     def fit_chk_to_fv(self, *chks_tags):
+        assert len(chks_tags) in {1, 2}
         if hasattr(self.chk_to_fv, 'fit'):
             chks, tags = _get_pairs(chks_tags)
             self.chk_to_fv.fit(chks, tags)
         return self
 
     def fit_fv_to_snip(self, *fvs_tags):
+        assert len(fvs_tags) in {1, 2}
         if hasattr(self.fv_to_snip, 'fit'):
             fvs, tags = _get_pairs(fvs_tags)
             self.fv_to_snip.fit(fvs, tags)
         return self
 
     def fit_snip_to_score(self, *snips_tags):
+        assert len(snips_tags) in {1, 2}
         if hasattr(self.snip_to_score, 'fit'):
             snips, tags = _get_pairs(snips_tags)
             self.snip_to_score.fit(snips, tags)
