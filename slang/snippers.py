@@ -21,16 +21,16 @@ class DfltWfToChk:
 
 
 class DfltChkToFv(PCA):
-    def __init__(self, n_components=5, *args, **kwargs):
-        super().__init__(n_components=n_components, *args, **kwargs)
+    def __init__(self, n_components=5, **kwargs):
+        super().__init__(n_components=n_components, **kwargs)
 
     def __call__(self, fv):
         return self.transform([fv])[0]
 
 
 class DfltFvToSnip(KMeans):
-    def __init__(self, n_clusters=47, *args, **kwargs):
-        super().__init__(n_clusters=n_clusters, *args, **kwargs)
+    def __init__(self, n_clusters=47, **kwargs):
+        super().__init__(n_clusters=n_clusters, **kwargs)
 
     def __call__(self, fv):
         return self.predict([fv])[0]
@@ -49,15 +49,30 @@ def is_iterable(x):
     return isinstance(x, Iterable)
 
 
-def _get_pairs(iterables):
+def _assure_pair(iterables):
     """ """
     if hasattr(iterables, '__len__'):
         if len(iterables) == 2:
             return iterables
         elif len(iterables) == 1 and is_iterable(iterables[0]):
             return list(zip(*iterables[0]))
+        # TODO: else?... raise? If None on purpose, say it and why!
     else:
         return list(zip(*iterables))
+
+
+_get_pairs = _assure_pair  # but deprecating
+
+
+def _assure_zipped(iterables):
+    """ """
+    if hasattr(iterables, '__len__'):
+        if len(iterables) == 1:
+            return iterables
+        else:
+            return zip(*iterables)
+    else:
+        return zip(*iterables)
 
 
 def _is_a_tuple_of_aligned_iterables(x):
@@ -117,32 +132,53 @@ class ClassificationSnipper(Snipper):
 
     # TODO: Make the next four methods more DRY
     def fit_wf_to_chks(self, *wfs_tags):
-        assert len(wfs_tags) in {1, 2}
         if hasattr(self.wf_to_chks, 'fit'):
-            chks, tags = _get_pairs(wfs_tags)  # need to generalize to situations with no tags
+            chks, tags = _assure_pair(wfs_tags)  # need to generalize to situations with no tags
             self.wf_to_chks.fit(chks, tags)
         return self
 
     def fit_chk_to_fv(self, *chks_tags):
-        assert len(chks_tags) in {1, 2}
         if hasattr(self.chk_to_fv, 'fit'):
-            chks, tags = _get_pairs(chks_tags)
+            chks, tags = _assure_pair(chks_tags)
             self.chk_to_fv.fit(chks, tags)
         return self
 
     def fit_fv_to_snip(self, *fvs_tags):
-        assert len(fvs_tags) in {1, 2}
         if hasattr(self.fv_to_snip, 'fit'):
-            fvs, tags = _get_pairs(fvs_tags)
+            fvs, tags = _assure_pair(fvs_tags)
             self.fv_to_snip.fit(fvs, tags)
         return self
 
     def fit_snip_to_score(self, *snips_tags):
-        assert len(snips_tags) in {1, 2}
         if hasattr(self.snip_to_score, 'fit'):
-            snips, tags = _get_pairs(snips_tags)
+            snips, tags = _assure_pair(snips_tags)
             self.snip_to_score.fit(snips, tags)
         return self
+
+    # TODO: Dagify all this. To hardcoded. No caching. No flexibility
+
+    def chk_tag_gen(self, wf_tag_gen):
+        for wf, tag in wf_tag_gen():
+            for chk in self.wf_to_chks(wf):
+                yield chk, tag
+
+    def fv_tag_gen(self, wf_tag_gen):
+        for chk, tag in self.chk_tag_gen(wf_tag_gen):
+            yield self.chk_to_fv(chk), tag
+
+    def snip_tag_gen(self, wf_tag_gen):
+        for fv, tag in self.fv_tag_gen(wf_tag_gen):
+            yield self.fv_to_snip(fv), tag
+
+    def fit_pipeline(self, wf_tags_gen):
+
+        self.fit_wf_to_chks(wf_tags_gen())
+
+        self.fit_chk_to_fv(self.chk_tag_gen(wf_tags_gen))
+
+        self.fit_fv_to_snip(self.fv_tag_gen(wf_tags_gen))
+
+        self.fit_snip_to_score(self.snip_tag_gen(wf_tags_gen))
 
     # def snips_of_wf(self, wf: Waveform) -> Snips:
     #     warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")

@@ -201,8 +201,10 @@ class BayesFactors:
         indices = self.predict_proba(snips).argmax(axis=1)
         return self.classes_[indices]
 
-    def _diagnosis(self):
+    def _assert_sanity(self):
         assert set(np.diff(sorted(self.log_bayes_factor_.index))) == {1}, "some snips are missing!"
+
+    _diagnosis = _assert_sanity  # but deprecating _diagnosis
 
     # TODO: self.snip_to_score([0]) blows up, but self.snip_to_score([0, 1, 2]) gives me a score (should blow up)
     def __call__(self, snip):
