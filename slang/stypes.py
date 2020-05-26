@@ -38,7 +38,10 @@ def MyType(name: str, constraint, *more_constraints, doc: Optional[str] = None, 
     else:
         new_tp = TypeVar(name, constraint, *more_constraints, covariant=covariant, contravariant=contravariant)
     if doc is not None:
-        setattr(new_tp, '__doc__', doc)
+        try:
+            setattr(new_tp, '__doc__', doc)
+        except AttributeError:  # because __doc__ is read only in 3.6, it seems...
+            pass
     if aka is not None:
         setattr(new_tp, '_aka', set(aka))
     if assign_to_globals:
