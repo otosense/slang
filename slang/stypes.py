@@ -40,10 +40,13 @@ def MyType(name: str, constraint, *more_constraints, doc: Optional[str] = None, 
     if doc is not None:
         try:
             setattr(new_tp, '__doc__', doc)
-        except AttributeError:  # because __doc__ is read only in 3.6, it seems...
+        except AttributeError:  # because TypeVar attributes are read only in 3.6, it seems...
             pass
     if aka is not None:
-        setattr(new_tp, '_aka', set(aka))
+        try:
+            setattr(new_tp, '_aka', set(aka))
+        except AttributeError:  # because TypeVar attributes are read only in 3.6, it seems...
+            pass
     if assign_to_globals:
         globals()[name] = new_tp  # not sure how kosher this is... Should only use at top level of module, for sure!
     return new_tp
