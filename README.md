@@ -1,3 +1,20 @@
+- [Slang: Light weight tools to build signal languages](#slang--light-weight-tools-to-build-signal-languages)
+  * [A story to paint the horizon](#a-story-to-paint-the-horizon)
+  * [Okay, but what does a pipeline look like in slang](#okay--but-what-does-a-pipeline-look-like-in-slang)
+- [Sound Language](#sound-language)
+- [Structural and Syntactical Pattern Recognition](#structural-and-syntactical-pattern-recognition)
+- [Semantic Structure](#semantic-structure)
+- [Acoustics Structure](#acoustics-structure)
+  * [Alphabetization](#alphabetization)
+  * [Snips network](#snips-network)
+- [Snips Annotations](#snips-annotations)
+  * [Relationship between Annotations and the Syntactic Approach](#relationship-between-annotations-and-the-syntactic-approach)
+- [Modeling](#modeling)
+- [References](#references)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 # Slang: Light weight tools to build signal languages
 
 Slang is a structural approach to sound/signal machine learning. 
@@ -41,6 +58,8 @@ and relate these patterns to each other from lower to higher levels of abstracti
 ## Okay, but what does a pipeline look like in slang
 
 Here are the ingredients of a typical _running_ (as opposed to _learning_) pipeline.
+
+![](img/slang_flow.png)
 
 ```
 source -> [chunker] --> chk -> [featurizer] -> fv -> [quantizer] -> snip -> [ledger] -> stats -> [aggregator] -> aggr -> [trigger]
