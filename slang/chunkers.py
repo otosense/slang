@@ -59,7 +59,13 @@ def mk_chunker(chk_size=DFLT_CHK_SIZE, chk_step=None, *, use_numpy_reshape=None)
         def chunker(a):
             yield from fixed_step_chunker(a, chk_size, chk_step)
 
+    chunker.chk_size = chk_size
+    chunker.chk_step = chk_step
+
     return chunker
+
+
+DFLT_CHUNKER = mk_chunker(chk_size=DFLT_CHK_SIZE)
 
 
 def simple_fixed_step_chunker(it, chk_size, chk_step=None):
@@ -298,9 +304,6 @@ def fixed_step_chunker(it, chk_size, chk_step=None, start_at=None, stop_at=None,
         while len(chk) > 0:
             yield chk
             chk = chk[chk_step:]
-
-
-DFLT_CHUNKER = partial(fixed_step_chunker, chk_size=DFLT_CHK_SIZE)
 
 #
 # from collections import deque
