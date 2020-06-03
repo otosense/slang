@@ -1,7 +1,7 @@
 from functools import wraps
 import inspect
 
-from numpy import array, dot, cumsum, min, inf, ndarray, floor
+from numpy import cumsum, min, inf, ndarray, floor
 from sklearn.decomposition import PCA, IncrementalPCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.utils.validation import NotFittedError
@@ -13,7 +13,6 @@ from numpy import array, hanning, fft  # TODO: Get rid of this once we use C-bas
 DFLT_WIN_FUNC = hanning
 DFLT_CHK_SIZE = 2048
 DFLT_INPUT_SIZE = 1 + int(floor(DFLT_CHK_SIZE / 2))
-DFLT_MATRIX_MULTI = dot
 DFLT_AMPLITUDE_FUNC = np.abs
 
 
@@ -97,8 +96,13 @@ def mk_chk_fft(chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUD
 
 DFLT_CHK_FFT = mk_chk_fft(chk_size=DFLT_CHK_SIZE, window=DFLT_WIN_FUNC)
 
+matrix_mult = np.dot
+DFLT_MATRIX_MULTI = matrix_mult
 
-def projection(basis, vectors, mat_mult=DFLT_MATRIX_MULTI):
+
+# TODO: Better name for this, to distinguish between expressing projection in projected sub-space or original space
+#   The following expresses it in the original space
+def projection(basis, vectors):
     """
     The vectors live in a k dimensional space S and the columns of the basis are vectors of the same
     space spanning a subspace of S. Gives a representation of the projection of vector into the space
@@ -108,10 +112,10 @@ def projection(basis, vectors, mat_mult=DFLT_MATRIX_MULTI):
     :param vectors: an m-by-k array, a vector to be represented in the basis
     :return: an m-by-k array
     """
-    return mat_mult(basis.T, mat_mult(basis, vectors.T)).T
+    return matrix_mult(matrix_mult(vectors, basis), basis.T)
 
 
-class Projection:
+class Projector:
     def __init__(self, scalings_=None, mat_mult=DFLT_MATRIX_MULTI):
         self.scalings_ = scalings_
         self.mat_mult = mat_mult
@@ -139,7 +143,7 @@ class Projection:
             raise NotFittedError("{} was not fitted yet.".format(self.__class__.__name__))
 
 
-class SpectralProjector(Projection):
+class SpectralProjector(Projector):
     def __init__(self,
                  scalings_=None,
                  chk_fft=DFLT_CHK_FFT,
@@ -218,12 +222,10 @@ class SpectralProjectorLearner(SpectralProjector, BaseEstimator, TransformerMixi
 
 # TODO: Probably better if subclassing PCA
 class TargettedVariancePCA(BaseEstimator, TransformerMixin):
-    def __init__(self, target_variance=0.95, max_n_components=inf, min_n_components=1,
-                 mat_mult=DFLT_MATRIX_MULTI):
+    def __init__(self, target_variance=0.95, max_n_components=inf, min_n_components=1):
         self.target_variance = target_variance
         self.max_n_components = max_n_components
         self.min_n_components = min_n_components
-        self.mat_mult = mat_mult
 
     def fit(self, X, y=None):
         max_possible_comp = min(X.shape)
@@ -247,23 +249,22 @@ class TargettedVariancePCA(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        return self.mat_mult(X, self.scalings_)
+        return matrix_mult(X, self.scalings_)
 
 
 class SpectralProjectorUnsupervisedFitter(SpectralProjector, TargettedVariancePCA):
     def __init__(self, target_variance=0.95, max_n_components=inf, min_n_components=1,
-                 scalings_=None, chk_fft=DFLT_CHK_FFT, mat_mult=DFLT_MATRIX_MULTI):
-        TargettedVariancePCA.__init__(self, target_variance, max_n_components, min_n_components, mat_mult)
-        SpectralProjector.__init__(self, scalings_, chk_fft, mat_mult)
+                 scalings_=None, chk_fft=DFLT_CHK_FFT):
+        TargettedVariancePCA.__init__(self, target_variance, max_n_components, min_n_components)
+        SpectralProjector.__init__(self, scalings_, chk_fft)
 
     def fit(self, chks, y=None):
         return super().fit(self.spectras(chks), y)
 
 
 class MyLDA(BaseEstimator, TransformerMixin):
-    def __init__(self, n_components=None, mat_mult=DFLT_MATRIX_MULTI):
+    def __init__(self, n_components=None):
         self.n_components = n_components
-        self.mat_mult = mat_mult
 
     def fit(self, X, y):
         lda = LinearDiscriminantAnalysis(n_components=self.n_components)
@@ -277,14 +278,14 @@ class MyLDA(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        return self.mat_mult(X, self.scalings_)
+        return matrix_mult(X, self.scalings_)
 
 
 class SpectralProjectorSupervisedFitter(SpectralProjector, MyLDA):
     def __init__(self, n_components=None,
-                 scalings_=None, chk_fft=DFLT_CHK_FFT, mat_mult=DFLT_MATRIX_MULTI):
-        MyLDA.__init__(self, n_components, mat_mult)
-        SpectralProjector.__init__(self, scalings_, chk_fft, mat_mult)
+                 scalings_=None, chk_fft=DFLT_CHK_FFT):
+        MyLDA.__init__(self, n_components)
+        SpectralProjector.__init__(self, scalings_, chk_fft)
 
     def fit(self, chks, y):
         return super().fit(self.spectras(chks), y)
@@ -317,29 +318,29 @@ CLUSTERING_OPTIONS = ('KMeans', 'SpectralClustering', 'AffinityPropagation',
 # TODO: Examples of objectivication below. Not verified or tested yet.
 # Note: A choice to make here: Subclassing versus Delegation. I'll perform subclassing here.
 
-class PcaProj(PCA, Projection):
+class PcaProj(PCA, Projector):
     def fit(self, X, y=None):
         super().fit(X, y)
         self.scalings_ = self.components_
         return self
 
-    transform = Projection.transform
+    transform = Projector.transform
 
 
-class IpcaProj(IncrementalPCA, Projection):
+class IpcaProj(IncrementalPCA, Projector):
     def fit(self, X, y=None):
         super().fit(X, y)
         self.scalings_ = self.components_
         return self
 
-    transform = Projection.transform
+    transform = Projector.transform
 
 
-class LdaProj(LinearDiscriminantAnalysis, Projection):
-    transform = Projection.transform
+class LdaProj(LinearDiscriminantAnalysis, Projector):
+    transform = Projector.transform
 
 
-class LinregProj(LinearRegression, Projection):
+class LinregProj(LinearRegression, Projector):
     @wraps(LinearRegression.fit)
     def fit(self, *args, **kwargs):
         super().fit(*args, **kwargs)
@@ -349,7 +350,7 @@ class LinregProj(LinearRegression, Projection):
 
 # Example of PCA+Projection, with delegation
 
-class PcaProjWithDelegation(Projection):
+class PcaProjWithDelegation(Projector):
     @wraps(PCA.__init__)
     def __init__(self, *args, **kwargs):
         self._source = PCA(*args, **kwargs)
@@ -359,7 +360,7 @@ class PcaProjWithDelegation(Projection):
         self.scalings_ = self._source.components_
         return self
 
-    transform = Projection.transform
+    transform = Projector.transform
 
 
 def learn_spect_proj(X, y=None, spectral_proj_name='pca',
@@ -476,7 +477,7 @@ def residue(scalings, X):
 
 # TODO: Check. Not consistent with normal projection (scalings_ is not used as projection), though it is a linear trans.
 # Note: Perhaps this is better seen as the compliment/dual of a projection?
-class Residues(Projection):
+class Residues(Projector):
     def transform(self, X):
         return X - projection(self.scalings_, X)
 
