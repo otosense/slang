@@ -100,6 +100,7 @@ matrix_mult = np.dot
 DFLT_MATRIX_MULTI = matrix_mult
 
 
+# TODO: Does the doc match what the function does?
 # TODO: Better name for this, to distinguish between expressing projection in projected sub-space or original space
 #   The following expresses it in the original space
 def projection(basis, vectors):
@@ -115,13 +116,19 @@ def projection(basis, vectors):
     return matrix_mult(matrix_mult(vectors, basis), basis.T)
 
 
+def reducing_proj(basis, vectors):
+    """What we actually use to get fvs from spectras"""
+    return matrix_mult(vectors, basis.T)
+
+
 class Projector:
     def __init__(self, scalings_=None, mat_mult=DFLT_MATRIX_MULTI):
         self.scalings_ = scalings_
         self.mat_mult = mat_mult
 
     def transform(self, X):
-        return projection(self.scalings_, ascertain_array(X))
+        # return projection(self.scalings_, ascertain_array(X))
+        return reducing_proj(self.scalings_, ascertain_array(X))
 
     def to_jdict(self):
         return {
@@ -156,7 +163,7 @@ class SpectralProjector(Projector):
         return array([self.chk_fft(chk) for chk in chks])
 
     def transform(self, chks):
-        return self.transform(self.spectras(chks))
+        return super().transform(self.spectras(chks))
 
     def __call__(self, chk):
         return self.transform([chk])[0]
