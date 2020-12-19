@@ -1,9 +1,14 @@
 from typing import Callable
-from slang.chunkers import fixed_step_chunker
+from collections import Counter, defaultdict
+
+import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
+
+from slang.chunkers import fixed_step_chunker
 from slang.snip_stats import BayesFactors
 from slang.core import Snipper
+from slang.util import lazyprop, row_euclidean_distance
 
 
 class DfltWfToChk:
@@ -20,7 +25,7 @@ class DfltWfToChk:
         yield from fixed_step_chunker(wf, chk_size=self.chk_size, chk_step=self.chk_step)
 
 
-class DfltChkToFv(PCA):
+class PcaChkToFv(PCA):
     def __init__(self, n_components=5, **kwargs):
         super().__init__(n_components=n_components, **kwargs)
 
@@ -28,13 +33,93 @@ class DfltChkToFv(PCA):
         return self.transform([fv])[0]
 
 
-class DfltFvToSnip(KMeans):
+DfltChkToFv = PcaChkToFv
+
+
+class FvToSnip:  # TODO: Mixin? ABC?
+    # fit: optional
+    # __call__: required
+    # fvs_to_snips: required?
+    # fvs_to_snip_distance_pairs: required?
+    @property
+    def fv_of_snip(self):
+        """array providing representative fv for each snip"""
+        raise NotImplemented("Not implemented -- should be implemented in subclass of FvToSnipMixin")
+        # return None
+
+
+from slang.stypes import FV, FVs
+
+
+# TODO: choose n_clusters from len(X) at fit time
+# TODO: post_fit_proc shouldn't be here, but external and optional
+class KMeansFvToSnip(KMeans, FvToSnip):
+    stats_of_snip = None  # will be filled when instance is fit
+
+    # cluster_centers_ = None  # will be filled when instance is fit
+    # n_clusters = None
+    #
+    # fv_of_snip = cluster_centers_  # Snipper's api expectation
+    # alphabet_size = n_clusters  # Snipper's api expectation
+
+    @property
+    def fv_of_snip(self):
+        return self.cluster_centers_
+
+    @property
+    def alphabet_size(self):
+        return self.n_clusters
+
     def __init__(self, n_clusters=47, **kwargs):
         super().__init__(n_clusters=n_clusters, **kwargs)
 
-    def __call__(self, fv):
+    def __call__(self, fv: FV):
         return self.predict([fv])[0]
 
+    def fit(self, fvs: FVs, y=None, sample_weight=None):
+        super().fit(fvs, y, sample_weight)
+        # self.post_fit_proc(fvs, y, sample_weight=sample_weight)
+        return self
+
+    # fvs_to_snips = KMeans.predict  # alias for predict
+    # ... replaced (because need to handle iterator of fvs) by:
+    def fvs_to_snips(self, fvs, sample_weight=None):
+        # return self.predict(list(fvs), sample_weight=sample_weight)
+        if isinstance(fvs, (list, tuple, np.ndarray)):
+            return self.predict(fvs, sample_weight=sample_weight)
+        else:
+            return map(lambda x: self.predict([x]), fvs)
+
+    def fvs_to_snip_distance_pairs(self, fvs: FVs):
+        """iterator of (snip, distance_to_snip_centroid) pairs"""
+        fvs = np.array(list(fvs))
+        snips = self.fvs_to_snips(fvs)
+        return zip(snips, row_euclidean_distance(fvs, self.fv_of_snip[snips]))
+
+    # def post_fit_proc(self, fvs, y=None, **kwargs):
+    #     d = defaultdict(list)
+    #     # TODO: Better than a for loop? (d.update(self.snip_and_distance(fvs)) doesn't work, but want something like))
+    #     for snip, distance in self.fvs_to_snip_distance_pairs(fvs):
+    #         d[snip].append(distance)
+    #
+    #     # TODO: A numpy array might be more useful here
+    #     # self.stats_of_snip = np.empty(self.alphabet_size) * np.nan
+    #
+    #     self.stats_of_snip = {snip:
+    #                               dict(count=len(distances),
+    #                                    dist_sum=sum(distances),
+    #                                    dist_sum2=sum(np.array(distances) ** 2))
+    #                           for snip, distances in d.items()}
+    #
+    #     return self
+
+
+class KMeansFvToSnipDist(KMeansFvToSnip):
+    def __call__(self, fv: FV):
+        return list(self.fvs_to_snip_distance_pairs([fv]))[0]
+
+
+DfltFvToSnip = KMeansFvToSnip
 
 from collections.abc import Iterable
 
@@ -86,23 +171,23 @@ def iterate_over_pairs(pairs):
         yield from pairs  # assume pairs is an iterable of pairs
 
 
-class ClassificationSnipper(Snipper):
+class FittableSnipper(Snipper):
     wf_to_chks: Callable
     chk_to_fv: Callable  # TODO: Make a "Callable and Fittable" type
-    fv_to_snip: Callable  # TODO: Make a "Callable and Fittable" type
-    snip_to_score: Callable  # TODO: Make a "Callable and Fittable" type
+    fv_to_snip: FvToSnip  # TODO: Make a "Callable and Fittable" type
 
-    dflt_cls_of_name = {
+    dflt_cls_of_name: dict = {
         'wf_to_chks': DfltWfToChk,
-        'chk_to_fv': DfltChkToFv,
+        'chk_to_fv': PcaChkToFv,
         'fv_to_snip': DfltFvToSnip,
-        'snip_to_score': BayesFactors
     }
 
     @classmethod
     def mk_component(cls, obj, role=None, assert_func=None):
         if isinstance(obj, type):
             obj = obj()
+        elif obj is None:
+            obj = cls.dflt_cls_of_name.get(role)()
         elif not callable(obj):
             assert isinstance(obj, dict)
             obj = cls.dflt_cls_of_name.get(role)(**obj)
@@ -112,25 +197,22 @@ class ClassificationSnipper(Snipper):
             assert assert_func(obj)
         return obj
 
-    def __init__(self, wf_to_chks=DfltWfToChk(),
-                 chk_to_fv=DfltChkToFv,
-                 fv_to_snip=DfltFvToSnip,
-                 snip_to_score=BayesFactors):
+    def __init__(self, wf_to_chks=None,
+                 chk_to_fv=None,
+                 fv_to_snip=None):
 
         wf_to_chks = self.mk_component(wf_to_chks, 'wf_to_chks', assert_func=callable)
         chk_to_fv = self.mk_component(chk_to_fv, 'chk_to_fv', assert_func=callable)
         fv_to_snip = self.mk_component(fv_to_snip, 'fv_to_snip', assert_func=callable)
-        snip_to_score = self.mk_component(snip_to_score, 'snip_to_score', assert_func=callable)
 
         super().__init__(wf_to_chks, chk_to_fv, fv_to_snip)
-        self.snip_to_score = snip_to_score
 
         # TODO: Find a more concise way to take care of block above. Like... (but not working)
         # _locals = locals()
         # for obj_role in ['wf_to_chks', 'chk_to_fv', 'fv_to_snip', 'snip_to_score']:
         #     _locals[obj_role] = self.mk_component(_locals[obj_role], obj_role, assert_func=callable)
 
-    # TODO: Make the next four methods more DRY
+    # TODO: Make the next three methods more DRY (see also ClassificationSnipper.fit_snip_to_score)
     def fit_wf_to_chks(self, *wfs_tags):
         if hasattr(self.wf_to_chks, 'fit'):
             chks, tags = _assure_pair(wfs_tags)  # need to generalize to situations with no tags
@@ -149,13 +231,7 @@ class ClassificationSnipper(Snipper):
             self.fv_to_snip.fit(fvs, tags)
         return self
 
-    def fit_snip_to_score(self, *snips_tags):
-        if hasattr(self.snip_to_score, 'fit'):
-            snips, tags = _assure_pair(snips_tags)
-            self.snip_to_score.fit(snips, tags)
-        return self
-
-    # TODO: Dagify all this. To hardcoded. No caching. No flexibility
+    # TODO: Dagify all this. Too hardcoded. No caching. No flexibility
 
     def chk_tag_gen(self, wf_tag_gen):
         for wf, tag in wf_tag_gen():
@@ -171,32 +247,90 @@ class ClassificationSnipper(Snipper):
             yield self.fv_to_snip(fv), tag
 
     def fit_pipeline(self, wf_tags_gen):
-
         self.fit_wf_to_chks(wf_tags_gen())
-
         self.fit_chk_to_fv(self.chk_tag_gen(wf_tags_gen))
-
         self.fit_fv_to_snip(self.fv_tag_gen(wf_tags_gen))
 
+
+class ClassificationSnipper(FittableSnipper):
+    snip_to_score: Callable  # TODO: Make a "Callable and Fittable" type
+
+    dflt_cls_of_name: dict = dict(FittableSnipper.dflt_cls_of_name, snip_to_score=BayesFactors)
+
+    def __init__(self, wf_to_chks=DfltWfToChk(),
+                 chk_to_fv=DfltChkToFv,
+                 fv_to_snip=DfltFvToSnip,
+                 snip_to_score=BayesFactors):
+        super().__init__(wf_to_chks, chk_to_fv, fv_to_snip)
+
+        snip_to_score = self.mk_component(snip_to_score, 'snip_to_score', assert_func=callable)
+        self.snip_to_score = snip_to_score
+
+    def fit_snip_to_score(self, *snips_tags):
+        if hasattr(self.snip_to_score, 'fit'):
+            snips, tags = _assure_pair(snips_tags)
+            self.snip_to_score.fit(snips, tags)
+        return self
+
+    # TODO: Dagify all this. Too hardcoded. No caching. No flexibility
+
+    def fit_pipeline(self, wf_tags_gen):
+        super().fit_pipeline(wf_tags_gen)
         self.fit_snip_to_score(self.snip_tag_gen(wf_tags_gen))
 
-    # def snips_of_wf(self, wf: Waveform) -> Snips:
-    #     warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")
-    #     for chk in self.wf_to_chks(wf):
-    #         fv = self.chk_to_fv(chk)
-    #         yield self.fv_to_snip(fv)
-    #
-    # def wf_to_fvs(self, wf: Waveform) -> FVs:
-    #     for chk in self.wf_to_chks(wf):
-    #         yield self.chk_to_fv(chk)
-    #
-    # def chk_to_snip(self, chk: Chunk) -> Snip:
-    #     return self.fv_to_snip(self.chk_to_fv(chk))
-    #
-    # def wf_to_snips(self, wf: Waveform) -> Snips:
-    #     for chk in self.wf_to_chks(wf):
-    #         fv = self.chk_to_fv(chk)
-    #         yield self.fv_to_snip(fv)
+
+# from slang.snip_stats import ClassifiedMomentsFitter
+# from itertools import chain
+#
+#
+# class OutlierSnipper(FittableSnipper):
+#     snip_to_score: Callable  # TODO: Make a "Callable and Fittable" type
+#
+#     dflt_cls_of_name: dict = dict(FittableSnipper.dflt_cls_of_name, snip_to_score=ClassifiedMomentsFitter)
+#
+#     def __init__(self, wf_to_chks=DfltWfToChk(),
+#                  chk_to_fv=DfltChkToFv,
+#                  fv_to_snip=DfltFvToSnip,
+#                  snip_to_score=ClassifiedMomentsFitter):
+#         super().__init__(wf_to_chks, chk_to_fv, fv_to_snip)
+#
+#         snip_to_score = self.mk_component(snip_to_score, 'snip_to_score', assert_func=callable)
+#         self.snip_to_score = snip_to_score
+#
+#     def fit_snip_to_score(self, *dist_snips):
+#         if hasattr(self.snip_to_score, 'fit'):
+#             dist, snips = _assure_pair(dist_snips)
+#             self.snip_to_score.fit(dist, snips)
+#         return self
+#
+#     # TODO: Dagify all this. Too hardcoded. No caching. No flexibility
+#
+#     def fit_pipeline(self, wf_gen):
+#         # super().fit_pipeline(wf_tags_gen)
+#         self.fit_wf_to_chks(wf_gen())
+#         self.fit_chk_to_fv(self.chk_tag_gen(wf_tags_gen))
+#         fvs = map(self.chk_to_fv, chain.from_iterable(map(self.wf_to_chks,
+#         self.fit_fv_to_snip(self.fv_tag_gen(wf_tags_gen))
+#
+#         self.fit_snip_to_score(self.snip_tag_gen(wf_tags_gen))
+
+# def snips_of_wf(self, wf: Waveform) -> Snips:
+#     warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")
+#     for chk in self.wf_to_chks(wf):
+#         fv = self.chk_to_fv(chk)
+#         yield self.fv_to_snip(fv)
+#
+# def wf_to_fvs(self, wf: Waveform) -> FVs:
+#     for chk in self.wf_to_chks(wf):
+#         yield self.chk_to_fv(chk)
+#
+# def chk_to_snip(self, chk: Chunk) -> Snip:
+#     return self.fv_to_snip(self.chk_to_fv(chk))
+#
+# def wf_to_snips(self, wf: Waveform) -> Snips:
+#     for chk in self.wf_to_chks(wf):
+#         fv = self.chk_to_fv(chk)
+#         yield self.fv_to_snip(fv)
 
 
 SlangClassifier = ClassificationSnipper  # alias for back compatibility

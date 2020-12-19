@@ -2,7 +2,7 @@
 # from functools import partial
 
 from warnings import warn
-from typing import Callable, Any, Optional
+from typing import Callable, Any, Optional, Mapping
 from slang.stypes import Waveform, Chunk, Chunker, Featurizer, Quantizer, Snip, Snips, FVs
 from slang.chunkers import DFLT_CHUNKER
 from slang.featurizers import DFLT_FEATURIZER, DFLT_QUANTIZER
@@ -75,6 +75,8 @@ class AnnotedWfSource(WfSource):
 - key_to_tag not general enough because tag not general enough. Sometimes it's not a categorical.
     Sometimes it's multiple. Sometimes we have context information that needs to be associated with the annot. 
 """
+
+
 class KvDataSource:
     def __init__(self, kv_store, key_to_tag=None, key_filt=None):
         self.kv_store = kv_store
@@ -136,6 +138,7 @@ class KvDataSource:
         return ((fv, tag) for _, tag, fv in self.key_tag_fvs_gen(wf_to_chks, chk_to_fv))
 
 
+
 class Snipper:
     """A base class that implements the wf->chk->fv->snip pipeline.
     Default functions for wf_to_chk (a.k.a. chunker), chk_to_fv (a.k.a. featurizer) and fv_to_snip (a.k.a. nipper)
@@ -150,14 +153,6 @@ class Snipper:
         self.chk_to_fv = chk_to_fv
         self.fv_to_snip = fv_to_snip
 
-    def wf_to_snips(self, wf: Waveform) -> Snips:
-        # warn("The name 'snips_of_wf' be replaced by 'wf_to_snips' soon.")
-        for chk in self.wf_to_chks(wf):
-            fv = self.chk_to_fv(chk)
-            yield self.fv_to_snip(fv)
-
-    snips_of_wf = wf_to_snips  # alias for back-compatibility
-
     def wf_to_fvs(self, wf: Waveform) -> FVs:
         for chk in self.wf_to_chks(wf):
             yield self.chk_to_fv(chk)
@@ -169,6 +164,47 @@ class Snipper:
         for chk in self.wf_to_chks(wf):
             fv = self.chk_to_fv(chk)
             yield self.fv_to_snip(fv)
+
+    snips_of_wf = wf_to_snips  # alias for back-compatibility
+
+    # Delegations ##################
+
+    # TODO: Get delegated attrs to show up as full fledged attr (tab complete, etc.)
+    _delegations = dict(
+        stats_of_snip=('fv_to_snip', 'stats_of_snip'),
+        fv_of_snip=('fv_to_snip', 'fv_of_snip'),
+        alphabet_size=('fv_to_snip', 'alphabet_size')
+    )
+
+    def __getattr__(self, attr):
+        """Delegate method to wrapped store if not part of wrapper store methods"""
+        attr_spec = self._delegations.get(attr, None)
+        if attr_spec is not None:
+            a = self
+            for aa in attr_spec:
+                a = getattr(a, aa)
+            return a
+        else:
+            raise AttributeError(f"Unknown attribute: {attr}")
+
+    # TODO: Revise approach here (see above)
+    #  lazyprop or property?
+    #  getattr or self.attr (with try/catch or not)
+    #  self.metric[snip] or self.all_metrics[snip][metric] or self.all_metrics[metric][snip] or self.all.metric[snip]
+    # TODO: Delegate multiple at once?
+    # @lazyprop
+    # def stats_of_snip(self) -> Mapping:
+    #     """(Lazy) property that holds the dict of snip stats"""
+    #     return getattr(self.fv_to_snip, 'stats_of_snip', dict())  # look for them in fv_to_snip or return empty dict
+    #
+    # @property
+    # def fv_of_snip(self) -> Mapping:
+    #     """property that holds the dict of snip stats"""
+    #     return getattr(self.fv_to_snip, 'fv_of_snip', dict())  # look for them in fv_to_snip or return empty dict
+
+    @property
+    def alphabet_size(self) -> int:
+        return self.fv_to_snip.alphabet_size
 
     def __call__(self, wf: Waveform) -> Snips:
         return self.wf_to_snips(wf)

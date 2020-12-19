@@ -1,16 +1,132 @@
 from collections import defaultdict, Counter
-from collections.abc import Mapping
-from typing import Union, Callable
+from dataclasses import dataclass
 from functools import reduce
-import matplotlib.pylab as plt
+from typing import Iterable, Tuple, Union
 
+import matplotlib.pylab as plt
 import numpy as np
 import pandas as pd
+from sklearn.base import BaseEstimator
+from py2store.util import groupby
 
-from slang.util import running_mean_gen
+from slang.util import lazyprop, running_mean_gen, row_euclidean_distance
 from slang.util import snips_to_str as dflt_snips_to_str
 
-from py2store.util import lazyprop, groupby
+GroupId = int
+FV = Union[float, Iterable[float]]
+GroupedFV = Tuple[GroupId, FV]
+
+
+# Note: ClassifiedMoments and ClassifiedMomentsFitter untested and paused for now
+# @dataclass
+# TODO: Review-w-mp
+class ClassifiedMoments:
+    _zero_var = 33e-33
+
+    def __init__(self, n_classes_: int, initial_count: int = 1):
+        self.n_classes_ = n_classes_
+        self.initial_count = initial_count
+        self.initialize_stats()
+
+    def initialize_stats(self):
+        self.count_ = np.ones(self.n_classes_) * self.initial_count
+        self.sum_ = np.zeros(self.n_classes_)
+        self.sum2_ = np.zeros(self.n_classes_)
+        return self
+
+    @property
+    def global_count_(self):
+        return len(self.count_)
+
+    @property
+    def global_sum_(self):
+        return sum(self.sum_)
+
+    @property
+    def global_sum2_(self):
+        return sum(self.sum2_)
+
+    @property
+    def global_mean_(self):
+        return self.global_sum_ / self.global_count_
+
+    @property
+    def global_var_(self):
+        return max(self._zero_var, (self.global_sum2_ / self.global_count_) - self.global_mean_ ** 2)  # TODO: verify
+
+    @property
+    def global_std_(self):
+        return np.sqrt(self.global_var_)
+
+    @property
+    def inverse_frequency_(self):
+        return 1 / self.count_
+
+    @property
+    def mean_(self):
+        return self.sum_ / (self.count_)
+
+    @property
+    def var_(self):
+        """Variance: E[X**2] - E[X]**2 (https://en.wikipedia.org/wiki/Variance)"""
+        return (self.sum2_ / self.count_) - self.mean_ ** 2  #
+
+    def inverse_frequency_for_groups(self, groups):
+        return 1 / self.count_[groups]
+
+    def var_for_groups(self, groups):
+        count = self.count_[groups]
+        return (self.sum2_[groups] / count) - (self.sum_[groups] / count) ** 2
+
+    def predict_within_group(self, gfvs: Iterable[GroupedFV]):
+        groups, fvs = list(map(np.array, zip(*gfvs)))
+        return np.array(list(zip(self.inverse_frequency_for_groups(groups),
+                                 fvs / np.sqrt(self.var_for_groups(groups)))))
+
+    def predict_global(self, gfvs: Iterable[GroupedFV]):
+        groups, fvs = list(map(np.array, zip(*gfvs)))
+        return np.array(list(zip(self.inverse_frequency_for_groups(groups),
+                                 fvs / self.global_std_)))
+
+    predict = predict_global
+
+    def __call__(self, gfv: GroupedFV):
+        return self.predict([gfv])[0]
+
+
+# Make ABC or mother class
+class ClassifiedMomentsFitter(ClassifiedMoments, BaseEstimator):
+
+    def fit_partial_single(self, gfv: GroupedFV):
+        group, fv = gfv
+        self.count_[group] += 1
+        self.sum_[group] += fv
+        self.sum2_[group] += fv ** 2
+        return self
+
+    # # TODO: Make this work
+    # def __iadd__(self, gfv: GroupedFV):
+    #     return self.fit_partial_single(gfv)
+
+    def _group_x_by_y(self, X, y):
+        d = defaultdict(list)
+        # TODO: Better than a for loop? (d.update(self.snip_and_distance(fvs)) doesn't work, but want something like))
+        for label, x in zip(y, X):
+            d[label].append(x)
+        return d
+
+    def fit_partial(self, gfvs: Iterable[GroupedFV], y=None):
+        for gfv in gfvs:
+            self.fit_partial_single(gfv)
+
+        return self
+
+    def fit(self, gfvs: Iterable[GroupedFV], y=None):
+        if not self.n_classes_:
+            self.n_classes_ = np.max(y)
+        self.initialize_stats()
+
+        return self.fit_partial(gfvs)
 
 
 def _is_a_tuple_of_aligned_iterables(x):
@@ -155,6 +271,26 @@ class TagSnipStats:
                                  tag_snips_format_str="{:<21}: {}\n\n"):
         print(self.mk_tags_and_snips_str_string(tags, snips, snips_to_str,
                                                 tag_snips_format_str))
+
+
+# class SnipStats:
+#     """Compute frequency and centroid distance statistics on snips
+#     """
+#
+#     def __init__(self, pseudocount=0, tag_order=None, alphabet_size=None):
+#         self.pseudocount = pseudocount
+#         self.tag_order = tag_order
+#         self._alphabet_size = alphabet_size  # TODO: Use to tell TagSnipStats it should fill until there
+#
+#     @lazyprop
+#     def alphabet_size(self):
+#         return self._alphabet_size or self.log_bayes_factor_.index.max()
+#
+#     def fit(self, snips, tags=None):
+#         self.tag_snip_stats = TagSnipStats(snips, tags, fillna=self.pseudocount, tag_order=self.tag_order)
+#         self.log_bayes_factor_ = self.tag_snip_stats.log_bayes_factor.sort_index()
+#         self.classes_ = self.tag_snip_stats.tag_order
+#         return self
 
 
 class BayesFactors:

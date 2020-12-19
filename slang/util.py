@@ -1,9 +1,26 @@
 from collections import deque, defaultdict
 from itertools import islice
+
 import numpy as np
 from numpy import array, nan, arange, unique, ones
 from numpy.random import choice
 from slang.util_data import displayable_unichr
+
+
+from functools import partial
+from contextlib import suppress
+
+ModuleNotFoundIgnore = partial(suppress, ModuleNotFoundError)
+
+# class ModuleNotFoundIgnore:
+#     def __enter__(self):
+#         pass
+#
+#     def __exit__(self, exc_type, exc_val, exc_tb):
+#         if exc_type is ModuleNotFoundError:
+#             pass
+#         return True
+
 
 ####### Seeing snips ###################################################################################################
 
@@ -33,6 +50,76 @@ str_of_snips = snips_to_str  # alias for back-compatibility
 
 ####### Misc ###########################################################################################################
 ddir = lambda obj: [x for x in dir(obj) if not x.startswith('_')]
+
+
+def row_euclidean_distance(A, B):
+    """Euclidean distance between aligned rows of A. An array of length len(A) (==len(B)).
+
+    >>> import numpy as np
+    >>> A = np.arange(5 * 16).reshape((5, 16))
+    >>> B = 1 + A
+
+    >>> assert all(row_euclidean_distance(A, A) == np.zeros(5))
+    >>> assert all(row_euclidean_distance(A, B) == np.array([4., 4., 4., 4., 4.]))
+
+    Note: Not to be confused with the matrix of distances of all pairs of rows. Here, equivalent to the latter diagnonal (see below).
+
+    ```
+    from  sklearn.metrics.pairwise import euclidean_distances
+    A = np.random.rand(5, 7)
+    B = np.random.rand(5, 7)
+    assert all(np.diag(euclidean_distances(A, B)) == row_euclidean_distance(A, B))
+    ```
+
+    """
+    return np.sqrt(((A - B) ** 2).sum(axis=1))
+
+
+def row_euclidean_distance_casting_to_array(A, B):
+    return row_euclidean_distance(np.array(list(A)), np.array(list(B)))
+
+
+class lazyprop:
+    """
+    A descriptor implementation of lazyprop (cached property) from David Beazley's "Python Cookbook" book.
+    It's
+    >>> class Test:
+    ...     def __init__(self, a):
+    ...         self.a = a
+    ...     @lazyprop
+    ...     def len(self):
+    ...         print('generating "len"')
+    ...         return len(self.a)
+    >>> t = Test([0, 1, 2, 3, 4])
+    >>> t.__dict__
+    {'a': [0, 1, 2, 3, 4]}
+    >>> t.len
+    generating "len"
+    5
+    >>> t.__dict__
+    {'a': [0, 1, 2, 3, 4], 'len': 5}
+    >>> t.len
+    5
+    >>> # But careful when using lazyprop that no one will change the value of a without deleting the property first
+    >>> t.a = [0, 1, 2]  # if we change a...
+    >>> t.len  # ... we still get the old cached value of len
+    5
+    >>> del t.len  # if we delete the len prop
+    >>> t.len  # ... then len being recomputed again
+    generating "len"
+    3
+    """
+
+    def __init__(self, func):
+        self.func = func
+
+    def __get__(self, instance, cls):
+        if instance is None:
+            return self
+        else:
+            value = self.func(instance)
+            setattr(instance, self.func.__name__, value)
+            return value
 
 
 def balanced_sample_maker(key_to_tag, max_n_keys_per_tag=7, random=False):

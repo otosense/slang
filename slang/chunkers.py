@@ -74,6 +74,8 @@ def simple_fixed_step_chunker(it, chk_size, chk_step=None):
     Yields chunks as lists.
     """
     from itertools import islice
+    if chk_step is None:
+        chk_step = chk_size
 
     if chk_step == chk_size:
         yield from map(list, zip(*([iter(it)] * chk_step)))

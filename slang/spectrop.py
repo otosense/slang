@@ -1,5 +1,7 @@
 from functools import wraps
 import inspect
+from dataclasses import dataclass, field
+from typing import Union, Optional, Callable
 
 from numpy import cumsum, min, inf, ndarray, floor
 from sklearn.decomposition import PCA, IncrementalPCA
@@ -12,8 +14,150 @@ from numpy import array, hanning, fft  # TODO: Get rid of this once we use C-bas
 
 DFLT_WIN_FUNC = hanning
 DFLT_CHK_SIZE = 2048
-DFLT_INPUT_SIZE = 1 + int(floor(DFLT_CHK_SIZE / 2))
+DFLT_INPUT_SIZE = int(1 + DFLT_CHK_SIZE / 2)  # 1025 for chk sie of 2048
 DFLT_AMPLITUDE_FUNC = np.abs
+
+
+def make_band_matrix_row(list_entries, row_len):
+    """
+    Makes a row for the spectral bucket matrix. The row is zero everywhere except on the entries of index in
+    list_entries where it is 1 / len(list_entries)
+
+    :param list_entries: the indices of non zero entries of the row
+    :param row_len: the length of the row
+    :return: an array of length row_len as described above
+
+    >>> make_band_matrix_row([3], 5)
+    array([0., 0., 0., 1., 0.])
+    >>> make_band_matrix_row([0, 3], 5)
+    array([0.5, 0. , 0. , 0.5, 0. ])
+
+    """
+
+    n_non_zero = len(list_entries)
+    row = np.array([0 if i not in list_entries else 1 / n_non_zero for i in range(row_len)])
+    return row
+
+
+def make_band_matrix(buckets, n_freq=DFLT_INPUT_SIZE):
+    """
+    Given a list of n list of indices, make a matrix of size n by n_freq where the entries of row k are 0
+    everywhere except at the index in the k list of buckets, where the entries are the inverse of the length
+    of that bucket
+
+    :param buckets: a list of list containing the indices of non zero entries of the corresponding row
+    :param n_freq: the number of column of the matrix
+    :return: a len(buckets) by n_freq matrix
+
+    >>> buckets = make_buckets(n_buckets=15, freqs_weighting=lambda x: np.log(x + 0.001), freq_range=(200, 1000))
+    >>> M = make_band_matrix(buckets, n_freq=1025)
+    >>> print(M.shape)
+    (15, 1025)
+
+    >>> # the matrix sends each of the 200 first unitary vector to the zero vector (not below is not a mathematical proof of that, but solid clue)
+    >>> vec = [1] * 200 + [0] * (1025 - 200)
+    >>> print(np.dot(M, vec))
+    [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]
+
+    >>> # after that, we get non zero output (in general at least)
+    >>> vec = [1] * 200 + [1] + [0] * (1025 - 201)
+    >>> print(np.dot(M, vec))
+    [0.01612903 0.         0.         0.         0.         0.
+     0.         0.         0.         0.         0.         0.
+     0.         0.         0.        ]
+
+    """
+
+    n_bands = len(buckets)
+    bucket_matrix = np.zeros((n_bands, n_freq))
+    for row_idx, bucket in enumerate(buckets):
+        row = make_band_matrix_row(list_entries=bucket, row_len=n_freq)
+        bucket_matrix[row_idx] = row
+    return bucket_matrix
+
+
+def decreasing_integer_geometric_sequence(start: int = DFLT_INPUT_SIZE, scale_factor=0.5) -> list:
+    """Generate decreasing positive integers in by multiplying numbers by a constant (between 0 and 1) repeatedly.
+    Numbers of ther sequence will all be integers and not repeat (so often not a true geometri sequence).
+    All sequences will end with 1.
+    An error will be raised if scale_factor is not between 0 and 1 (exclusive).
+
+    >>> decreasing_integer_geometric_sequence(128)
+    [128, 64, 32, 16, 8, 4, 2, 1]
+    >>> decreasing_integer_geometric_sequence(10, 0.3)
+    [10, 3, 1]
+    >>> decreasing_integer_geometric_sequence(10, 0.7)
+    [10, 7, 5, 3, 2, 1]
+
+    And to see that we indeed don't get duplicates of the true geometric sequence.
+
+    >>> decreasing_integer_geometric_sequence(10, 0.9999)
+    [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+    """
+    assert 0 < scale_factor < 1, "This geometric_sequence is meant for decreasing sequences only"
+
+    def gen():
+        cursor = start
+        yield round(cursor)
+        while cursor > 1:
+            cursor *= scale_factor
+            yield round(cursor)
+
+    return list(dict.fromkeys(gen()))
+
+
+# TODO: Continue algorithm further, filling more coarse coverage with static greedy rule, thus making n_buckets unbound
+# TODO: Make factor=None with n_buckets not None have the effect of choosing factor so n_buckets is exactly reached.
+def logarithmic_bands_matrix(n_buckets=None, n_freqs: int = DFLT_INPUT_SIZE, factor: float = 2) -> np.ndarray:
+    """Makes a spectral projection matrix that puts more importance on low frequencies than high ones.
+    Importance both in weight and in precision.
+    By a factor of 2 by default, but can be any amount.
+    Note that the factor here is the inverse of the geometric factor of decreasing_integer_geometric_sequence.
+
+    Note that the sum of the frequencies of the bands is constant from band to band. Not sure if that's the best choice,
+    or if equal weight through out is the best choice.
+    We can discuss what both mean at a later date.
+
+    Important here is to understand my intent, to see how well I achieve it.
+    - The features "build on each other". That is, if you ask (within the same `(n_freqs, factor)` set)
+    for 7 features in your fv, the first 5 will be the same as if you asked for only 5. This makes it easier to compare
+    fvs between projects, and possibly even "add to existing features".
+    - Note  that the first feature is always total energy.
+    - Lower frequencies are given less importance -- both in precision and in weight.
+    - The linear algebraists that are listening will note what the vector space generated actually is,
+    compared to that created by disjoint bands.
+
+    >>> print(*logarithmic_bands_matrix(n_freqs=8).tolist(), sep='\\n')
+    [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]
+    [0.25, 0.25, 0.25, 0.25, 0.0, 0.0, 0.0, 0.0]
+    [0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    >>> print(*logarithmic_bands_matrix(n_freqs=8, factor=1.5).tolist(), sep='\\n')
+    [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]
+    [0.2, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0]
+    [0.25, 0.25, 0.25, 0.25, 0.0, 0.0, 0.0, 0.0]
+    [0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+    """
+    bucket_upper_bounds = decreasing_integer_geometric_sequence(n_freqs, 1 / factor)
+    buckets = list(range(0, i) for i in bucket_upper_bounds)
+    m = make_band_matrix(buckets, n_freq=n_freqs)
+    if n_buckets is not None:
+        assert n_buckets <= len(m), f"you asked for {n_buckets}, but the matrix has only {len(m)} rows. " \
+                                    f"Consider decreasing the factor to get more buckets"
+    else:
+        n_buckets = len(m)
+    return m[:n_buckets]
+
+
+# A few default spectral projection matrices
+geo_mat_11 = logarithmic_bands_matrix(11, n_freqs=1025, factor=2)
+geo_mat_17 = logarithmic_bands_matrix(17, n_freqs=1025, factor=1.5)
+geo_mat_34 = logarithmic_bands_matrix(34, n_freqs=1025, factor=1.2)
+
+DFLT_SCALINGS = geo_mat_11
 
 
 def instantiate_class_and_inject_attributes(cls, **kwargs):
@@ -63,6 +207,7 @@ def ascertain_array(iterable):
     return iterable
 
 
+# TODO: Use partial of full func instead -- since it makes it pickalable
 def mk_chk_fft(chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC):
     """Make a chk_fft function that will compute the fft (with given amplitude and window).
     Note that this output chk_fft function will enforce a fixed chk_size (given explicitly, or through the
@@ -121,10 +266,10 @@ def reducing_proj(basis, vectors):
     return matrix_mult(vectors, basis.T)
 
 
+@dataclass
 class Projector:
-    def __init__(self, scalings_=None, mat_mult=DFLT_MATRIX_MULTI):
-        self.scalings_ = scalings_
-        self.mat_mult = mat_mult
+    scalings_: np.ndarray = DFLT_SCALINGS
+    mat_mult: np.ndarray = DFLT_MATRIX_MULTI
 
     def transform(self, X):
         # return projection(self.scalings_, ascertain_array(X))
@@ -150,14 +295,12 @@ class Projector:
             raise NotFittedError("{} was not fitted yet.".format(self.__class__.__name__))
 
 
+@dataclass
 class SpectralProjector(Projector):
-    def __init__(self,
-                 scalings_=None,
-                 chk_fft=DFLT_CHK_FFT,
-                 mat_mult=DFLT_MATRIX_MULTI):
-        super().__init__(scalings_, mat_mult)
-        self.chk_fft = chk_fft
-        self.chk_size = getattr(chk_fft, 'chk_size', None)  # get chk_size from chk_fft if it has it
+    chk_fft: Callable = DFLT_CHK_FFT
+
+    def __post_init__(self):
+        self.chk_size = getattr(self.chk_fft, 'chk_size', None)  # get chk_size from chk_fft if it has it
 
     def spectras(self, chks):
         return array([self.chk_fft(chk) for chk in chks])
@@ -170,12 +313,13 @@ class SpectralProjector(Projector):
 
     mk_chk_fft = staticmethod(mk_chk_fft)  # to have it available to make a chk_fft in __init__
 
-    # @classmethod
-    # def for_chk_size(cls, scalings_=None,
-    #                  chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC,
-    #                  mat_mult=DFLT_MATRIX_MULTI):
-    #     chk_fft = mk_chk_fft(chk_size, window, amplitude_func)
-    #     return cls(scalings_, chk_fft, mat_mult)
+
+# @classmethod
+# def for_chk_size(cls, scalings_=None,
+#                  chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC,
+#                  mat_mult=DFLT_MATRIX_MULTI):
+#     chk_fft = mk_chk_fft(chk_size, window, amplitude_func)
+#     return cls(scalings_, chk_fft, mat_mult)
 
 
 # def handle_iterables(learner_cls):
@@ -465,8 +609,11 @@ def learn_spect_proj(X, y=None, spectral_proj_name='pca',
 def residue(scalings, X):
     """
     find the residue of each of vectors after projection in basis
-    :param scalings: an n-by-k array, spanning a vector space A
-    :param X: an n-by-l array
+
+    residues will be vectors in the original space (same number of dimensions)
+
+    :param scalings: an n-by-m array, spanning a vector space A
+    :param X: an n-by-k array
     :return: an n-by-l array, the residues of vectors with the respect of the projection in basis
 
     >>> A = np.array([[1,0],[0,1]])
@@ -507,8 +654,8 @@ def mk_pre_projection_from_indices(indices=None, input_size=DFLT_INPUT_SIZE):
     return keep_only_indices(indices, input_size=input_size)
 
 
-def learn_chain_proj_matrix(X, y=None, chain=({'type': 'pca', 'kwargs': {'n_components': 5}},),
-                            pre_projection=None):
+def learn_chain_proj_matrix(X, y=None, chain=({'type': 'pca', 'args': {'n_components': 5}},),
+                            indices=None, n_freq=1025):
     """
     A function successively learning a projections matrix on the residue of the previous one. The projections
     matrices are then concatenated and return as one single projection matrix. Note that the final projection
@@ -521,17 +668,19 @@ def learn_chain_proj_matrix(X, y=None, chain=({'type': 'pca', 'kwargs': {'n_comp
     :param y: the classes, an array of size n
     :param chain: a tuple of dictionaries each containing the type of projection along with its parameters
     :param indices: the indices of the spectra to work with, anything else is discarded
-    :param input_size: the total number of entries from the spectra. Only needed if input_size is not None, in order to
+    :param n_freq: the total number of entries from the spectra. Only needed if n_freq is not None, in order to
                    determine the size of the freq_selection_matrix
     :return: a single projection matrix
     """
 
-    if pre_projection is not None:
-        X = np.dot(X, pre_projection)
+    freq_selection_matrix = None
+    if indices is not None:
+        freq_selection_matrix = keep_only_indices(indices, n_freq=n_freq)
+        X = np.dot(X, freq_selection_matrix)
 
     all_proj_matrices = []
     for mat_dict in chain:
-        kwargs_feat = mat_dict['kwargs']
+        kwargs_feat = mat_dict['args']
         proj_matrix = learn_spect_proj(X, y,
                                        spectral_proj_name=mat_dict['type'],
                                        kwargs_feat=kwargs_feat)
@@ -539,8 +688,8 @@ def learn_chain_proj_matrix(X, y=None, chain=({'type': 'pca', 'kwargs': {'n_comp
         X = residue(proj_matrix, X)
 
     proj_matrix = np.hstack(tuple(all_proj_matrices))
-    if pre_projection is not None:  # if you had a prior matrix, need to combine with the proj_matrix
-        proj_matrix = np.dot(pre_projection, proj_matrix)
+    if indices is not None:
+        proj_matrix = np.dot(freq_selection_matrix, proj_matrix)
     return np.array(proj_matrix)
 
 
@@ -567,16 +716,47 @@ def old_learn_chain_proj_matrix(X, y=None, chain=({'type': 'pca', 'kwargs': {'n_
 
 
 class GeneralProjectionLearner(BaseEstimator, TransformerMixin):
-    def __init__(self, chain=({'type': 'pca', 'kwargs': {'n_components': 5}},), indices=None,
-                 input_size=DFLT_INPUT_SIZE):
+    def __init__(self, chain=({'type': 'pca', 'args': {'n_components': 5}},), indices=None, n_freq=1025):
         self.chain = chain
         self.indices = indices
-        self.input_size = input_size
+        self.n_freq = n_freq
 
     def fit(self, X, y=None):
-        pre_projection = mk_pre_projection_from_indices(self.indices, self.input_size)
-        self.scalings_ = learn_chain_proj_matrix(X, y, self.chain, pre_projection)
+        self.scalings_ = learn_chain_proj_matrix(X, y, self.chain, indices=self.indices, n_freq=self.n_freq)
+        self.projection = np.dot(self.scalings_, self.scalings_.T)
         return self
 
     def transform(self, X):
+        """Projection within projected space (reduces dimensions)"""
         return np.dot(X, self.scalings_)
+
+    def project(self, X):
+        """Projection within original space (remains same dimensions, no reduction)"""
+        return np.dot(X, self.projection)
+
+#
+# class GeneralProjectionLearner(BaseEstimator, TransformerMixin):
+#     def __init__(self, chain=({'type': 'pca', 'kwargs': {'n_components': 5}},), indices=None,
+#                  input_size=DFLT_INPUT_SIZE):
+#         self.chain = chain
+#         self.indices = indices
+#         self.input_size = input_size
+#
+#     def fit(self, X, y=None):
+#         pre_projection = mk_pre_projection_from_indices(self.indices, self.input_size)
+#         self.scalings_ = learn_chain_proj_matrix(X, y, self.chain, pre_projection)
+#         return self
+#
+#     def fit(self, X, y=None):
+#         self.scalings_ = learn_chain_proj_matrix(X, y, self.chain, indices=self.indices, n_freq=self.n_freq)
+#         self.projection = np.dot(self.scalings_, self.scalings_.T)
+#         return self
+#
+#     def transform(self, X):
+#         """Projection within projected space (reduces dimensions)"""
+#         return np.dot(X, self.scalings_)
+#
+#     def project(self, X):
+#         """Projection within original space (remains same dimensions, no reduction)"""
+#         return np.dot(X, self.projection)
+#
