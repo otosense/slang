@@ -23,5 +23,3 @@ from slang.snippers import (
     KMeansFvToSnipDist,
     DfltFvToSnip,
 )
-
-
