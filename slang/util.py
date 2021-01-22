@@ -6,20 +6,75 @@ from numpy import array, nan, arange, unique, ones
 from numpy.random import choice
 from slang.util_data import displayable_unichr
 
-
 from functools import partial
 from contextlib import suppress
 
-ModuleNotFoundIgnore = partial(suppress, ModuleNotFoundError)
+ModuleNotFoundIgnore = partial(suppress, ModuleNotFoundError)  # just an alias for back-compatibility
 
-# class ModuleNotFoundIgnore:
-#     def __enter__(self):
-#         pass
-#
-#     def __exit__(self, exc_type, exc_val, exc_tb):
-#         if exc_type is ModuleNotFoundError:
-#             pass
-#         return True
+
+def mk_callable(call_func):
+    """A class decorator that adds a __call__ method. Specialized for sklearn models.
+
+    >>> import numpy as np
+    >>> from sklearn.decomposition import PCA
+    >>>
+    >>> CallablePCA = mk_callable('single_transform')(PCA)
+    >>> pca = CallablePCA(n_components=3).fit(np.random.rand(100, 5))
+    >>> x = np.random.rand(5)
+    >>> all(pca(x) == pca.transform([x])[0])
+    True
+    >>>
+    >>> from sklearn.neighbors import NearestNeighbors
+    >>>
+    >>> def nearest_neighbors_indices(self, x):
+    ...     _, indices = self.kneighbors([x])
+    ...     return indices[0]
+    ...
+    >>>
+    >>> @mk_callable(nearest_neighbors_indices)
+    ... class CallableKnn(NearestNeighbors):
+    ...     '''NearestNeighbors with callable instances that give you the indices of the neighbors
+    ...     without the kerfuffle.'''
+    >>>
+    >>> knn = CallableKnn().fit(np.arange(1000).reshape(200, 5))
+    >>> x = np.array([10, 20, 30, 40, 50])  # say we have a single point we want to get neighbors for
+    >>>
+    >>> # This is the standard way to do it
+    >>> _, indices = knn.kneighbors([x])
+    >>> neighbors = indices[0]
+    >>> neighbors
+    array([6, 5, 7, 4, 8])
+    >>> # but now, you can just do this instead:
+    >>> knn(x)
+    array([6, 5, 7, 4, 8])
+    >>>
+    >>> assert all(knn(x) == neighbors)
+    """
+    call_func_str = None
+    if isinstance(call_func, str):
+        call_func_str = call_func
+
+    def add_call_method(cls):
+        if call_func_str is not None:
+            if hasattr(cls, call_func_str):
+                cls.__call__ = getattr(cls, call_func_str)
+            elif call_func_str.startswith('single_') and hasattr(cls, call_func_str[len('single_'):]):
+                call_method = getattr(cls, call_func_str[len('single_'):])
+
+                def _call_func(self, x):
+                    return call_method(self, [x])[0]
+
+                cls.__call__ = _call_func
+            else:
+                raise ValueError(
+                    f"call_func was specified by a string, but was neither the name of the method of the class"
+                    f"nor 'single_METHOD_NAME' where METHOD_NAME is a method of the class: {call_func_str}")
+        else:
+            assert callable(call_func), f"call_func must be callable but was {call_func}"
+            cls.__call__ = call_func
+        return cls
+
+    return add_call_method
 
 
 ####### Seeing snips ###################################################################################################

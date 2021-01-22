@@ -1,4 +1,5 @@
 from typing import Callable
+import itertools
 from collections import Counter, defaultdict
 
 import numpy as np
@@ -8,7 +9,7 @@ from sklearn.cluster import KMeans
 from slang.chunkers import fixed_step_chunker
 from slang.snip_stats import BayesFactors
 from slang.core import Snipper
-from slang.util import lazyprop, row_euclidean_distance
+from slang.util import row_euclidean_distance, mk_callable
 
 
 class DfltWfToChk:
@@ -25,12 +26,13 @@ class DfltWfToChk:
         yield from fixed_step_chunker(wf, chk_size=self.chk_size, chk_step=self.chk_step)
 
 
+@mk_callable('single_transform')
 class PcaChkToFv(PCA):
     def __init__(self, n_components=5, **kwargs):
         super().__init__(n_components=n_components, **kwargs)
 
-    def __call__(self, fv):
-        return self.transform([fv])[0]
+    # def __call__(self, fv):
+    #     return self.transform([fv])[0]
 
 
 DfltChkToFv = PcaChkToFv
@@ -53,6 +55,7 @@ from slang.stypes import FV, FVs
 
 # TODO: choose n_clusters from len(X) at fit time
 # TODO: post_fit_proc shouldn't be here, but external and optional
+@mk_callable('single_predict')
 class KMeansFvToSnip(KMeans, FvToSnip):
     stats_of_snip = None  # will be filled when instance is fit
 
@@ -73,8 +76,8 @@ class KMeansFvToSnip(KMeans, FvToSnip):
     def __init__(self, n_clusters=47, **kwargs):
         super().__init__(n_clusters=n_clusters, **kwargs)
 
-    def __call__(self, fv: FV):
-        return self.predict([fv])[0]
+    # def __call__(self, fv: FV):
+    #     return self.predict([fv])[0]
 
     def fit(self, fvs: FVs, y=None, sample_weight=None):
         super().fit(fvs, y, sample_weight)
@@ -250,6 +253,13 @@ class FittableSnipper(Snipper):
         self.fit_wf_to_chks(wf_tags_gen())
         self.fit_chk_to_fv(self.chk_tag_gen(wf_tags_gen))
         self.fit_fv_to_snip(self.fv_tag_gen(wf_tags_gen))
+
+    def fit(self, X, y=None):
+        if y is None:
+            wf_tags_gen = lambda: itertools.product(X, [y])
+        else:
+            wf_tags_gen = lambda: zip(X, y)
+        return self.fit_pipeline(wf_tags_gen)
 
 
 class ClassificationSnipper(FittableSnipper):

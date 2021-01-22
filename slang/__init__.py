@@ -17,6 +17,7 @@ from slang.snippers import (
     DfltWfToChk,
     PcaChkToFv,
     DfltChkToFv,
+    FittableSnipper,
     ClassificationSnipper,
     FvToSnip,
     KMeansFvToSnip,
