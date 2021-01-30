@@ -4,6 +4,7 @@ from collections import Counter, defaultdict
 
 import numpy as np
 from sklearn.decomposition import PCA
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.cluster import KMeans
 
 from slang.chunkers import fixed_step_chunker
@@ -33,6 +34,11 @@ class PcaChkToFv(PCA):
 
     # def __call__(self, fv):
     #     return self.transform([fv])[0]
+
+@mk_callable('single_transform')
+class LdaChkToFv(LinearDiscriminantAnalysis):
+    def __init__(self, n_components=5, **kwargs):
+        super().__init__(n_components=n_components, **kwargs)
 
 
 DfltChkToFv = PcaChkToFv
