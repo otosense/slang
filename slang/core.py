@@ -120,7 +120,7 @@ class KvDataSource:
 
     def key_chks_gen(self, wf_to_chk):
         for k, wf in self.key_wf_gen():
-            for chk in wf_to_chk:
+            for chk in wf_to_chk(wf):
                 yield k, chk
 
     def key_fvs_gen(self, wf_to_chk, chk_to_fv):
