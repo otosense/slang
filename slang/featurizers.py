@@ -7,6 +7,18 @@ from slang.stypes import Chunk, Chunks, Featurizer
 ########################################################################################################################
 # FFT
 
+DFLT_WIN_FUNC = hanning
+
+
+def tile_fft(tile, window=DFLT_WIN_FUNC, amp_function=abs):
+    """Compute the power fft for a single tile
+    """
+    if callable(window):
+        window = window(len(tile))
+    fft_amplitudes = amp_function(rfft(tile * window))
+    return fft_amplitudes
+
+
 def identity_func(x):
     """The identify (a.k.a. transparent) function that returns it's input as is."""
     return x
@@ -25,9 +37,11 @@ mk_window_func.hanning = wraps(hanning)(partial(mk_window_func, hanning))
 mk_window_func.kaiser = wraps(kaiser)(partial(mk_window_func, kaiser))
 
 
-def mk_wf_to_spectr(preproc: callable = None,
-                    fft_func: callable = rfft,
-                    postproc: callable = abs):
+def mk_wf_to_spectr(
+    preproc: callable = None,
+    fft_func: callable = rfft,
+    postproc: callable = abs,
+):
     """Make a function that computes the spectrogram of a waveform
     By spectrum, we mean the output of the pipeline:
         `tile -> preproc -> fft -> postproc -> spectrum
@@ -60,24 +74,33 @@ def mk_wf_to_spectr(preproc: callable = None,
     >>>
     """
     if callable(preproc):
+
         def wf_to_spectr(wf):
             return postproc(fft_func(preproc(wf)))
+
     else:
+
         def wf_to_spectr(wf):
             return postproc(fft_func(wf))
 
     return wf_to_spectr
 
 
-def _mk_wf_to_spectr_w_hanning(window_size: int, fft_func: callable = rfft, postproc: callable = abs):
+def _mk_wf_to_spectr_w_hanning(
+    window_size: int, fft_func: callable = rfft, postproc: callable = abs
+):
     """Make a wf_to_spectr function that uses a hanning window preproc.
     """
     preproc = mk_window_func.hanning(window_size)
     return mk_wf_to_spectr(preproc, fft_func, postproc)
 
 
-def _mk_wf_to_spectr_w_kaiser(window_size: int, beta: float = 0.0,
-                              fft_func: callable = rfft, postproc: callable = abs):
+def _mk_wf_to_spectr_w_kaiser(
+    window_size: int,
+    beta: float = 0.0,
+    fft_func: callable = rfft,
+    postproc: callable = abs,
+):
     """Make a wf_to_spectr function that uses a kaiser window preproc.
 
     The window_size should be set to the fixed tile (chunk) size you're using.
@@ -111,7 +134,8 @@ from numpy import dot
 mat_mult = dot
 
 
-class NotFittedError(ValueError, AttributeError): ...
+class NotFittedError(ValueError, AttributeError):
+    ...
 
 
 # Featurizer
@@ -153,12 +177,16 @@ def rms_zcr(chk):
 
 _n_levels = 10
 _zcr_level_dividers = [2 ** (-(x + 1)) for x in range(0, _n_levels - 1)][::-1]
-_rms_level_dividers = [2048 * 2 ** (-(x + 1)) for x in range(0, _n_levels - 1)][::-1]
+_rms_level_dividers = [
+    2048 * 2 ** (-(x + 1)) for x in range(0, _n_levels - 1)
+][::-1]
 
 
 def _rms_zcr_to_levels(rms, zcr):
-    return (bisect_left(_rms_level_dividers, rms),
-            bisect_left(_zcr_level_dividers, zcr))
+    return (
+        bisect_left(_rms_level_dividers, rms),
+        bisect_left(_zcr_level_dividers, zcr),
+    )
 
 
 def rms_zcr_quantizer(fv):
@@ -174,16 +202,19 @@ import numpy as np
 from typing import Union, Iterable
 
 
-def mk_spectral_moment_featurizer(n_moments=100,
-                                  preproc: callable = None,
-                                  fft_func: callable = rfft,
-                                  postproc: callable = abs):
+def mk_spectral_moment_featurizer(
+    n_moments=100,
+    preproc: callable = None,
+    fft_func: callable = rfft,
+    postproc: callable = abs,
+):
     wf_to_spectr = mk_wf_to_spectr(preproc, fft_func, postproc)
     moments = np.arange(1, n_moments + 1)
     n_moments = len(moments)
     std_exponents = np.arange(1, n_moments + 1)
 
     if n_moments > 2:
+
         def moment_featurizer(wf):
             a = wf_to_spectr(wf)
             a_std = np.std(a)
@@ -191,16 +222,23 @@ def mk_spectral_moment_featurizer(n_moments=100,
             m[0] = np.mean(a)
             m[1] = a_std
             return m
+
     elif n_moments == 2:
+
         def moment_featurizer(wf):
             a = wf_to_spectr(wf)
             return np.array([np.mean(a), np.std(a)])
+
     elif n_moments == 1:
+
         def moment_featurizer(wf):
             a = wf_to_spectr(wf)
             return np.array([np.mean(a)])
+
     else:
-        raise ValueError(f"n_moments should be a positive integer. Instead, was {n_moments}")
+        raise ValueError(
+            f'n_moments should be a positive integer. Instead, was {n_moments}'
+        )
 
     return moment_featurizer
 
@@ -249,7 +287,7 @@ def moment(a, moment: Union[int, Iterable] = 1, axis=0):
 
 def _moment(a, moment, axis):
     if np.abs(moment - np.round(moment)) > 0:
-        raise ValueError("All moment parameters must be integers")
+        raise ValueError('All moment parameters must be integers')
 
     if moment == 0:
         # When moment equals 0, the result is 1, by definition.
