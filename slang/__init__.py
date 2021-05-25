@@ -14,6 +14,7 @@ from slang.featurizers import (
     DFLT_WF_TO_SPECTR,
     DFLT_FEATURIZER,
     DFLT_QUANTIZER,
+    tile_fft
 )
 
 from slang.spectrop import (
