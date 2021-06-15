@@ -52,7 +52,10 @@ class ClassifiedMoments:
 
     @property
     def global_var_(self):
-        return max(self._zero_var, (self.global_sum2_ / self.global_count_) - self.global_mean_ ** 2)  # TODO: verify
+        return max(
+            self._zero_var,
+            (self.global_sum2_ / self.global_count_) - self.global_mean_ ** 2,
+        )  # TODO: verify
 
     @property
     def global_std_(self):
@@ -80,13 +83,20 @@ class ClassifiedMoments:
 
     def predict_within_group(self, gfvs: Iterable[GroupedFV]):
         groups, fvs = list(map(np.array, zip(*gfvs)))
-        return np.array(list(zip(self.inverse_frequency_for_groups(groups),
-                                 fvs / np.sqrt(self.var_for_groups(groups)))))
+        return np.array(
+            list(
+                zip(
+                    self.inverse_frequency_for_groups(groups),
+                    fvs / np.sqrt(self.var_for_groups(groups)),
+                )
+            )
+        )
 
     def predict_global(self, gfvs: Iterable[GroupedFV]):
         groups, fvs = list(map(np.array, zip(*gfvs)))
-        return np.array(list(zip(self.inverse_frequency_for_groups(groups),
-                                 fvs / self.global_std_)))
+        return np.array(
+            list(zip(self.inverse_frequency_for_groups(groups), fvs / self.global_std_))
+        )
 
     predict = predict_global
 
@@ -96,7 +106,6 @@ class ClassifiedMoments:
 
 # Make ABC or mother class
 class ClassifiedMomentsFitter(ClassifiedMoments, BaseEstimator):
-
     def fit_partial_single(self, gfv: GroupedFV):
         group, fv = gfv
         self.count_[group] += 1
@@ -165,8 +174,9 @@ class TagSnipStats:
 
     @lazyprop
     def snip_tag_counts(self):
-        df = df_of_snip_count_for_tag((self.tags, self.snips),
-                                      self.snips_to_str, self.fillna, self.tag_order)
+        df = df_of_snip_count_for_tag(
+            (self.tags, self.snips), self.snips_to_str, self.fillna, self.tag_order
+        )
         if self.tag_order is None:
             self.tag_order = df.columns.values
         total_count = df.sum(axis=1)
@@ -195,28 +205,61 @@ class TagSnipStats:
             snips = self.snips
         return np.array(list(map(self.log_bayes_factor[tag].loc.__getitem__, snips)))
 
-    def plot_snip_count_for_tag(self, snips_to_str=None,
-                                figsize=(14, 10), tag_order=None, output_fig=False,
-                                ylabel_rotation=90):
-        return plot_snip_count_for_tag(self.snip_count_for_tag, snips_to_str=snips_to_str,
-                                       figsize=figsize, tag_order=tag_order, output_fig=output_fig,
-                                       ylabel_rotation=ylabel_rotation)
+    def plot_snip_count_for_tag(
+        self,
+        snips_to_str=None,
+        figsize=(14, 10),
+        tag_order=None,
+        output_fig=False,
+        ylabel_rotation=90,
+    ):
+        return plot_snip_count_for_tag(
+            self.snip_count_for_tag,
+            snips_to_str=snips_to_str,
+            figsize=figsize,
+            tag_order=tag_order,
+            output_fig=output_fig,
+            ylabel_rotation=ylabel_rotation,
+        )
 
     # TODO: Make a decorator that takes care of the `x = x or getattr(self, x, None)` pattern
-    def plot_bars_of_tag_snip_stats(self,
-                                    figsize=(24, 18), output_fig=False,
-                                    ylabel_fontsize=None, ylabel_rotation=90,
-                                    tag_order=None, snip_order=None, snips_to_str=None):
+    def plot_bars_of_tag_snip_stats(
+        self,
+        figsize=(24, 18),
+        output_fig=False,
+        ylabel_fontsize=None,
+        ylabel_rotation=90,
+        tag_order=None,
+        snip_order=None,
+        snips_to_str=None,
+    ):
         tag_order = tag_order or self.tag_order
         snip_order = snip_order or self.snip_order
         snips_to_str = snips_to_str or self.snips_to_str
-        bar_plot_of_tag_snip_stats(self.log_bayes_factor, snips_to_str=snips_to_str, figsize=figsize,
-                                   snip_order=snip_order, tag_order=tag_order, output_fig=output_fig,
-                                   ylabel_fontsize=ylabel_fontsize, ylabel_rotation=ylabel_rotation)
+        bar_plot_of_tag_snip_stats(
+            self.log_bayes_factor,
+            snips_to_str=snips_to_str,
+            figsize=figsize,
+            snip_order=snip_order,
+            tag_order=tag_order,
+            output_fig=output_fig,
+            ylabel_fontsize=ylabel_fontsize,
+            ylabel_rotation=ylabel_rotation,
+        )
 
-    def plot_tag_scores(self, tags=None, snips=None, chk_size=1, chk_step=1,
-                        figsize=(24, 18), ylabel_fontsize=20, ylabel_rotation=0, predict_thresh=0,
-                        normal_style='-k', over_predict_style='ob'):
+    def plot_tag_scores(
+        self,
+        tags=None,
+        snips=None,
+        chk_size=1,
+        chk_step=1,
+        figsize=(24, 18),
+        ylabel_fontsize=20,
+        ylabel_rotation=0,
+        predict_thresh=0,
+        normal_style='-k',
+        over_predict_style='ob',
+    ):
         if tags is None:
             tags = self.tag_order
         if snips is None:
@@ -235,7 +278,11 @@ class TagSnipStats:
             plt.plot([0, len(scores)], [0, predict_thresh], ':', color='k', alpha=0.8)
 
             over_predict_thresh = scores >= predict_thresh
-            plt.plot(x_vals[over_predict_thresh], scores[over_predict_thresh], over_predict_style)
+            plt.plot(
+                x_vals[over_predict_thresh],
+                scores[over_predict_thresh],
+                over_predict_style,
+            )
 
             #     n_tag_snips = len(tss.snips_of_tag[tag])
             #     these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]
@@ -247,8 +294,13 @@ class TagSnipStats:
             plt.ylabel(tag, fontsize=ylabel_fontsize, rotation=ylabel_rotation)
 
     def plot_smoothed_log_bayes_factors(self, chk_size=1, chk_step=None, tag_order=None):
-        return plot_smoothed_log_bayes_factors(self.snips_of_tag, self.log_bayes_factor,
-                                               chk_size=chk_size, chk_step=chk_step, tags=tag_order)
+        return plot_smoothed_log_bayes_factors(
+            self.snips_of_tag,
+            self.log_bayes_factor,
+            chk_size=chk_size,
+            chk_step=chk_step,
+            tags=tag_order,
+        )
 
     def tags_and_snips_str_gen(self, tags=None, snips=None, snips_to_str=None):
         snips_to_str = snips_to_str or self.snips_to_str or dflt_snips_to_str
@@ -260,17 +312,30 @@ class TagSnipStats:
         for tag, snips in snips_of_tag.items():
             yield tag, snips_to_str(snips)
 
-    def mk_tags_and_snips_str_string(self, tags=None, snips=None, snips_to_str=None,
-                                     tag_snips_format_str="{:<21}: {}\n\n"):
+    def mk_tags_and_snips_str_string(
+        self,
+        tags=None,
+        snips=None,
+        snips_to_str=None,
+        tag_snips_format_str='{:<21}: {}\n\n',
+    ):
         s = ''
         for tag, snips_str in self.tags_and_snips_str_gen(tags, snips, snips_to_str):
             s += tag_snips_format_str.format(tag, snips_str)
         return s
 
-    def print_tags_and_snips_str(self, tags=None, snips=None, snips_to_str=None,
-                                 tag_snips_format_str="{:<21}: {}\n\n"):
-        print(self.mk_tags_and_snips_str_string(tags, snips, snips_to_str,
-                                                tag_snips_format_str))
+    def print_tags_and_snips_str(
+        self,
+        tags=None,
+        snips=None,
+        snips_to_str=None,
+        tag_snips_format_str='{:<21}: {}\n\n',
+    ):
+        print(
+            self.mk_tags_and_snips_str_string(
+                tags, snips, snips_to_str, tag_snips_format_str
+            )
+        )
 
 
 # class SnipStats:
@@ -303,14 +368,18 @@ class BayesFactors:
     def __init__(self, pseudocount=0, tag_order=None, alphabet_size=None):
         self.pseudocount = pseudocount
         self.tag_order = tag_order
-        self._alphabet_size = alphabet_size  # TODO: Use to tell TagSnipStats it should fill until there
+        self._alphabet_size = (
+            alphabet_size  # TODO: Use to tell TagSnipStats it should fill until there
+        )
 
     @lazyprop
     def alphabet_size(self):
         return self._alphabet_size or self.log_bayes_factor_.index.max()
 
     def fit(self, snips, tags):
-        self.tag_snip_stats = TagSnipStats(snips, tags, fillna=self.pseudocount, tag_order=self.tag_order)
+        self.tag_snip_stats = TagSnipStats(
+            snips, tags, fillna=self.pseudocount, tag_order=self.tag_order
+        )
         self.log_bayes_factor_ = self.tag_snip_stats.log_bayes_factor.sort_index()
         self.classes_ = self.tag_snip_stats.tag_order
         return self
@@ -320,7 +389,9 @@ class BayesFactors:
         self = cls()
         if classes_ is None:
             classes_ = log_bayes_factor_.columns.values
-        self.log_bayes_factor_ = log_bayes_factor_[classes_]  # To assert columns contents and ensure order
+        self.log_bayes_factor_ = log_bayes_factor_[
+            classes_
+        ]  # To assert columns contents and ensure order
         self.classes_ = classes_
 
     def scores_for_tag(self, tag, snips):
@@ -338,7 +409,9 @@ class BayesFactors:
         return self.classes_[indices]
 
     def _assert_sanity(self):
-        assert set(np.diff(sorted(self.log_bayes_factor_.index))) == {1}, "some snips are missing!"
+        assert set(np.diff(sorted(self.log_bayes_factor_.index))) == {
+            1
+        }, 'some snips are missing!'
 
     _diagnosis = _assert_sanity  # but deprecating _diagnosis
 
@@ -349,16 +422,25 @@ class BayesFactors:
 
 def mk_model_caller(kind='asis'):
     if kind == 'predict_proba':
+
         def model_caller(self, snip):
             return self.predict_proba([snip])[0]
+
     elif kind == 'tag_probs':
+
         def model_caller(self, snip):
-            return {tag: prob for tag, prob in zip(self.classes_, self.predict_proba([snip])[0])}
+            return {
+                tag: prob
+                for tag, prob in zip(self.classes_, self.predict_proba([snip])[0])
+            }
+
     elif kind == 'predict':
+
         def model_caller(self, snip):
             return self.predict([snip])[0]
+
     else:
-        raise ValueError(f"Unknown kind: {kind}")
+        raise ValueError(f'Unknown kind: {kind}')
     return model_caller
 
 
@@ -369,7 +451,9 @@ class PredictProbaBF(BayesFactors):
 
 class TagProbsBF(BayesFactors):
     def __call__(self, snip):
-        return {tag: prob for tag, prob in zip(self.classes_, self.predict_proba([snip])[0])}
+        return {
+            tag: prob for tag, prob in zip(self.classes_, self.predict_proba([snip])[0])
+        }
 
 
 class PredictBF(BayesFactors):
@@ -408,6 +492,7 @@ def tag_slice_iter_from_slices_of_tag_dict(slices_of_tag):
 #
 #     return dict(snip_count_for_tag)
 
+
 def tag_snip_count_dict_from_tags_and_snips(tags, snips):
     snip_count_for_tag = defaultdict(dict)
 
@@ -417,7 +502,9 @@ def tag_snip_count_dict_from_tags_and_snips(tags, snips):
     return dict(snip_count_for_tag)
 
 
-def df_of_snip_count_for_tag(snip_count_for_tag, snips_to_str=None, fillna=0, tag_order=None):
+def df_of_snip_count_for_tag(
+    snip_count_for_tag, snips_to_str=None, fillna=0, tag_order=None
+):
     """
     A df representation of snip_count_for_tag
     :param snip_count_for_tag: {tag: {snip: count, ...},...} dict
@@ -459,9 +546,16 @@ def log_bayes_factor_bayes_factor_df_from_snip_count_df(snip_count_df):
     return np.log2(bayes_factor_df_from_snip_count_df(snip_count_df))
 
 
-def bar_plot_of_tag_snip_stats(snip_stats_for_tag, snips_to_str=None,
-                               figsize=(14, 10), snip_order=None, tag_order=None, output_fig=False,
-                               ylabel_fontsize=None, ylabel_rotation=90):
+def bar_plot_of_tag_snip_stats(
+    snip_stats_for_tag,
+    snips_to_str=None,
+    figsize=(14, 10),
+    snip_order=None,
+    tag_order=None,
+    output_fig=False,
+    ylabel_fontsize=None,
+    ylabel_rotation=90,
+):
     """
     Multiplot of snip count bars for each tag (in a different row). First row is the total count for each snip.
     :param snip_count_for_tag: {tag: {snip: count, ...},...} nested dict
@@ -505,12 +599,14 @@ def bar_plot_of_tag_snip_stats(snip_stats_for_tag, snips_to_str=None,
         if ylabel_fontsize is not None:
             h.set_fontsize(ylabel_fontsize)
 
-        plt.xlabel("")
+        plt.xlabel('')
         if i == 1:
-            plt.xticks(list(range(n_snips)), snips_to_str(snip_stats_for_tag.index.values))
+            plt.xticks(
+                list(range(n_snips)), snips_to_str(snip_stats_for_tag.index.values)
+            )
             ax.xaxis.tick_top()
         else:
-            plt.xticks(list(range(n_snips)), " " * n_snips)
+            plt.xticks(list(range(n_snips)), ' ' * n_snips)
 
     plt.xticks(list(range(n_snips)), snips_to_str(snip_stats_for_tag.index.values))
 
@@ -523,9 +619,15 @@ def bar_plot_of_tag_snip_stats(snip_stats_for_tag, snips_to_str=None,
         return fig
 
 
-def plot_snip_count_for_tag(snip_count_for_tag, snips_to_str=None,
-                            figsize=(14, 10), tag_order=None, output_fig=False,
-                            ylabel_fontsize=None, ylabel_rotation=90):
+def plot_snip_count_for_tag(
+    snip_count_for_tag,
+    snips_to_str=None,
+    figsize=(14, 10),
+    tag_order=None,
+    output_fig=False,
+    ylabel_fontsize=None,
+    ylabel_rotation=90,
+):
     """
     Multiplot of snip count bars for each tag (in a different row). First row is the total count for each snip.
     :param snip_count_for_tag: {tag: {snip: count, ...},...} nested dict
@@ -560,12 +662,12 @@ def plot_snip_count_for_tag(snip_count_for_tag, snips_to_str=None,
         h.set_rotation(ylabel_rotation)
         if ylabel_fontsize is not None:
             h.set_fontsize(ylabel_fontsize)
-        plt.xlabel("")
+        plt.xlabel('')
         if i == 1:
             plt.xticks(list(range(n_snips)), snips_to_str(df.index.values))
             ax.xaxis.tick_top()
         else:
-            plt.xticks(list(range(n_snips)), " " * n_snips)
+            plt.xticks(list(range(n_snips)), ' ' * n_snips)
 
     plt.xticks(list(range(n_snips)), snips_to_str(df.index.values))
 
@@ -576,10 +678,18 @@ def plot_snip_count_for_tag(snip_count_for_tag, snips_to_str=None,
         return fig
 
 
-def plot_tag_scores_for_snips(snips_of_tag, snip_tag_score_df, tag_order=None,
-                              smoothing_window_size=1, figsize=(24, 18),
-                              ylabel_fontsize=15, ylabel_rotation=0):
-    assert isinstance(snip_tag_score_df, pd.DataFrame), "isinstance(snip_tag_score_df, pd.DataFrame)"
+def plot_tag_scores_for_snips(
+    snips_of_tag,
+    snip_tag_score_df,
+    tag_order=None,
+    smoothing_window_size=1,
+    figsize=(24, 18),
+    ylabel_fontsize=15,
+    ylabel_rotation=0,
+):
+    assert isinstance(
+        snip_tag_score_df, pd.DataFrame
+    ), 'isinstance(snip_tag_score_df, pd.DataFrame)'
 
     def scores_of_snips(snips, tag):
         return list(map(snip_tag_score_df[tag].loc.__getitem__, snips))
@@ -596,13 +706,19 @@ def plot_tag_scores_for_snips(snips_of_tag, snip_tag_score_df, tag_order=None,
     for i, tag in enumerate(tag_order, 1):
         plt.subplot(n_tags, 1, i)
 
-        snip_scores = list(running_mean_gen(scores_of_snips(tag, all_snips), smoothing_window_size))
+        snip_scores = list(
+            running_mean_gen(scores_of_snips(all_snips, tag), smoothing_window_size)
+        )
         plt.plot(snip_scores, '-')
         plt.plot([0, len(snip_scores)], [0, 0], ':k')
 
         n_tag_snips = len(snips_of_tag[tag])
-        these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]
-        tag_snips_idx = list(range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores)))
+        these_snip_scores = snip_scores[
+            tag_snips_cursor : (tag_snips_cursor + n_tag_snips)
+        ]
+        tag_snips_idx = list(
+            range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores))
+        )
         plt.plot(tag_snips_idx, these_snip_scores, 'k-')
         tag_snips_cursor += n_tag_snips
 
@@ -645,9 +761,19 @@ def tag_scores_gen(scores_for_tag, tags, snips, chk_size=1, chk_step=1):
         yield tag, list(running_mean_gen(scores_for_tag(tag, snips), chk_size, chk_step))
 
 
-def plot_tag_scores(scores_for_tag, tags, snips, chk_size=1, chk_step=1,
-                    figsize=(24, 18), ylabel_fontsize=20, ylabel_rotation=0, predict_thresh=0,
-                    normal_style='-k', over_predict_style='ob'):
+def plot_tag_scores(
+    scores_for_tag,
+    tags,
+    snips,
+    chk_size=1,
+    chk_step=1,
+    figsize=(24, 18),
+    ylabel_fontsize=20,
+    ylabel_rotation=0,
+    predict_thresh=0,
+    normal_style='-k',
+    over_predict_style='ob',
+):
     gen = tag_scores_gen(scores_for_tag, tags, snips, chk_size, chk_step)
     tag_snips_cursor = 0
     n_tags = len(tags)
@@ -661,7 +787,9 @@ def plot_tag_scores(scores_for_tag, tags, snips, chk_size=1, chk_step=1,
         plt.plot([0, len(scores)], [0, predict_thresh], ':', color='k', alpha=0.8)
 
         over_predict_thresh = scores >= predict_thresh
-        plt.plot(x_vals[over_predict_thresh], scores[over_predict_thresh], over_predict_style)
+        plt.plot(
+            x_vals[over_predict_thresh], scores[over_predict_thresh], over_predict_style
+        )
 
         #     n_tag_snips = len(tss.snips_of_tag[tag])
         #     these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]
@@ -677,8 +805,15 @@ def scores_of_snips(tag, snips, snip_log_bayes_factor_of_tag):
     return list(map(snip_log_bayes_factor_of_tag[tag].loc.__getitem__, snips))
 
 
-def plot_smoothed_log_bayes_factors(snips_of_tag, snip_log_bayes_factor_of_tag, chk_size=1, chk_step=1,
-                                    tags=None, ylabel_fontsize=15, ylabel_rotation=0):
+def plot_smoothed_log_bayes_factors(
+    snips_of_tag,
+    snip_log_bayes_factor_of_tag,
+    chk_size=1,
+    chk_step=1,
+    tags=None,
+    ylabel_fontsize=15,
+    ylabel_rotation=0,
+):
     # dflt_snip_order, dflt_tag_order = _tag_order_from_df(snip_tag_counts)
     if tags:
         snip_log_bayes_factor_of_tag = snip_log_bayes_factor_of_tag[tags]
@@ -694,13 +829,22 @@ def plot_smoothed_log_bayes_factors(snips_of_tag, snip_log_bayes_factor_of_tag, 
     for i, tag in enumerate(tags, 1):
         plt.subplot(n_tags, 1, i)
         snip_scores = list(
-            running_mean_gen(scores_of_snips(tag, all_snips, snip_log_bayes_factor_of_tag), chk_size, chk_step))
+            running_mean_gen(
+                scores_of_snips(tag, all_snips, snip_log_bayes_factor_of_tag),
+                chk_size,
+                chk_step,
+            )
+        )
         plt.plot(snip_scores, '-')
         plt.plot([0, len(snip_scores)], [0, 0], ':k')
 
         n_tag_snips = len(snips_of_tag[tag])
-        these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]
-        tag_snips_idx = list(range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores)))
+        these_snip_scores = snip_scores[
+            tag_snips_cursor : (tag_snips_cursor + n_tag_snips)
+        ]
+        tag_snips_idx = list(
+            range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores))
+        )
         plt.plot(tag_snips_idx, these_snip_scores, 'k-')
         tag_snips_cursor += n_tag_snips
 
@@ -712,7 +856,9 @@ def snip_scores_from_lookup(snips, snip_to_score):
     if isinstance(snip_to_score, (pd.Series, dict)):
         snip_to_score = snip_to_score.__getitem__
     elif isinstance(snip_to_score, pd.DataFrame):
-        _snip_to_score = {k: snip_to_score[k].loc.__getitem__ for k in list(snip_to_score.columns)}
+        _snip_to_score = {
+            k: snip_to_score[k].loc.__getitem__ for k in list(snip_to_score.columns)
+        }
         snip_to_score = lambda snip: {k: lookup(snip) for k, lookup in _snip_to_score}
     return map(snip_to_score, snips)
 
