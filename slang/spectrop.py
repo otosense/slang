@@ -207,7 +207,7 @@ def ascertain_array(iterable):
     return iterable
 
 
-def chk_to_spectrum(chk, *, chk_size, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC):
+def chk_to_spectrum(chk, chk_size, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC):
     assert len(chk) == chk_size, (
         f"This function was made for chk_size={chk_size}. "
         f"You fed a chk of size len(chk)={len(chk)} instead")
