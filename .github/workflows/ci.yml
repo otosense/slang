@@ -33,7 +33,7 @@ jobs:
       # C0114: missing-module-docstring
       # E0401: import-error
       - name: Validate docstrings
-        run: pylint ./$PROJECT_NAME --ignore=tests,examples,scrap --disable=all --enable=C0114,E0401 | report
+        run: pylint ./$PROJECT_NAME --ignore=tests,examples,scrap --disable=all --enable=C0114,E0401 | mk_pylint_report
 
       - name: Test
         run: pytest --ignore=$PROJECT_NAME/examples --ignore=$PROJECT_NAME/scrap --doctest-modules -v $PROJECT_NAME
