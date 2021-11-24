@@ -1,3 +1,5 @@
+"""Featurizers. Functions to get from waveform to feature vectors"""
+
 from numpy import hanning, kaiser, abs, diff, array, std
 from numpy.fft import rfft
 from functools import wraps, partial

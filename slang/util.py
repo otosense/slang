@@ -9,7 +9,9 @@ from slang.util_data import displayable_unichr
 from functools import partial
 from contextlib import suppress
 
-ModuleNotFoundIgnore = partial(suppress, ModuleNotFoundError)  # just an alias for back-compatibility
+ModuleNotFoundIgnore = partial(
+    suppress, ModuleNotFoundError
+)  # just an alias for back-compatibility
 
 
 def mk_callable(call_func):
@@ -58,8 +60,10 @@ def mk_callable(call_func):
         if call_func_str is not None:
             if hasattr(cls, call_func_str):
                 cls.__call__ = getattr(cls, call_func_str)
-            elif call_func_str.startswith('single_') and hasattr(cls, call_func_str[len('single_'):]):
-                call_method = getattr(cls, call_func_str[len('single_'):])
+            elif call_func_str.startswith('single_') and hasattr(
+                cls, call_func_str[len('single_') :]
+            ):
+                call_method = getattr(cls, call_func_str[len('single_') :])
 
                 def _call_func(self, x):
                     return call_method(self, [x])[0]
@@ -67,10 +71,13 @@ def mk_callable(call_func):
                 cls.__call__ = _call_func
             else:
                 raise ValueError(
-                    f"call_func was specified by a string, but was neither the name of the method of the class"
-                    f"nor 'single_METHOD_NAME' where METHOD_NAME is a method of the class: {call_func_str}")
+                    f'call_func was specified by a string, but was neither the name of the method of the class'
+                    f"nor 'single_METHOD_NAME' where METHOD_NAME is a method of the class: {call_func_str}"
+                )
         else:
-            assert callable(call_func), f"call_func must be callable but was {call_func}"
+            assert callable(
+                call_func
+            ), f'call_func must be callable but was {call_func}'
             cls.__call__ = call_func
         return cls
 
@@ -79,13 +86,15 @@ def mk_callable(call_func):
 
 ####### Seeing snips ###################################################################################################
 
-unichr_code_of_snip = array(displayable_unichr
-                            + list(unique(list(set(range(33, 20000)).difference(displayable_unichr)))))
+unichr_code_of_snip = array(
+    displayable_unichr
+    + list(unique(list(set(range(33, 20000)).difference(displayable_unichr))))
+)
 snip_of_unichr_code = (nan * ones(unichr_code_of_snip.max() + 1)).astype(int)
 snip_of_unichr_code[unichr_code_of_snip] = arange(len(unichr_code_of_snip))
 
 # assert that snip_of_unichr_code is the inverse of unichr_code_of_snip
-assert (all(snip_of_unichr_code[unichr_code_of_snip] == arange(len(unichr_code_of_snip))))
+assert all(snip_of_unichr_code[unichr_code_of_snip] == arange(len(unichr_code_of_snip)))
 
 
 def snip_to_str(snip):
@@ -214,7 +223,11 @@ def _apply_op(op, d1, dflt_1, d2, dflt_2):
         for k, v1 in d1.items():
             v2 = d2.get(k, dflt_2)
             out[k] = op(v1, v2)
-        for k in d2:  # take care of the remainder (those keys in dict_2 that were not in dict_1)
+        for (
+            k
+        ) in (
+            d2
+        ):  # take care of the remainder (those keys in dict_2 that were not in dict_1)
             if k not in out:
                 out[k] = op(dflt_1, d2[k])
     else:
@@ -224,9 +237,12 @@ def _apply_op(op, d1, dflt_1, d2, dflt_2):
 
 def _mk_op_method(op, dflt_1, dflt_2, for_reflexive_op=False):
     if not for_reflexive_op:
+
         def op_method(self, d):
             return self.__class__(_apply_op(op, self, dflt_1, d, dflt_2))
+
     else:
+
         def op_method(self, d):
             return self.__class__(_apply_op(op, d, dflt_1, self, dflt_2))
 
@@ -247,7 +263,7 @@ def _mk_unary_op_method(op):
 _ops_and_identity = [
     ({'__add__', '__sub__', '__lshift__', '__rshift__', '__or__'}, 0),
     ({'__mul__', '__truediv__', '__floordiv__', '__pow__'}, 1),
-    ({'__mod__', '__and__', '__xor__', '__matmul__'}, None)
+    ({'__mod__', '__and__', '__xor__', '__matmul__'}, None),
 ]
 
 _unary_ops = {'__pos__', '__neg__', '__abs__', '__invert__'}
@@ -376,10 +392,17 @@ class ArithmeDict(dict):
     for ops, identity_val in _ops_and_identity:
         for op in ops:
             op_func = getattr(operator, op)
-            locals()[op] = _mk_op_method(op_func, dflt_1=identity_val, dflt_2=identity_val, for_reflexive_op=False)
+            locals()[op] = _mk_op_method(
+                op_func,
+                dflt_1=identity_val,
+                dflt_2=identity_val,
+                for_reflexive_op=False,
+            )
 
 
-def running_mean_gen(it, chk_size=2, chk_step=1):  # TODO: A version of this with chk_step as well
+def running_mean_gen(
+    it, chk_size=2, chk_step=1
+):  # TODO: A version of this with chk_step as well
     """
     Running mean (moving average) on iterator.
     Note: When input it is list-like, ut.stats.smooth.sliders version of running_mean is 4 times more efficient with
@@ -388,23 +411,24 @@ def running_mean_gen(it, chk_size=2, chk_step=1):  # TODO: A version of this wit
     :param chk_size: width of the window to take means from
     :return:
 
-    >>> list(running_mean([1, 3, 5, 7, 9], 2))
+    >>> list(running_mean_gen([1, 3, 5, 7, 9], 2))
     [2.0, 4.0, 6.0, 8.0]
-    >>> list(running_mean([1, 3, 5, 7, 9], 2, chk_step=2))
+    >>> list(running_mean_gen([1, 3, 5, 7, 9], 2, chk_step=2))
     [2.0, 6.0]
-    >>> list(running_mean([1, 3, 5, 7, 9], 2, chk_step=3))
+    >>> list(running_mean_gen([1, 3, 5, 7, 9], 2, chk_step=3))
     [2.0, 8.0]
-    >>> list(running_mean([1, 3, 5, 7, 9], 3))
+    >>> list(running_mean_gen([1, 3, 5, 7, 9], 3))
     [3.0, 5.0, 7.0]
-    >>> list(running_mean([1, -1, 1, -1], 2))
+    >>> list(running_mean_gen([1, -1, 1, -1], 2))
     [0.0, 0.0, 0.0]
-    >>> list(running_mean([-1, -2, -3, -4], 3))
+    >>> list(running_mean_gen([-1, -2, -3, -4], 3))
     [-2.0, -3.0]
     """
     if chk_step is None:
         chk_step = chk_size
     if chk_step > 1:
-        # TODO: perhaps there's a more efficient way. A way that would sum the values of every step and add them in bulk
+        # TODO: perhaps there's a more efficient way. A way that would sum the values
+        #  of every step and add them in bulk
         yield from islice(running_mean(it, chk_size), None, None, chk_step)
     else:
         it = iter(it)

@@ -1,3 +1,5 @@
+"""Snipping: Feature vector quantization"""
+
 from typing import Callable
 import itertools
 from collections import Counter, defaultdict

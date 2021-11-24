@@ -1,3 +1,6 @@
+"""Signal transformers
+Tools to transform signals into a structured language.
+"""
 from slang.core import KvDataSource, Snipper
 
 from slang.util import snips_to_str as dflt_snips_to_str

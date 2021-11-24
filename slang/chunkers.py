@@ -1,3 +1,5 @@
+"""Chunker functions"""
+
 from itertools import islice, chain
 from functools import partial
 from typing import Iterable

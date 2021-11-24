@@ -1,9 +1,20 @@
+"""Core functionality"""
+
 # from sklearn.cluster import KMeans
 # from functools import partial
 
 from warnings import warn
 from typing import Callable, Any, Optional, Mapping
-from slang.stypes import Waveform, Chunk, Chunker, Featurizer, Quantizer, Snip, Snips, FVs
+from slang.stypes import (
+    Waveform,
+    Chunk,
+    Chunker,
+    Featurizer,
+    Quantizer,
+    Snip,
+    Snips,
+    FVs,
+)
 from slang.chunkers import DFLT_CHUNKER
 from slang.featurizers import DFLT_FEATURIZER, DFLT_QUANTIZER
 
@@ -88,13 +99,17 @@ class KvDataSource:
         for k in filter(self.key_filt, self.kv_store):
             yield k, kv_store[k]
 
-    def key_tag_wf_gen(self, wf_callback: WfCallback = None, iterate_over_wf_callaback_output=False):
-        assert self.key_to_tag is not None, "You need to have a key_to_tag function to do that!"
+    def key_tag_wf_gen(
+        self, wf_callback: WfCallback = None, iterate_over_wf_callaback_output=False
+    ):
+        assert (
+            self.key_to_tag is not None
+        ), 'You need to have a key_to_tag function to do that!'
         if wf_callback is None:
             for k, wf in self.key_wf_gen():
                 yield k, self.key_to_tag(k), wf
         else:
-            assert callable(wf_callback), "wf_callback needs to be callable."
+            assert callable(wf_callback), 'wf_callback needs to be callable.'
 
             if iterate_over_wf_callaback_output:
                 for k, wf in self.key_wf_gen():
@@ -106,17 +121,23 @@ class KvDataSource:
                     yield k, self.key_to_tag(k), wf_callback(wf)
 
     def key_tag_chks_gen(self, wf_to_chk):
-        yield from self.key_tag_wf_gen(wf_callback=wf_to_chk, iterate_over_wf_callaback_output=True)
+        yield from self.key_tag_wf_gen(
+            wf_callback=wf_to_chk, iterate_over_wf_callaback_output=True
+        )
 
     def key_tag_fvs_gen(self, wf_to_chk, chk_to_fv):
         wf_to_fv = lambda wf: list(map(chk_to_fv, wf_to_chk(wf)))
-        yield from self.key_tag_wf_gen(wf_callback=wf_to_fv, iterate_over_wf_callaback_output=True)
+        yield from self.key_tag_wf_gen(
+            wf_callback=wf_to_fv, iterate_over_wf_callaback_output=True
+        )
 
     def key_tag_snips_gen(self, wf_to_chk, chk_to_fv, fv_to_snip):
         def wf_to_snips(wf):
             return list(fv_to_snip(chk_to_fv(chk)) for chk in wf_to_chk(wf))
 
-        yield from self.key_tag_wf_gen(wf_callback=wf_to_snips, iterate_over_wf_callaback_output=True)
+        yield from self.key_tag_wf_gen(
+            wf_callback=wf_to_snips, iterate_over_wf_callaback_output=True
+        )
 
     def key_chks_gen(self, wf_to_chk):
         for k, wf in self.key_wf_gen():
@@ -138,17 +159,18 @@ class KvDataSource:
         return ((fv, tag) for _, tag, fv in self.key_tag_fvs_gen(wf_to_chks, chk_to_fv))
 
 
-
 class Snipper:
     """A base class that implements the wf->chk->fv->snip pipeline.
     Default functions for wf_to_chk (a.k.a. chunker), chk_to_fv (a.k.a. featurizer) and fv_to_snip (a.k.a. nipper)
     are given, but usually the user should specify these, and usually these are learned from data.
     """
 
-    def __init__(self,
-                 wf_to_chks: Chunker = DFLT_CHUNKER,
-                 chk_to_fv: Featurizer = DFLT_FEATURIZER,
-                 fv_to_snip: Quantizer = DFLT_QUANTIZER):
+    def __init__(
+        self,
+        wf_to_chks: Chunker = DFLT_CHUNKER,
+        chk_to_fv: Featurizer = DFLT_FEATURIZER,
+        fv_to_snip: Quantizer = DFLT_QUANTIZER,
+    ):
         self.wf_to_chks = wf_to_chks
         self.chk_to_fv = chk_to_fv
         self.fv_to_snip = fv_to_snip
@@ -173,7 +195,7 @@ class Snipper:
     _delegations = dict(
         stats_of_snip=('fv_to_snip', 'stats_of_snip'),
         fv_of_snip=('fv_to_snip', 'fv_of_snip'),
-        alphabet_size=('fv_to_snip', 'alphabet_size')
+        alphabet_size=('fv_to_snip', 'alphabet_size'),
     )
 
     def __getattr__(self, attr):
@@ -185,7 +207,7 @@ class Snipper:
                 a = getattr(a, aa)
             return a
         else:
-            raise AttributeError(f"Unknown attribute: {attr}")
+            raise AttributeError(f'Unknown attribute: {attr}')
 
     # TODO: Revise approach here (see above)
     #  lazyprop or property?

@@ -1,3 +1,5 @@
+"""Snip statistics functions"""
+
 from collections import defaultdict, Counter
 from dataclasses import dataclass
 from functools import reduce
@@ -293,7 +295,9 @@ class TagSnipStats:
             plt.axis('tight')
             plt.ylabel(tag, fontsize=ylabel_fontsize, rotation=ylabel_rotation)
 
-    def plot_smoothed_log_bayes_factors(self, chk_size=1, chk_step=None, tag_order=None):
+    def plot_smoothed_log_bayes_factors(
+        self, chk_size=1, chk_step=None, tag_order=None
+    ):
         return plot_smoothed_log_bayes_factors(
             self.snips_of_tag,
             self.log_bayes_factor,
@@ -514,7 +518,9 @@ def df_of_snip_count_for_tag(
     :return: A dataframe of snip (in rows) counts for each tag (in columns)
     """
     if isinstance(snip_count_for_tag, tuple) and len(snip_count_for_tag) == 2:
-        snip_count_for_tag = tag_snip_count_dict_from_tags_and_snips(*snip_count_for_tag)
+        snip_count_for_tag = tag_snip_count_dict_from_tags_and_snips(
+            *snip_count_for_tag
+        )
 
     df = pd.DataFrame(snip_count_for_tag).fillna(fillna)
     if tag_order is not None:
@@ -758,7 +764,9 @@ def tag_scores_gen(scores_for_tag, tags, snips, chk_size=1, chk_step=1):
     if isinstance(tags, (str, int, float)):
         tags = [tags]
     for tag in tags:
-        yield tag, list(running_mean_gen(scores_for_tag(tag, snips), chk_size, chk_step))
+        yield tag, list(
+            running_mean_gen(scores_for_tag(tag, snips), chk_size, chk_step)
+        )
 
 
 def plot_tag_scores(
