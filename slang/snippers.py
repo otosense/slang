@@ -26,7 +26,9 @@ class DfltWfToChk:
         return self  # no fitting required
 
     def __call__(self, wf):
-        yield from fixed_step_chunker(wf, chk_size=self.chk_size, chk_step=self.chk_step)
+        yield from fixed_step_chunker(
+            wf, chk_size=self.chk_size, chk_step=self.chk_step
+        )
 
 
 @mk_callable('single_transform')
@@ -36,6 +38,7 @@ class PcaChkToFv(PCA):
 
     # def __call__(self, fv):
     #     return self.transform([fv])[0]
+
 
 @mk_callable('single_transform')
 class LdaChkToFv(LinearDiscriminantAnalysis):
@@ -54,7 +57,9 @@ class FvToSnip:  # TODO: Mixin? ABC?
     @property
     def fv_of_snip(self):
         """array providing representative fv for each snip"""
-        raise NotImplemented("Not implemented -- should be implemented in subclass of FvToSnipMixin")
+        raise NotImplemented(
+            'Not implemented -- should be implemented in subclass of FvToSnipMixin'
+        )
         # return None
 
 
@@ -208,9 +213,7 @@ class FittableSnipper(Snipper):
             assert assert_func(obj)
         return obj
 
-    def __init__(self, wf_to_chks=None,
-                 chk_to_fv=None,
-                 fv_to_snip=None):
+    def __init__(self, wf_to_chks=None, chk_to_fv=None, fv_to_snip=None):
 
         wf_to_chks = self.mk_component(wf_to_chks, 'wf_to_chks', assert_func=callable)
         chk_to_fv = self.mk_component(chk_to_fv, 'chk_to_fv', assert_func=callable)
@@ -226,7 +229,9 @@ class FittableSnipper(Snipper):
     # TODO: Make the next three methods more DRY (see also ClassificationSnipper.fit_snip_to_score)
     def fit_wf_to_chks(self, *wfs_tags):
         if hasattr(self.wf_to_chks, 'fit'):
-            chks, tags = _assure_pair(wfs_tags)  # need to generalize to situations with no tags
+            chks, tags = _assure_pair(
+                wfs_tags
+            )  # need to generalize to situations with no tags
             self.wf_to_chks.fit(chks, tags)
         return self
 
@@ -273,15 +278,22 @@ class FittableSnipper(Snipper):
 class ClassificationSnipper(FittableSnipper):
     snip_to_score: Callable  # TODO: Make a "Callable and Fittable" type
 
-    dflt_cls_of_name: dict = dict(FittableSnipper.dflt_cls_of_name, snip_to_score=BayesFactors)
+    dflt_cls_of_name: dict = dict(
+        FittableSnipper.dflt_cls_of_name, snip_to_score=BayesFactors
+    )
 
-    def __init__(self, wf_to_chks=DfltWfToChk(),
-                 chk_to_fv=DfltChkToFv,
-                 fv_to_snip=DfltFvToSnip,
-                 snip_to_score=BayesFactors):
+    def __init__(
+        self,
+        wf_to_chks=DfltWfToChk(),
+        chk_to_fv=DfltChkToFv,
+        fv_to_snip=DfltFvToSnip,
+        snip_to_score=BayesFactors,
+    ):
         super().__init__(wf_to_chks, chk_to_fv, fv_to_snip)
 
-        snip_to_score = self.mk_component(snip_to_score, 'snip_to_score', assert_func=callable)
+        snip_to_score = self.mk_component(
+            snip_to_score, 'snip_to_score', assert_func=callable
+        )
         self.snip_to_score = snip_to_score
 
     def fit_snip_to_score(self, *snips_tags):

@@ -32,7 +32,7 @@ jobs:
       #   http://pylint.pycqa.org/en/latest/technical_reference/features.html#basic-checker-messages
       # C0114: missing-module-docstring
       # E0401: import-error
-      - name: Validate docstrings
+      - name: Pylint Validation
         run: pylint ./$PROJECT_NAME --ignore=tests,examples,scrap --disable=all --enable=C0114,E0401 | mk_pylint_report
 
       - name: Test

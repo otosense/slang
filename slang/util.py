@@ -1,3 +1,5 @@
+"""Slang utils"""
+
 from collections import deque, defaultdict
 from itertools import islice
 

@@ -40,9 +40,7 @@ mk_window_func.kaiser = wraps(kaiser)(partial(mk_window_func, kaiser))
 
 
 def mk_wf_to_spectr(
-    preproc: callable = None,
-    fft_func: callable = rfft,
-    postproc: callable = abs,
+    preproc: callable = None, fft_func: callable = rfft, postproc: callable = abs,
 ):
     """Make a function that computes the spectrogram of a waveform
     By spectrum, we mean the output of the pipeline:
@@ -179,9 +177,7 @@ def rms_zcr(chk):
 
 _n_levels = 10
 _zcr_level_dividers = [2 ** (-(x + 1)) for x in range(0, _n_levels - 1)][::-1]
-_rms_level_dividers = [
-    2048 * 2 ** (-(x + 1)) for x in range(0, _n_levels - 1)
-][::-1]
+_rms_level_dividers = [2048 * 2 ** (-(x + 1)) for x in range(0, _n_levels - 1)][::-1]
 
 
 def _rms_zcr_to_levels(rms, zcr):
