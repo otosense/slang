@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.snippers &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snippers.html">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>slang.snippers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for slang.snippers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Snipping: Feature vector quantization&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span><span class="p">,</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="kn">import</span> <span class="n">LinearDiscriminantAnalysis</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+
+<span class="kn">from</span> <span class="nn">slang.chunkers</span> <span class="kn">import</span> <span class="n">fixed_step_chunker</span>
+<span class="kn">from</span> <span class="nn">slang.snip_stats</span> <span class="kn">import</span> <span class="n">BayesFactors</span>
+<span class="kn">from</span> <span class="nn">slang.core</span> <span class="kn">import</span> <span class="n">Snipper</span>
+<span class="kn">from</span> <span class="nn">slang.util</span> <span class="kn">import</span> <span class="n">row_euclidean_distance</span><span class="p">,</span> <span class="n">mk_callable</span>
+
+
+<span class="k">class</span> <span class="nc">DfltWfToChk</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">chk_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chk_size</span> <span class="o">=</span> <span class="n">chk_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_step</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>  <span class="c1"># no fitting required</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="n">fixed_step_chunker</span><span class="p">(</span>
+            <span class="n">wf</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">chk_step</span>
+        <span class="p">)</span>
+
+
+<div class="viewcode-block" id="PcaChkToFv"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.PcaChkToFv">[docs]</a><span class="nd">@mk_callable</span><span class="p">(</span><span class="s1">&#39;single_transform&#39;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">PcaChkToFv</span><span class="p">(</span><span class="n">PCA</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+    <span class="c1"># def __call__(self, fv):</span>
+    <span class="c1">#     return self.transform([fv])[0]</span>
+
+
+<div class="viewcode-block" id="LdaChkToFv"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.LdaChkToFv">[docs]</a><span class="nd">@mk_callable</span><span class="p">(</span><span class="s1">&#39;single_transform&#39;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">LdaChkToFv</span><span class="p">(</span><span class="n">LinearDiscriminantAnalysis</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="n">n_components</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<span class="n">DfltChkToFv</span> <span class="o">=</span> <span class="n">PcaChkToFv</span>
+
+
+<span class="k">class</span> <span class="nc">FvToSnip</span><span class="p">:</span>  <span class="c1"># TODO: Mixin? ABC?</span>
+    <span class="c1"># fit: optional</span>
+    <span class="c1"># __call__: required</span>
+    <span class="c1"># fvs_to_snips: required?</span>
+    <span class="c1"># fvs_to_snip_distance_pairs: required?</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fv_of_snip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;array providing representative fv for each snip&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="bp">NotImplemented</span><span class="p">(</span>
+            <span class="s1">&#39;Not implemented -- should be implemented in subclass of FvToSnipMixin&#39;</span>
+        <span class="p">)</span>
+        <span class="c1"># return None</span>
+
+
+<span class="kn">from</span> <span class="nn">slang.stypes</span> <span class="kn">import</span> <span class="n">FV</span><span class="p">,</span> <span class="n">FVs</span>
+
+
+<span class="c1"># TODO: choose n_clusters from len(X) at fit time</span>
+<span class="c1"># TODO: post_fit_proc shouldn&#39;t be here, but external and optional</span>
+<div class="viewcode-block" id="KMeansFvToSnip"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.KMeansFvToSnip">[docs]</a><span class="nd">@mk_callable</span><span class="p">(</span><span class="s1">&#39;single_predict&#39;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">KMeansFvToSnip</span><span class="p">(</span><span class="n">KMeans</span><span class="p">,</span> <span class="n">FvToSnip</span><span class="p">):</span>
+    <span class="n">stats_of_snip</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># will be filled when instance is fit</span>
+
+    <span class="c1"># cluster_centers_ = None  # will be filled when instance is fit</span>
+    <span class="c1"># n_clusters = None</span>
+    <span class="c1">#</span>
+    <span class="c1"># fv_of_snip = cluster_centers_  # Snipper&#39;s api expectation</span>
+    <span class="c1"># alphabet_size = n_clusters  # Snipper&#39;s api expectation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fv_of_snip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_centers_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">alphabet_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_clusters</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_clusters</span><span class="o">=</span><span class="mi">47</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_clusters</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># def __call__(self, fv: FV):</span>
+    <span class="c1">#     return self.predict([fv])[0]</span>
+
+<div class="viewcode-block" id="KMeansFvToSnip.fit"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.KMeansFvToSnip.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fvs</span><span class="p">:</span> <span class="n">FVs</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fvs</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
+        <span class="c1"># self.post_fit_proc(fvs, y, sample_weight=sample_weight)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="c1"># fvs_to_snips = KMeans.predict  # alias for predict</span>
+    <span class="c1"># ... replaced (because need to handle iterator of fvs) by:</span>
+    <span class="k">def</span> <span class="nf">fvs_to_snips</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fvs</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># return self.predict(list(fvs), sample_weight=sample_weight)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fvs</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">fvs</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">x</span><span class="p">]),</span> <span class="n">fvs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KMeansFvToSnip.fvs_to_snip_distance_pairs"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.KMeansFvToSnip.fvs_to_snip_distance_pairs">[docs]</a>    <span class="k">def</span> <span class="nf">fvs_to_snip_distance_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fvs</span><span class="p">:</span> <span class="n">FVs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;iterator of (snip, distance_to_snip_centroid) pairs&quot;&quot;&quot;</span>
+        <span class="n">fvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">fvs</span><span class="p">))</span>
+        <span class="n">snips</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fvs_to_snips</span><span class="p">(</span><span class="n">fvs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">snips</span><span class="p">,</span> <span class="n">row_euclidean_distance</span><span class="p">(</span><span class="n">fvs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fv_of_snip</span><span class="p">[</span><span class="n">snips</span><span class="p">]))</span></div></div>
+
+    <span class="c1"># def post_fit_proc(self, fvs, y=None, **kwargs):</span>
+    <span class="c1">#     d = defaultdict(list)</span>
+    <span class="c1">#     # TODO: Better than a for loop? (d.update(self.snip_and_distance(fvs)) doesn&#39;t work, but want something like))</span>
+    <span class="c1">#     for snip, distance in self.fvs_to_snip_distance_pairs(fvs):</span>
+    <span class="c1">#         d[snip].append(distance)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     # TODO: A numpy array might be more useful here</span>
+    <span class="c1">#     # self.stats_of_snip = np.empty(self.alphabet_size) * np.nan</span>
+    <span class="c1">#</span>
+    <span class="c1">#     self.stats_of_snip = {snip:</span>
+    <span class="c1">#                               dict(count=len(distances),</span>
+    <span class="c1">#                                    dist_sum=sum(distances),</span>
+    <span class="c1">#                                    dist_sum2=sum(np.array(distances) ** 2))</span>
+    <span class="c1">#                           for snip, distances in d.items()}</span>
+    <span class="c1">#</span>
+    <span class="c1">#     return self</span>
+
+
+<div class="viewcode-block" id="KMeansFvToSnipDist"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.KMeansFvToSnipDist">[docs]</a><span class="k">class</span> <span class="nc">KMeansFvToSnipDist</span><span class="p">(</span><span class="n">KMeansFvToSnip</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fv</span><span class="p">:</span> <span class="n">FV</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fvs_to_snip_distance_pairs</span><span class="p">([</span><span class="n">fv</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<span class="n">DfltFvToSnip</span> <span class="o">=</span> <span class="n">KMeansFvToSnip</span>
+
+<span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+
+<div class="viewcode-block" id="is_iterable"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.is_iterable">[docs]</a><span class="k">def</span> <span class="nf">is_iterable</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Similar in nature to :func:`callable`, ``is_iterable`` returns</span>
+<span class="sd">    ``True`` if an object is `iterable`_, ``False`` if not.</span>
+<span class="sd">    &gt;&gt;&gt; is_iterable([])</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; is_iterable(1)</span>
+<span class="sd">    False&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_assure_pair</span><span class="p">(</span><span class="n">iterables</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">iterables</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">iterables</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">is_iterable</span><span class="p">(</span><span class="n">iterables</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">iterables</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="c1"># TODO: else?... raise? If None on purpose, say it and why!</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">iterables</span><span class="p">))</span>
+
+
+<span class="n">_get_pairs</span> <span class="o">=</span> <span class="n">_assure_pair</span>  <span class="c1"># but deprecating</span>
+
+
+<span class="k">def</span> <span class="nf">_assure_zipped</span><span class="p">(</span><span class="n">iterables</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">iterables</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterables</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">iterables</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">iterables</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">iterables</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_is_a_tuple_of_aligned_iterables</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">iterate_over_pairs</span><span class="p">(</span><span class="n">pairs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_a_tuple_of_aligned_iterables</span><span class="p">(</span><span class="n">pairs</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pairs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="n">pairs</span>  <span class="c1"># assume pairs is an iterable of pairs</span>
+
+
+<div class="viewcode-block" id="FittableSnipper"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.FittableSnipper">[docs]</a><span class="k">class</span> <span class="nc">FittableSnipper</span><span class="p">(</span><span class="n">Snipper</span><span class="p">):</span>
+    <span class="n">wf_to_chks</span><span class="p">:</span> <span class="n">Callable</span>
+    <span class="n">chk_to_fv</span><span class="p">:</span> <span class="n">Callable</span>  <span class="c1"># TODO: Make a &quot;Callable and Fittable&quot; type</span>
+    <span class="n">fv_to_snip</span><span class="p">:</span> <span class="n">FvToSnip</span>  <span class="c1"># TODO: Make a &quot;Callable and Fittable&quot; type</span>
+
+    <span class="n">dflt_cls_of_name</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;wf_to_chks&#39;</span><span class="p">:</span> <span class="n">DfltWfToChk</span><span class="p">,</span>
+        <span class="s1">&#39;chk_to_fv&#39;</span><span class="p">:</span> <span class="n">PcaChkToFv</span><span class="p">,</span>
+        <span class="s1">&#39;fv_to_snip&#39;</span><span class="p">:</span> <span class="n">DfltFvToSnip</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">mk_component</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">assert_func</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">dflt_cls_of_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">role</span><span class="p">)()</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">dflt_cls_of_name</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">role</span><span class="p">)(</span><span class="o">**</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># as is</span>
+        <span class="k">if</span> <span class="n">assert_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">assert_func</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf_to_chks</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chk_to_fv</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fv_to_snip</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="n">wf_to_chks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mk_component</span><span class="p">(</span><span class="n">wf_to_chks</span><span class="p">,</span> <span class="s1">&#39;wf_to_chks&#39;</span><span class="p">,</span> <span class="n">assert_func</span><span class="o">=</span><span class="n">callable</span><span class="p">)</span>
+        <span class="n">chk_to_fv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mk_component</span><span class="p">(</span><span class="n">chk_to_fv</span><span class="p">,</span> <span class="s1">&#39;chk_to_fv&#39;</span><span class="p">,</span> <span class="n">assert_func</span><span class="o">=</span><span class="n">callable</span><span class="p">)</span>
+        <span class="n">fv_to_snip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mk_component</span><span class="p">(</span><span class="n">fv_to_snip</span><span class="p">,</span> <span class="s1">&#39;fv_to_snip&#39;</span><span class="p">,</span> <span class="n">assert_func</span><span class="o">=</span><span class="n">callable</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wf_to_chks</span><span class="p">,</span> <span class="n">chk_to_fv</span><span class="p">,</span> <span class="n">fv_to_snip</span><span class="p">)</span>
+
+        <span class="c1"># TODO: Find a more concise way to take care of block above. Like... (but not working)</span>
+        <span class="c1"># _locals = locals()</span>
+        <span class="c1"># for obj_role in [&#39;wf_to_chks&#39;, &#39;chk_to_fv&#39;, &#39;fv_to_snip&#39;, &#39;snip_to_score&#39;]:</span>
+        <span class="c1">#     _locals[obj_role] = self.mk_component(_locals[obj_role], obj_role, assert_func=callable)</span>
+
+    <span class="c1"># TODO: Make the next three methods more DRY (see also ClassificationSnipper.fit_snip_to_score)</span>
+    <span class="k">def</span> <span class="nf">fit_wf_to_chks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">wfs_tags</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wf_to_chks</span><span class="p">,</span> <span class="s1">&#39;fit&#39;</span><span class="p">):</span>
+            <span class="n">chks</span><span class="p">,</span> <span class="n">tags</span> <span class="o">=</span> <span class="n">_assure_pair</span><span class="p">(</span>
+                <span class="n">wfs_tags</span>
+            <span class="p">)</span>  <span class="c1"># need to generalize to situations with no tags</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wf_to_chks</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">chks</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">fit_chk_to_fv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">chks_tags</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chk_to_fv</span><span class="p">,</span> <span class="s1">&#39;fit&#39;</span><span class="p">):</span>
+            <span class="n">chks</span><span class="p">,</span> <span class="n">tags</span> <span class="o">=</span> <span class="n">_assure_pair</span><span class="p">(</span><span class="n">chks_tags</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chk_to_fv</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">chks</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">fit_fv_to_snip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">fvs_tags</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fv_to_snip</span><span class="p">,</span> <span class="s1">&#39;fit&#39;</span><span class="p">):</span>
+            <span class="n">fvs</span><span class="p">,</span> <span class="n">tags</span> <span class="o">=</span> <span class="n">_assure_pair</span><span class="p">(</span><span class="n">fvs_tags</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fv_to_snip</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">fvs</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="c1"># TODO: Dagify all this. Too hardcoded. No caching. No flexibility</span>
+
+    <span class="k">def</span> <span class="nf">chk_tag_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf_tag_gen</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">wf</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">wf_tag_gen</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">chk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wf_to_chks</span><span class="p">(</span><span class="n">wf</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">chk</span><span class="p">,</span> <span class="n">tag</span>
+
+    <span class="k">def</span> <span class="nf">fv_tag_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf_tag_gen</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">chk</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chk_tag_gen</span><span class="p">(</span><span class="n">wf_tag_gen</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">chk_to_fv</span><span class="p">(</span><span class="n">chk</span><span class="p">),</span> <span class="n">tag</span>
+
+    <span class="k">def</span> <span class="nf">snip_tag_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf_tag_gen</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">fv</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fv_tag_gen</span><span class="p">(</span><span class="n">wf_tag_gen</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">fv_to_snip</span><span class="p">(</span><span class="n">fv</span><span class="p">),</span> <span class="n">tag</span>
+
+    <span class="k">def</span> <span class="nf">fit_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf_tags_gen</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_wf_to_chks</span><span class="p">(</span><span class="n">wf_tags_gen</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_chk_to_fv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chk_tag_gen</span><span class="p">(</span><span class="n">wf_tags_gen</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_fv_to_snip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fv_tag_gen</span><span class="p">(</span><span class="n">wf_tags_gen</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wf_tags_gen</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[</span><span class="n">y</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wf_tags_gen</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_pipeline</span><span class="p">(</span><span class="n">wf_tags_gen</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ClassificationSnipper"><a class="viewcode-back" href="../../module_docs/slang/snippers.html#slang.snippers.ClassificationSnipper">[docs]</a><span class="k">class</span> <span class="nc">ClassificationSnipper</span><span class="p">(</span><span class="n">FittableSnipper</span><span class="p">):</span>
+    <span class="n">snip_to_score</span><span class="p">:</span> <span class="n">Callable</span>  <span class="c1"># TODO: Make a &quot;Callable and Fittable&quot; type</span>
+
+    <span class="n">dflt_cls_of_name</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">FittableSnipper</span><span class="o">.</span><span class="n">dflt_cls_of_name</span><span class="p">,</span> <span class="n">snip_to_score</span><span class="o">=</span><span class="n">BayesFactors</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">wf_to_chks</span><span class="o">=</span><span class="n">DfltWfToChk</span><span class="p">(),</span>
+        <span class="n">chk_to_fv</span><span class="o">=</span><span class="n">DfltChkToFv</span><span class="p">,</span>
+        <span class="n">fv_to_snip</span><span class="o">=</span><span class="n">DfltFvToSnip</span><span class="p">,</span>
+        <span class="n">snip_to_score</span><span class="o">=</span><span class="n">BayesFactors</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wf_to_chks</span><span class="p">,</span> <span class="n">chk_to_fv</span><span class="p">,</span> <span class="n">fv_to_snip</span><span class="p">)</span>
+
+        <span class="n">snip_to_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mk_component</span><span class="p">(</span>
+            <span class="n">snip_to_score</span><span class="p">,</span> <span class="s1">&#39;snip_to_score&#39;</span><span class="p">,</span> <span class="n">assert_func</span><span class="o">=</span><span class="n">callable</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snip_to_score</span> <span class="o">=</span> <span class="n">snip_to_score</span>
+
+    <span class="k">def</span> <span class="nf">fit_snip_to_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">snips_tags</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snip_to_score</span><span class="p">,</span> <span class="s1">&#39;fit&#39;</span><span class="p">):</span>
+            <span class="n">snips</span><span class="p">,</span> <span class="n">tags</span> <span class="o">=</span> <span class="n">_assure_pair</span><span class="p">(</span><span class="n">snips_tags</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snip_to_score</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">snips</span><span class="p">,</span> <span class="n">tags</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="c1"># TODO: Dagify all this. Too hardcoded. No caching. No flexibility</span>
+
+    <span class="k">def</span> <span class="nf">fit_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wf_tags_gen</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit_pipeline</span><span class="p">(</span><span class="n">wf_tags_gen</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_snip_to_score</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snip_tag_gen</span><span class="p">(</span><span class="n">wf_tags_gen</span><span class="p">))</span></div>
+
+
+<span class="c1"># from slang.snip_stats import ClassifiedMomentsFitter</span>
+<span class="c1"># from itertools import chain</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># class OutlierSnipper(FittableSnipper):</span>
+<span class="c1">#     snip_to_score: Callable  # TODO: Make a &quot;Callable and Fittable&quot; type</span>
+<span class="c1">#</span>
+<span class="c1">#     dflt_cls_of_name: dict = dict(FittableSnipper.dflt_cls_of_name, snip_to_score=ClassifiedMomentsFitter)</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, wf_to_chks=DfltWfToChk(),</span>
+<span class="c1">#                  chk_to_fv=DfltChkToFv,</span>
+<span class="c1">#                  fv_to_snip=DfltFvToSnip,</span>
+<span class="c1">#                  snip_to_score=ClassifiedMomentsFitter):</span>
+<span class="c1">#         super().__init__(wf_to_chks, chk_to_fv, fv_to_snip)</span>
+<span class="c1">#</span>
+<span class="c1">#         snip_to_score = self.mk_component(snip_to_score, &#39;snip_to_score&#39;, assert_func=callable)</span>
+<span class="c1">#         self.snip_to_score = snip_to_score</span>
+<span class="c1">#</span>
+<span class="c1">#     def fit_snip_to_score(self, *dist_snips):</span>
+<span class="c1">#         if hasattr(self.snip_to_score, &#39;fit&#39;):</span>
+<span class="c1">#             dist, snips = _assure_pair(dist_snips)</span>
+<span class="c1">#             self.snip_to_score.fit(dist, snips)</span>
+<span class="c1">#         return self</span>
+<span class="c1">#</span>
+<span class="c1">#     # TODO: Dagify all this. Too hardcoded. No caching. No flexibility</span>
+<span class="c1">#</span>
+<span class="c1">#     def fit_pipeline(self, wf_gen):</span>
+<span class="c1">#         # super().fit_pipeline(wf_tags_gen)</span>
+<span class="c1">#         self.fit_wf_to_chks(wf_gen())</span>
+<span class="c1">#         self.fit_chk_to_fv(self.chk_tag_gen(wf_tags_gen))</span>
+<span class="c1">#         fvs = map(self.chk_to_fv, chain.from_iterable(map(self.wf_to_chks,</span>
+<span class="c1">#         self.fit_fv_to_snip(self.fv_tag_gen(wf_tags_gen))</span>
+<span class="c1">#</span>
+<span class="c1">#         self.fit_snip_to_score(self.snip_tag_gen(wf_tags_gen))</span>
+
+<span class="c1"># def snips_of_wf(self, wf: Waveform) -&gt; Snips:</span>
+<span class="c1">#     warn(&quot;The name &#39;snips_of_wf&#39; be replaced by &#39;wf_to_snips&#39; soon.&quot;)</span>
+<span class="c1">#     for chk in self.wf_to_chks(wf):</span>
+<span class="c1">#         fv = self.chk_to_fv(chk)</span>
+<span class="c1">#         yield self.fv_to_snip(fv)</span>
+<span class="c1">#</span>
+<span class="c1"># def wf_to_fvs(self, wf: Waveform) -&gt; FVs:</span>
+<span class="c1">#     for chk in self.wf_to_chks(wf):</span>
+<span class="c1">#         yield self.chk_to_fv(chk)</span>
+<span class="c1">#</span>
+<span class="c1"># def chk_to_snip(self, chk: Chunk) -&gt; Snip:</span>
+<span class="c1">#     return self.fv_to_snip(self.chk_to_fv(chk))</span>
+<span class="c1">#</span>
+<span class="c1"># def wf_to_snips(self, wf: Waveform) -&gt; Snips:</span>
+<span class="c1">#     for chk in self.wf_to_chks(wf):</span>
+<span class="c1">#         fv = self.chk_to_fv(chk)</span>
+<span class="c1">#         yield self.fv_to_snip(fv)</span>
+
+
+<span class="n">SlangClassifier</span> <span class="o">=</span> <span class="n">ClassificationSnipper</span>  <span class="c1"># alias for back compatibility</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.snip_stats &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snippers.html">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>slang.snip_stats</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for slang.snip_stats</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Snip statistics functions&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">Counter</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span>
+<span class="kn">from</span> <span class="nn">py2store.util</span> <span class="kn">import</span> <span class="n">groupby</span>
+
+<span class="kn">from</span> <span class="nn">slang.util</span> <span class="kn">import</span> <span class="n">lazyprop</span><span class="p">,</span> <span class="n">running_mean_gen</span><span class="p">,</span> <span class="n">row_euclidean_distance</span>
+<span class="kn">from</span> <span class="nn">slang.util</span> <span class="kn">import</span> <span class="n">snips_to_str</span> <span class="k">as</span> <span class="n">dflt_snips_to_str</span>
+
+<span class="n">GroupId</span> <span class="o">=</span> <span class="nb">int</span>
+<span class="n">FV</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
+<span class="n">GroupedFV</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">GroupId</span><span class="p">,</span> <span class="n">FV</span><span class="p">]</span>
+
+
+<span class="c1"># Note: ClassifiedMoments and ClassifiedMomentsFitter untested and paused for now</span>
+<span class="c1"># @dataclass</span>
+<span class="c1"># TODO: Review-w-mp</span>
+<span class="k">class</span> <span class="nc">ClassifiedMoments</span><span class="p">:</span>
+    <span class="n">_zero_var</span> <span class="o">=</span> <span class="mf">33e-33</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_classes_</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">initial_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_classes_</span> <span class="o">=</span> <span class="n">n_classes_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_count</span> <span class="o">=</span> <span class="n">initial_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_stats</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">initialize_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_classes_</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_count</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_classes_</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum2_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_classes_</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_count_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_sum_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_sum2_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum2_</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_mean_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_sum_</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_count_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_var_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_zero_var</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_sum2_</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_count_</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_mean_</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>  <span class="c1"># TODO: verify</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">global_std_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_var_</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">inverse_frequency_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mean_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">count_</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">var_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Variance: E[X**2] - E[X]**2 (https://en.wikipedia.org/wiki/Variance)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum2_</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1">#</span>
+
+    <span class="k">def</span> <span class="nf">inverse_frequency_for_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">var_for_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum2_</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span> <span class="o">/</span> <span class="n">count</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum_</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span> <span class="o">/</span> <span class="n">count</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="k">def</span> <span class="nf">predict_within_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gfvs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GroupedFV</span><span class="p">]):</span>
+        <span class="n">groups</span><span class="p">,</span> <span class="n">fvs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">gfvs</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span>
+                <span class="nb">zip</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">inverse_frequency_for_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">),</span>
+                    <span class="n">fvs</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_for_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">)),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">predict_global</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gfvs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GroupedFV</span><span class="p">]):</span>
+        <span class="n">groups</span><span class="p">,</span> <span class="n">fvs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">gfvs</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inverse_frequency_for_groups</span><span class="p">(</span><span class="n">groups</span><span class="p">),</span> <span class="n">fvs</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_std_</span><span class="p">))</span>
+        <span class="p">)</span>
+
+    <span class="n">predict</span> <span class="o">=</span> <span class="n">predict_global</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gfv</span><span class="p">:</span> <span class="n">GroupedFV</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">gfv</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+
+<span class="c1"># Make ABC or mother class</span>
+<div class="viewcode-block" id="ClassifiedMomentsFitter"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.ClassifiedMomentsFitter">[docs]</a><span class="k">class</span> <span class="nc">ClassifiedMomentsFitter</span><span class="p">(</span><span class="n">ClassifiedMoments</span><span class="p">,</span> <span class="n">BaseEstimator</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">fit_partial_single</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gfv</span><span class="p">:</span> <span class="n">GroupedFV</span><span class="p">):</span>
+        <span class="n">group</span><span class="p">,</span> <span class="n">fv</span> <span class="o">=</span> <span class="n">gfv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count_</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum2_</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fv</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="c1"># # TODO: Make this work</span>
+    <span class="c1"># def __iadd__(self, gfv: GroupedFV):</span>
+    <span class="c1">#     return self.fit_partial_single(gfv)</span>
+
+    <span class="k">def</span> <span class="nf">_group_x_by_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="c1"># TODO: Better than a for loop? (d.update(self.snip_and_distance(fvs)) doesn&#39;t work, but want something like))</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span>
+
+    <span class="k">def</span> <span class="nf">fit_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gfvs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GroupedFV</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">gfv</span> <span class="ow">in</span> <span class="n">gfvs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fit_partial_single</span><span class="p">(</span><span class="n">gfv</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gfvs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">GroupedFV</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_classes_</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_classes_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_stats</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_partial</span><span class="p">(</span><span class="n">gfvs</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_is_a_tuple_of_aligned_iterables</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s1">&#39;__len__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">iterate_over_pairs</span><span class="p">(</span><span class="n">pairs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">_is_a_tuple_of_aligned_iterables</span><span class="p">(</span><span class="n">pairs</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pairs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="n">pairs</span>  <span class="c1"># assume pairs is an iterable of pairs</span>
+
+
+<span class="k">def</span> <span class="nf">mk_snips_of_tag_dict</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">groupby</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+
+<span class="c1"># TODO: Fillna is not additive smoothing, so should make it so?</span>
+<span class="k">class</span> <span class="nc">TagSnipStats</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        :param snips: The snips to analyze</span>
+<span class="sd">        :param tags: The corresponding tags (one per snip)</span>
+<span class="sd">        :param snips_to_str: A function that outputs a string of characters corresponding to the snip sequence</span>
+<span class="sd">        :param fillna: The pseudocount that will be used in the probability estimator.</span>
+<span class="sd">            That is, the value to assign to non-observed (snip, tag) pairs count.</span>
+<span class="sd">            See https://en.wikipedia.org/wiki/Additive_smoothing</span>
+<span class="sd">        :param tag_order:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snips</span> <span class="o">=</span> <span class="n">snips</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">snips_to_str</span> <span class="o">=</span> <span class="n">snips_to_str</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fillna</span> <span class="o">=</span> <span class="n">fillna</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_order</span> <span class="o">=</span> <span class="n">tag_order</span>
+
+    <span class="nd">@lazyprop</span>
+    <span class="k">def</span> <span class="nf">snip_tag_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df_of_snip_count_for_tag</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips_to_str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fillna</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_order</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tag_order</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">total_count</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">snip_order</span> <span class="o">=</span> <span class="p">(</span><span class="n">total_count</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">snip_order</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">df</span>
+
+    <span class="nd">@lazyprop</span>
+    <span class="k">def</span> <span class="nf">snip_count_for_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">tag_snip_count_dict_from_tags_and_snips</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips</span><span class="p">)</span>
+
+    <span class="nd">@lazyprop</span>
+    <span class="k">def</span> <span class="nf">snip_order</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">snip_tag_counts</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+
+    <span class="nd">@lazyprop</span>
+    <span class="k">def</span> <span class="nf">log_bayes_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">bayes_factor_df_from_snip_count_df</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">snip_tag_counts</span><span class="p">))</span>
+
+    <span class="nd">@lazyprop</span>
+    <span class="k">def</span> <span class="nf">snips_of_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">mk_snips_of_tag_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tags</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">scores_for_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">snips</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">snips</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">snips</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_bayes_factor</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">,</span> <span class="n">snips</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">plot_snip_count_for_tag</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+        <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">plot_snip_count_for_tag</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snip_count_for_tag</span><span class="p">,</span>
+            <span class="n">snips_to_str</span><span class="o">=</span><span class="n">snips_to_str</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span>
+            <span class="n">tag_order</span><span class="o">=</span><span class="n">tag_order</span><span class="p">,</span>
+            <span class="n">output_fig</span><span class="o">=</span><span class="n">output_fig</span><span class="p">,</span>
+            <span class="n">ylabel_rotation</span><span class="o">=</span><span class="n">ylabel_rotation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># TODO: Make a decorator that takes care of the `x = x or getattr(self, x, None)` pattern</span>
+    <span class="k">def</span> <span class="nf">plot_bars_of_tag_snip_stats</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span>
+        <span class="n">output_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+        <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">snip_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">tag_order</span> <span class="o">=</span> <span class="n">tag_order</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_order</span>
+        <span class="n">snip_order</span> <span class="o">=</span> <span class="n">snip_order</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">snip_order</span>
+        <span class="n">snips_to_str</span> <span class="o">=</span> <span class="n">snips_to_str</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips_to_str</span>
+        <span class="n">bar_plot_of_tag_snip_stats</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_bayes_factor</span><span class="p">,</span>
+            <span class="n">snips_to_str</span><span class="o">=</span><span class="n">snips_to_str</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span>
+            <span class="n">snip_order</span><span class="o">=</span><span class="n">snip_order</span><span class="p">,</span>
+            <span class="n">tag_order</span><span class="o">=</span><span class="n">tag_order</span><span class="p">,</span>
+            <span class="n">output_fig</span><span class="o">=</span><span class="n">output_fig</span><span class="p">,</span>
+            <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="n">ylabel_fontsize</span><span class="p">,</span>
+            <span class="n">ylabel_rotation</span><span class="o">=</span><span class="n">ylabel_rotation</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">plot_tag_scores</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">snips</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">chk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">chk_step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span>
+        <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">predict_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">normal_style</span><span class="o">=</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span>
+        <span class="n">over_predict_style</span><span class="o">=</span><span class="s1">&#39;ob&#39;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_order</span>
+        <span class="k">if</span> <span class="n">snips</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">snips</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips_of_tag</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="p">[]))</span>
+
+        <span class="n">gen</span> <span class="o">=</span> <span class="n">tag_scores_gen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scores_for_tag</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">)</span>
+        <span class="n">tag_snips_cursor</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">n_tags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">scores</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+            <span class="n">x_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_tags</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">normal_style</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">predict_thresh</span><span class="p">],</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+            <span class="n">over_predict_thresh</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">&gt;=</span> <span class="n">predict_thresh</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">x_vals</span><span class="p">[</span><span class="n">over_predict_thresh</span><span class="p">],</span>
+                <span class="n">scores</span><span class="p">[</span><span class="n">over_predict_thresh</span><span class="p">],</span>
+                <span class="n">over_predict_style</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1">#     n_tag_snips = len(tss.snips_of_tag[tag])</span>
+            <span class="c1">#     these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]</span>
+            <span class="c1">#     tag_snips_idx = list(range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores)))</span>
+            <span class="c1">#     plt.plot(tag_snips_idx, these_snip_scores, &#39;-o&#39;,  color=&#39;k&#39;);</span>
+            <span class="c1">#     tag_snips_cursor += n_tag_snips</span>
+
+            <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">ylabel_fontsize</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">ylabel_rotation</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">plot_smoothed_log_bayes_factors</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">plot_smoothed_log_bayes_factors</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">snips_of_tag</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">log_bayes_factor</span><span class="p">,</span>
+            <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">,</span>
+            <span class="n">chk_step</span><span class="o">=</span><span class="n">chk_step</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="n">tag_order</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">tags_and_snips_str_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">snips</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">snips_to_str</span> <span class="o">=</span> <span class="n">snips_to_str</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips_to_str</span> <span class="ow">or</span> <span class="n">dflt_snips_to_str</span>
+        <span class="k">if</span> <span class="n">tags</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">snips</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">snips_of_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snips_of_tag</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">snips_of_tag</span> <span class="o">=</span> <span class="n">mk_snips_of_tag_dict</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">snips</span> <span class="ow">in</span> <span class="n">snips_of_tag</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">tag</span><span class="p">,</span> <span class="n">snips_to_str</span><span class="p">(</span><span class="n">snips</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">mk_tags_and_snips_str_string</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">snips</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">tag_snips_format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&lt;21}</span><span class="s1">: </span><span class="si">{}</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">snips_str</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tags_and_snips_str_gen</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">snips_to_str</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">tag_snips_format_str</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">snips_str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">def</span> <span class="nf">print_tags_and_snips_str</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">snips</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">tag_snips_format_str</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{:&lt;21}</span><span class="s1">: </span><span class="si">{}</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mk_tags_and_snips_str_string</span><span class="p">(</span>
+                <span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">snips_to_str</span><span class="p">,</span> <span class="n">tag_snips_format_str</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+
+<span class="c1"># class SnipStats:</span>
+<span class="c1">#     &quot;&quot;&quot;Compute frequency and centroid distance statistics on snips</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     def __init__(self, pseudocount=0, tag_order=None, alphabet_size=None):</span>
+<span class="c1">#         self.pseudocount = pseudocount</span>
+<span class="c1">#         self.tag_order = tag_order</span>
+<span class="c1">#         self._alphabet_size = alphabet_size  # TODO: Use to tell TagSnipStats it should fill until there</span>
+<span class="c1">#</span>
+<span class="c1">#     @lazyprop</span>
+<span class="c1">#     def alphabet_size(self):</span>
+<span class="c1">#         return self._alphabet_size or self.log_bayes_factor_.index.max()</span>
+<span class="c1">#</span>
+<span class="c1">#     def fit(self, snips, tags=None):</span>
+<span class="c1">#         self.tag_snip_stats = TagSnipStats(snips, tags, fillna=self.pseudocount, tag_order=self.tag_order)</span>
+<span class="c1">#         self.log_bayes_factor_ = self.tag_snip_stats.log_bayes_factor.sort_index()</span>
+<span class="c1">#         self.classes_ = self.tag_snip_stats.tag_order</span>
+<span class="c1">#         return self</span>
+
+
+<div class="viewcode-block" id="BayesFactors"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.BayesFactors">[docs]</a><span class="k">class</span> <span class="nc">BayesFactors</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;BayesFactors classifier with sklearn-like interface. predict_probas are the log2 of the bayes factor.</span>
+<span class="sd">    It is sklearn-like, but to avoid depending on sklearn, it isn&#39;t a subclass of BaseEstimator and ClassifierMixin.</span>
+<span class="sd">    It just has the essentials of the classifier: a `fit`, a `predict_proba` and a derived `predict` method, and</span>
+<span class="sd">    a `classes_` attribute that indices the columns of the `predict_proba` matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pseudocount</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alphabet_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pseudocount</span> <span class="o">=</span> <span class="n">pseudocount</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_order</span> <span class="o">=</span> <span class="n">tag_order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alphabet_size</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">alphabet_size</span>  <span class="c1"># TODO: Use to tell TagSnipStats it should fill until there</span>
+        <span class="p">)</span>
+
+    <span class="nd">@lazyprop</span>
+    <span class="k">def</span> <span class="nf">alphabet_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_alphabet_size</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_bayes_factor_</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag_snip_stats</span> <span class="o">=</span> <span class="n">TagSnipStats</span><span class="p">(</span>
+            <span class="n">snips</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pseudocount</span><span class="p">,</span> <span class="n">tag_order</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag_order</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_bayes_factor_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_snip_stats</span><span class="o">.</span><span class="n">log_bayes_factor</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag_snip_stats</span><span class="o">.</span><span class="n">tag_order</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_params</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">log_bayes_factor_</span><span class="p">,</span> <span class="n">classes_</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">classes_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">classes_</span> <span class="o">=</span> <span class="n">log_bayes_factor_</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_bayes_factor_</span> <span class="o">=</span> <span class="n">log_bayes_factor_</span><span class="p">[</span>
+            <span class="n">classes_</span>
+        <span class="p">]</span>  <span class="c1"># To assert columns contents and ensure order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="n">classes_</span>
+
+    <span class="k">def</span> <span class="nf">scores_for_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">snips</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_bayes_factor_</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">,</span> <span class="n">snips</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">predict_proba</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snips</span><span class="p">):</span>
+        <span class="n">scores_for_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores_for_tag</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">scores_for_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">snips</span><span class="p">)</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+<div class="viewcode-block" id="BayesFactors.predict"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.BayesFactors.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snips</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Predict class labels for each snip of snips sequence.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">snips</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_assert_sanity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_bayes_factor_</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span> <span class="o">==</span> <span class="p">{</span>
+            <span class="mi">1</span>
+        <span class="p">},</span> <span class="s1">&#39;some snips are missing!&#39;</span>
+
+    <span class="n">_diagnosis</span> <span class="o">=</span> <span class="n">_assert_sanity</span>  <span class="c1"># but deprecating _diagnosis</span>
+
+    <span class="c1"># TODO: self.snip_to_score([0]) blows up, but self.snip_to_score([0, 1, 2]) gives me a score (should blow up)</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snip</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">snip</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<span class="k">def</span> <span class="nf">mk_model_caller</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;asis&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;predict_proba&#39;</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">model_caller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snip</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">snip</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;tag_probs&#39;</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">model_caller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snip</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">tag</span><span class="p">:</span> <span class="n">prob</span>
+                <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">snip</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="p">}</span>
+
+    <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;predict&#39;</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">model_caller</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snip</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">snip</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown kind: </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model_caller</span>
+
+
+<div class="viewcode-block" id="PredictProbaBF"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.PredictProbaBF">[docs]</a><span class="k">class</span> <span class="nc">PredictProbaBF</span><span class="p">(</span><span class="n">BayesFactors</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snip</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">snip</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TagProbsBF"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.TagProbsBF">[docs]</a><span class="k">class</span> <span class="nc">TagProbsBF</span><span class="p">(</span><span class="n">BayesFactors</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snip</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">tag</span><span class="p">:</span> <span class="n">prob</span> <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">classes_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">([</span><span class="n">snip</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="PredictBF"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.PredictBF">[docs]</a><span class="k">class</span> <span class="nc">PredictBF</span><span class="p">(</span><span class="n">BayesFactors</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snip</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">([</span><span class="n">snip</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="tag_slice_iter_from_slices_of_tag_dict"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.tag_slice_iter_from_slices_of_tag_dict">[docs]</a><span class="k">def</span> <span class="nf">tag_slice_iter_from_slices_of_tag_dict</span><span class="p">(</span><span class="n">slices_of_tag</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get an iterator of (tag, (bt, tt)) pairs</span>
+<span class="sd">    :param slices_of_tag: a {tag: [(bt, tt),...], ...} dict listing slices annotated by tags</span>
+<span class="sd">    :return: a tag, (bt, tt) iterator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">slices</span> <span class="ow">in</span> <span class="n">slices_of_tag</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">sl</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">tag</span><span class="p">,</span> <span class="n">sl</span></div>
+
+
+<span class="c1"># def snip_count_for_tag_from_wf_and_tag_slice_iter(wf, tag_slice_iter, snips_of_wf, sr=None):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     :param wf: waveform of oto.sound.audio.Sound object</span>
+<span class="c1">#     :param tag_slice_iter:</span>
+<span class="c1">#     :param snips_of_wf:</span>
+<span class="c1">#     :param sr:</span>
+<span class="c1">#     :return:</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#</span>
+<span class="c1">#     # from slang.utils.audio_core import Sound</span>
+<span class="c1">#     snip_count_for_tag = defaultdict(Counter)</span>
+<span class="c1">#</span>
+<span class="c1">#     for tag, sl in tag_slice_iter:</span>
+<span class="c1">#         chk = sound[slice(*sl)].wf  # wf chunk for sl slice</span>
+<span class="c1">#         chk_snips = snips_of_wf(chk)</span>
+<span class="c1">#         snip_count_for_tag[tag].update(chk_snips)</span>
+<span class="c1">#</span>
+<span class="c1">#     return dict(snip_count_for_tag)</span>
+
+
+<span class="k">def</span> <span class="nf">tag_snip_count_dict_from_tags_and_snips</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">):</span>
+    <span class="n">snip_count_for_tag</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">snip</span><span class="p">),</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">Counter</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">))</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">snip_count_for_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="n">snip</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">snip_count_for_tag</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="df_of_snip_count_for_tag"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.df_of_snip_count_for_tag">[docs]</a><span class="k">def</span> <span class="nf">df_of_snip_count_for_tag</span><span class="p">(</span>
+    <span class="n">snip_count_for_tag</span><span class="p">,</span> <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A df representation of snip_count_for_tag</span>
+<span class="sd">    :param snip_count_for_tag: {tag: {snip: count, ...},...} dict</span>
+<span class="sd">    :param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)</span>
+<span class="sd">    :param fillna: What to fill missing values with</span>
+<span class="sd">    :param tag_order: Serves both to specify an order of the tags, and to specify a subset of tags if we don&#39;t want all</span>
+<span class="sd">    :return: A dataframe of snip (in rows) counts for each tag (in columns)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">snip_count_for_tag</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">snip_count_for_tag</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">snip_count_for_tag</span> <span class="o">=</span> <span class="n">tag_snip_count_dict_from_tags_and_snips</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">snip_count_for_tag</span>
+        <span class="p">)</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">snip_count_for_tag</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">fillna</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tag_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">tag_order</span><span class="p">]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;snip&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">snips_to_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">&#39;snip&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">snips_to_str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;snip&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df</span></div>
+
+
+<span class="k">def</span> <span class="nf">snip_order_from_snip_count_df</span><span class="p">(</span><span class="n">snip_count_df</span><span class="p">):</span>
+    <span class="n">total_count</span> <span class="o">=</span> <span class="n">snip_count_df</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">total_count</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span>
+
+
+<span class="k">def</span> <span class="nf">bayes_factor_df_from_snip_count_df</span><span class="p">(</span><span class="n">snip_count_df</span><span class="p">):</span>
+    <span class="n">smoothed_count</span> <span class="o">=</span> <span class="n">snip_count_df</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">total_snip_count</span> <span class="o">=</span> <span class="n">smoothed_count</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">prob_given_tag</span> <span class="o">=</span> <span class="n">smoothed_count</span> <span class="o">/</span> <span class="n">smoothed_count</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># prob_given_not_tag = total_snip_count.sub(smoothed_count, level=0, fill_value=0, axis=0)</span>
+    <span class="n">prob_given_not_tag</span> <span class="o">=</span> <span class="o">-</span><span class="n">smoothed_count</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">total_snip_count</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">prob_given_not_tag</span> <span class="o">/=</span> <span class="n">prob_given_not_tag</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">prob_given_tag</span> <span class="o">/</span> <span class="n">prob_given_not_tag</span>
+
+
+<span class="k">def</span> <span class="nf">log_bayes_factor_bayes_factor_df_from_snip_count_df</span><span class="p">(</span><span class="n">snip_count_df</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">bayes_factor_df_from_snip_count_df</span><span class="p">(</span><span class="n">snip_count_df</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="bar_plot_of_tag_snip_stats"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.bar_plot_of_tag_snip_stats">[docs]</a><span class="k">def</span> <span class="nf">bar_plot_of_tag_snip_stats</span><span class="p">(</span>
+    <span class="n">snip_stats_for_tag</span><span class="p">,</span>
+    <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">snip_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multiplot of snip count bars for each tag (in a different row). First row is the total count for each snip.</span>
+<span class="sd">    :param snip_count_for_tag: {tag: {snip: count, ...},...} nested dict</span>
+<span class="sd">    :param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)</span>
+<span class="sd">    :param figsize:</span>
+<span class="sd">    :param output_fig:</span>
+<span class="sd">    :param tag_order: Serves both to specify an order of the tags, and to specify a subset of tags if we don&#39;t want all</span>
+<span class="sd">    :param ylabel_rotation: Will be applied to the ylabel</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">figsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">snips_to_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">snips_to_str</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">snips</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">snips</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">snip_stats_for_tag</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">snip_stats_for_tag</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">snip_stats_for_tag</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">snip_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">snip_stats_for_tag</span> <span class="o">=</span> <span class="n">snip_stats_for_tag</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">snip_order</span><span class="p">,</span> <span class="p">:]</span>
+
+    <span class="k">if</span> <span class="n">tag_order</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">snip_stats_for_tag</span> <span class="o">=</span> <span class="n">snip_stats_for_tag</span><span class="p">[</span><span class="n">tag_order</span><span class="p">]</span>
+
+    <span class="n">n_tags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">snip_stats_for_tag</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">n_snips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">snip_stats_for_tag</span><span class="p">)</span>
+
+    <span class="n">ax_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">snip_stats_for_tag</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">sr</span> <span class="o">=</span> <span class="n">snip_stats_for_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_tags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">ax_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">positive_lidx</span> <span class="o">=</span> <span class="n">sr</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">sr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">positive_lidx</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="kc">True</span><span class="p">:</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">:</span> <span class="s1">&#39;#D3D3D3&#39;</span><span class="p">}))</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="n">ylabel_rotation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ylabel_fontsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="n">ylabel_fontsize</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span>
+                <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_snips</span><span class="p">)),</span> <span class="n">snips_to_str</span><span class="p">(</span><span class="n">snip_stats_for_tag</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_snips</span><span class="p">)),</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="n">n_snips</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_snips</span><span class="p">)),</span> <span class="n">snips_to_str</span><span class="p">(</span><span class="n">snip_stats_for_tag</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">n_snips</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">ax_list</span><span class="p">:</span>
+            <span class="c1"># ax.grid(True, axis=&#39;x&#39;)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output_fig</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="plot_snip_count_for_tag"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.plot_snip_count_for_tag">[docs]</a><span class="k">def</span> <span class="nf">plot_snip_count_for_tag</span><span class="p">(</span>
+    <span class="n">snip_count_for_tag</span><span class="p">,</span>
+    <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">output_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multiplot of snip count bars for each tag (in a different row). First row is the total count for each snip.</span>
+<span class="sd">    :param snip_count_for_tag: {tag: {snip: count, ...},...} nested dict</span>
+<span class="sd">    :param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)</span>
+<span class="sd">    :param figsize:</span>
+<span class="sd">    :param output_fig:</span>
+<span class="sd">    :param tag_order: Serves both to specify an order of the tags, and to specify a subset of tags if we don&#39;t want all</span>
+<span class="sd">    :param ylabel_rotation: Will be applied to the ylabel</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">figsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">snips_to_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">snips_to_str</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">snips</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">snips</span><span class="p">))</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df_of_snip_count_for_tag</span><span class="p">(</span><span class="n">snip_count_for_tag</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag_order</span><span class="o">=</span><span class="n">tag_order</span><span class="p">)</span>
+    <span class="n">n_tags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ALL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;ALL&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">n_snips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">ax_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">sr</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_tags</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">ax_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+        <span class="n">sr</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="n">ylabel_rotation</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ylabel_fontsize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">set_fontsize</span><span class="p">(</span><span class="n">ylabel_fontsize</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_snips</span><span class="p">)),</span> <span class="n">snips_to_str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_snips</span><span class="p">)),</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="n">n_snips</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_snips</span><span class="p">)),</span> <span class="n">snips_to_str</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">ax_list</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output_fig</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<span class="k">def</span> <span class="nf">plot_tag_scores_for_snips</span><span class="p">(</span>
+    <span class="n">snips_of_tag</span><span class="p">,</span>
+    <span class="n">snip_tag_score_df</span><span class="p">,</span>
+    <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">smoothing_window_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span>
+    <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="n">snip_tag_score_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+    <span class="p">),</span> <span class="s1">&#39;isinstance(snip_tag_score_df, pd.DataFrame)&#39;</span>
+
+    <span class="k">def</span> <span class="nf">scores_of_snips</span><span class="p">(</span><span class="n">snips</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">snip_tag_score_df</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">,</span> <span class="n">snips</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">tag_order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tag_order</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">snips_of_tag</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="n">n_tags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag_order</span><span class="p">)</span>
+
+    <span class="n">all_snips</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">snips_of_tag</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="p">[])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+
+    <span class="n">tag_snips_cursor</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tag_order</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_tags</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+        <span class="n">snip_scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">running_mean_gen</span><span class="p">(</span><span class="n">scores_of_snips</span><span class="p">(</span><span class="n">all_snips</span><span class="p">,</span> <span class="n">tag</span><span class="p">),</span> <span class="n">smoothing_window_size</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">snip_scores</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">snip_scores</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;:k&#39;</span><span class="p">)</span>
+
+        <span class="n">n_tag_snips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">snips_of_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">])</span>
+        <span class="n">these_snip_scores</span> <span class="o">=</span> <span class="n">snip_scores</span><span class="p">[</span>
+            <span class="n">tag_snips_cursor</span> <span class="p">:</span> <span class="p">(</span><span class="n">tag_snips_cursor</span> <span class="o">+</span> <span class="n">n_tag_snips</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">tag_snips_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">tag_snips_cursor</span><span class="p">,</span> <span class="n">tag_snips_cursor</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">these_snip_scores</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tag_snips_idx</span><span class="p">,</span> <span class="n">these_snip_scores</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+        <span class="n">tag_snips_cursor</span> <span class="o">+=</span> <span class="n">n_tag_snips</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">ylabel_fontsize</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">ylabel_rotation</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">tags_and_snips_to_snip_of_tag</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">):</span>
+    <span class="n">snips_of_tag</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">snip</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">):</span>
+        <span class="n">snips_of_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">snip</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">snips_of_tag</span><span class="p">)</span>
+
+
+<span class="c1"># def _tag_order_from_df(df_with_tags_as_columns_and_snips_as_indices):</span>
+<span class="c1">#     snip_order = df_with_tags_as_columns_and_snips_as_indices.index.values</span>
+<span class="c1">#     tag_order = df_with_tags_as_columns_and_snips_as_indices.columns.values</span>
+<span class="c1">#     return snip_order, tag_order</span>
+
+
+<span class="c1"># def scores_of_snips(tag, snips, snip_log_bayes_factor_of_tag):</span>
+<span class="c1">#     lbf_for_tag = snip_log_bayes_factor_of_tag[tag]</span>
+<span class="c1">#     if isinstance(snip_log_bayes_factor_of_tag, pd.DataFrame):</span>
+<span class="c1">#         log_bayes_factor_for_snip = lbf_for_tag.loc.__getitem__</span>
+<span class="c1">#     elif hasattr(lbf_for_tag, &#39;__getitem__&#39;):</span>
+<span class="c1">#         log_bayes_factor_for_snip = lbf_for_tag.__getitem__</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         assert callable(lbf_for_tag), &quot;At this point lbf_for_tag can only be callable&quot;</span>
+<span class="c1">#         log_bayes_factor_for_snip = lbf_for_tag</span>
+<span class="c1">#</span>
+<span class="c1">#     return list(map(log_bayes_factor_for_snip, snips))</span>
+
+
+<span class="k">def</span> <span class="nf">tag_scores_gen</span><span class="p">(</span><span class="n">scores_for_tag</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="p">[</span><span class="n">tags</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">tag</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">running_mean_gen</span><span class="p">(</span><span class="n">scores_for_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">snips</span><span class="p">),</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">)</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">plot_tag_scores</span><span class="p">(</span>
+    <span class="n">scores_for_tag</span><span class="p">,</span>
+    <span class="n">tags</span><span class="p">,</span>
+    <span class="n">snips</span><span class="p">,</span>
+    <span class="n">chk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">chk_step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">18</span><span class="p">),</span>
+    <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">predict_thresh</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">normal_style</span><span class="o">=</span><span class="s1">&#39;-k&#39;</span><span class="p">,</span>
+    <span class="n">over_predict_style</span><span class="o">=</span><span class="s1">&#39;ob&#39;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">tag_scores_gen</span><span class="p">(</span><span class="n">scores_for_tag</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">)</span>
+    <span class="n">tag_snips_cursor</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">n_tags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">scores</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gen</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        <span class="n">x_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_tags</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">normal_style</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">predict_thresh</span><span class="p">],</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+        <span class="n">over_predict_thresh</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">&gt;=</span> <span class="n">predict_thresh</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+            <span class="n">x_vals</span><span class="p">[</span><span class="n">over_predict_thresh</span><span class="p">],</span> <span class="n">scores</span><span class="p">[</span><span class="n">over_predict_thresh</span><span class="p">],</span> <span class="n">over_predict_style</span>
+        <span class="p">)</span>
+
+        <span class="c1">#     n_tag_snips = len(tss.snips_of_tag[tag])</span>
+        <span class="c1">#     these_snip_scores = snip_scores[tag_snips_cursor:(tag_snips_cursor + n_tag_snips)]</span>
+        <span class="c1">#     tag_snips_idx = list(range(tag_snips_cursor, tag_snips_cursor + len(these_snip_scores)))</span>
+        <span class="c1">#     plt.plot(tag_snips_idx, these_snip_scores, &#39;-o&#39;,  color=&#39;k&#39;);</span>
+        <span class="c1">#     tag_snips_cursor += n_tag_snips</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">ylabel_fontsize</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">ylabel_rotation</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">scores_of_snips</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">snip_log_bayes_factor_of_tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">snip_log_bayes_factor_of_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">,</span> <span class="n">snips</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">plot_smoothed_log_bayes_factors</span><span class="p">(</span>
+    <span class="n">snips_of_tag</span><span class="p">,</span>
+    <span class="n">snip_log_bayes_factor_of_tag</span><span class="p">,</span>
+    <span class="n">chk_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">chk_step</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">tags</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="c1"># dflt_snip_order, dflt_tag_order = _tag_order_from_df(snip_tag_counts)</span>
+    <span class="k">if</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="n">snip_log_bayes_factor_of_tag</span> <span class="o">=</span> <span class="n">snip_log_bayes_factor_of_tag</span><span class="p">[</span><span class="n">tags</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">snip_log_bayes_factor_of_tag</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">n_tags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+
+    <span class="n">all_snips</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">,</span> <span class="n">snips_of_tag</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="p">[])</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">18</span><span class="p">))</span>
+
+    <span class="n">tag_snips_cursor</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tags</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">n_tags</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="n">snip_scores</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">running_mean_gen</span><span class="p">(</span>
+                <span class="n">scores_of_snips</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">all_snips</span><span class="p">,</span> <span class="n">snip_log_bayes_factor_of_tag</span><span class="p">),</span>
+                <span class="n">chk_size</span><span class="p">,</span>
+                <span class="n">chk_step</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">snip_scores</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">snip_scores</span><span class="p">)],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;:k&#39;</span><span class="p">)</span>
+
+        <span class="n">n_tag_snips</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">snips_of_tag</span><span class="p">[</span><span class="n">tag</span><span class="p">])</span>
+        <span class="n">these_snip_scores</span> <span class="o">=</span> <span class="n">snip_scores</span><span class="p">[</span>
+            <span class="n">tag_snips_cursor</span> <span class="p">:</span> <span class="p">(</span><span class="n">tag_snips_cursor</span> <span class="o">+</span> <span class="n">n_tag_snips</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">tag_snips_idx</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">range</span><span class="p">(</span><span class="n">tag_snips_cursor</span><span class="p">,</span> <span class="n">tag_snips_cursor</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">these_snip_scores</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">tag_snips_idx</span><span class="p">,</span> <span class="n">these_snip_scores</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">)</span>
+        <span class="n">tag_snips_cursor</span> <span class="o">+=</span> <span class="n">n_tag_snips</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="n">ylabel_fontsize</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">ylabel_rotation</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">snip_scores_from_lookup</span><span class="p">(</span><span class="n">snips</span><span class="p">,</span> <span class="n">snip_to_score</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">snip_to_score</span><span class="p">,</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)):</span>
+        <span class="n">snip_to_score</span> <span class="o">=</span> <span class="n">snip_to_score</span><span class="o">.</span><span class="fm">__getitem__</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">snip_to_score</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">_snip_to_score</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">snip_to_score</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="o">.</span><span class="fm">__getitem__</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">snip_to_score</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">snip_to_score</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">snip</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">lookup</span><span class="p">(</span><span class="n">snip</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">lookup</span> <span class="ow">in</span> <span class="n">_snip_to_score</span><span class="p">}</span>
+    <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="n">snip_to_score</span><span class="p">,</span> <span class="n">snips</span><span class="p">)</span>
+
+    <span class="c1"># assert isinstance(snip_to_score, pd.DataFrame), \</span>
+    <span class="c1">#     &quot;snip_to_score needs to be DataFrame whose index values are snips and columns are the different score kinds &quot; \</span>
+    <span class="c1">#     &quot;you want to compute&quot;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.chunkers &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="slang.core" href="core.html" />
+    <link rel="prev" title="slang" href="../slang.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../slang.html">slang</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="snippers.html">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>slang.chunkers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/slang/chunkers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-slang.chunkers">
+<span id="slang-chunkers"></span><h1>slang.chunkers<a class="headerlink" href="#module-slang.chunkers" title="Permalink to this headline">¶</a></h1>
+<p>Chunker functions</p>
+<dl class="py function">
+<dt id="slang.chunkers.fixed_step_chunker">
+<code class="sig-prename descclassname">slang.chunkers.</code><code class="sig-name descname">fixed_step_chunker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">it</span></em>, <em class="sig-param"><span class="n">chk_size</span></em>, <em class="sig-param"><span class="n">chk_step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_at</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stop_at</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_tail</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/chunkers.html#fixed_step_chunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.chunkers.fixed_step_chunker" title="Permalink to this definition">¶</a></dt>
+<dd><p>a function to get (an iterator of) segments (bt, tt) of chunks from an iterator (or list)
+of the for [it_1, it_2…], given a chk_size, chk_step, and a start_at and a stop_at.
+The start_at, stop_at act like slices indices for a list: start_at is included and stop_at is excluded</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>it</strong> – iterator of elements of any type</p></li>
+<li><p><strong>chk_size</strong> – length of the chunks</p></li>
+<li><p><strong>chk_step</strong> – step between chunks</p></li>
+<li><p><strong>start_at</strong> – index of the first term of the iterator at which we begin building the chunks (inclusive)</p></li>
+<li><p><strong>stop_at</strong> – index of the last term from the iterator included in the chunks</p></li>
+<li><p><strong>return_tail</strong> – if set to false, only the chunks with max element with index less than stop_at are yielded</p></li>
+</ul>
+</dd>
+</dl>
+<p>if set to true, any chunks with minimum index value no more than stop_at are returned but they contain
+term with index no more than stop_at
+:return: an iterator of the chunks</p>
+<ol class="arabic simple">
+<li><p>If stop_at is not None and return_tail is False:
+will return all full chunks with maximum element index less than stop_at
+or until the iterator is exhausted. Only full chunks are returned here.</p></li>
+<li><p>If stop_at is not None and return_tail is True:
+will return all full chunks as above along with possibly cut off chunks
+containing one term whose index is stop_at-1 or one (last) term which is the
+last element of it</p></li>
+<li><p>If stop_at is None and return_tail is False:
+will return all full chunks with maximum element index less or equal to the last
+element of it</p></li>
+<li><p>If stop_at is None and return_tail is True:
+will return all full chunks with maximum element index less or equal to the last
+element of it plus cut off chunks whose maximum term index is the last term of it</p></li>
+</ol>
+<blockquote>
+<div><p># testing chk_step &lt; chk_size with return_tail=TRUE, stop and start_at PRESENT
+# and stop_at SMALLER than the largest index of it
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=1, start_at=2, stop_at=5, return_tail=True)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[3, 4, 5], [4, 5], [5]]</p>
+<p># testing chk_step &lt; chk_size with return_tail=FALSE, stop and start_at PRESENT
+# and stop_at SMALLER than the largest index of it
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=1, start_at=2, stop_at=5, return_tail=False)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[3, 4, 5]]</p>
+<p># testing chk_step &lt; chk_size with return_tail=TRUE, stop and start_at PRESENT
+# and stop_at LARGER than the largest index of it
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=1, start_at=1, stop_at=20, return_tail=True)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[2, 3, 4], [3, 4, 5], [4, 5, 6], [5, 6, 7], [6, 7, 8], [7, 8, 9], [8, 9, 10], [9, 10, 11], [10, 11, 12], [11, 12, 13], [12, 13, 14], [13, 14, 15], [14, 15, 16], [15, 16], [16]]</p>
+<p># testing chk_step &lt; chk_size with return_tail=FALSE, stop and start_at PRESENT
+# and stop_at LARGER than the largest index of it
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=1, start_at=1, stop_at=20, return_tail=False)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[2, 3, 4], [3, 4, 5], [4, 5, 6], [5, 6, 7], [6, 7, 8], [7, 8, 9], [8, 9, 10], [9, 10, 11], [10, 11, 12], [11, 12, 13], [12, 13, 14], [13, 14, 15], [14, 15, 16]]</p>
+<p># testing chk_step = chk_size with return_tail=TRUE, stop and start_at PRESENT
+# and stop_at SMALLER than the largest index of it
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=3, start_at=1, stop_at=7, return_tail=True)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[2, 3, 4], [5, 6, 7]]</p>
+<p># testing chk_size &gt; len(it) with return_tail=False, no stop_at or start_at
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=30, chk_step=3, start_at=None, stop_at=None, return_tail=False)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[]</p>
+<p># testing chk_size &gt; len(it) with return_tail=True, no stop_at or start_at
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=30, chk_step=3, start_at=None, stop_at=None, return_tail=True)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16], [10, 11, 12, 13, 14, 15, 16], [13, 14, 15, 16], [16]]</p>
+<p># testing chk_step &gt; chk_size with return_tail=TRUE, stop and start_at PRESENT
+# and stop_at SMALLER than the largest index of it
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=1, stop_at=7, return_tail=True)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[2, 3, 4], [6, 7]]</p>
+<p># testing chk_step &gt; chk_size with return_tail=FALSE, stop and start_at PRESENT
+# and stop_at SMALLER than the largest index of it
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=1, stop_at=7, return_tail=False)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[2, 3, 4]]</p>
+<p># testing chk_step &gt; chk_size with return_tail=FALSE, stop and start_at NOT PRESENT
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=None, stop_at=None, return_tail=False)
+&gt;&gt;&gt; it = range(1, 17, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[1, 2, 3], [5, 6, 7], [9, 10, 11], [13, 14, 15]]</p>
+<p># testing chk_step &gt; chk_size with return_tail=TRUE, stop and start_at NOT PRESENT
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=None, stop_at=None, return_tail=True)
+&gt;&gt;&gt; it = range(1, 19, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[1, 2, 3], [5, 6, 7], [9, 10, 11], [13, 14, 15], [17, 18]]</p>
+<p># testing chk_step &gt; chk_size with return_tail=TRUE, stop and start_at NOT PRESENT
+# with negative values in the iterator
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=None, stop_at=None, return_tail=True)
+&gt;&gt;&gt; it = range(-10, 19, 1)
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[-10, -9, -8], [-6, -5, -4], [-2, -1, 0], [2, 3, 4], [6, 7, 8], [10, 11, 12], [14, 15, 16], [18]]</p>
+<p># testing chk_step &gt; chk_size with return_tail=TRUE, stop and start_at NOT PRESENT
+# with items of various types in the iterator
+&gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=2, start_at=None, stop_at=None, return_tail=True)
+&gt;&gt;&gt; it = [‘a’, 3, -10, 9.2, str, [1,2,3], set([10,20])]
+&gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)
+&gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!
+&gt;&gt;&gt; A  # and that thing is:
+[[‘a’, 3, -10], [-10, 9.2, &lt;class ‘str’&gt;], [&lt;class ‘str’&gt;, [1, 2, 3], {10, 20}], [{10, 20}]]</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.chunkers.mk_chunker">
+<code class="sig-prename descclassname">slang.chunkers.</code><code class="sig-name descname">mk_chunker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chk_size</span><span class="o">=</span><span class="default_value">2048</span></em>, <em class="sig-param"><span class="n">chk_step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">use_numpy_reshape</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/chunkers.html#mk_chunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.chunkers.mk_chunker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generator of (fixed size and fixed step) chunks of an iterable.
+This function-making function will try to choose an optimized chunker for you depending on the parameters and
+environment (if you have numpy and chk_size==chk_step, it’s the fastest).</p>
+<p>Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the type that is yield.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chk_size</strong> – Size of chunk (default 2048)</p></li>
+<li><p><strong>chk_step</strong> – Size of step (step of sliding window). If not specified, will be taken to be chk_size</p></li>
+<li><p><strong>use_numpy_reshape</strong> – If None (default), will use numpy (reshape) if numpy is importable.
+If True, will try to use numpy.reshape systematically.
+If False, will not use numpy.reshape, even if numpy present.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A generator of chunks (numpy.arrays, tuples, or lists, depending on the context)</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chunker</span> <span class="o">=</span> <span class="n">mk_chunker</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="go">[array([0, 1, 2]), array([3, 4, 5])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">mk_chunker</span><span class="p">(</span><span class="mi">2</span><span class="p">)(</span><span class="n">a</span><span class="p">))</span>
+<span class="go">[array([0, 1]), array([2, 3]), array([4, 5])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mk_chunker</span><span class="p">(</span><span class="mi">1</span><span class="p">)(</span><span class="n">a</span><span class="p">))</span>
+<span class="go">[(0,), (1,), (2,), (3,), (4,), (5,)]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chunker</span> <span class="o">=</span> <span class="n">mk_chunker</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+<span class="go">[[0, 1, 2, 3], [2, 3, 4, 5]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.chunkers.rechunker">
+<code class="sig-prename descclassname">slang.chunkers.</code><code class="sig-name descname">rechunker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chks</span></em>, <em class="sig-param"><span class="n">chk_size</span></em>, <em class="sig-param"><span class="n">chk_step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_at</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stop_at</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_tail</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/chunkers.html#rechunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.chunkers.rechunker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes an iterable of chks and produces another iterable of chunks.
+The chunks generated by the input chks iterable is assumed to be gap-less and without overlap,
+but these do not need to be of fixed size.
+The output will be though.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.chunkers.simple_fixed_step_chunker">
+<code class="sig-prename descclassname">slang.chunkers.</code><code class="sig-name descname">simple_fixed_step_chunker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">it</span></em>, <em class="sig-param"><span class="n">chk_size</span></em>, <em class="sig-param"><span class="n">chk_step</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/chunkers.html#simple_fixed_step_chunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.chunkers.simple_fixed_step_chunker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates chunks of fixed size and step.
+Yields chunks as lists.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../slang.html" class="btn btn-neutral float-left" title="slang" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="core.html" class="btn btn-neutral float-right" title="slang.core" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

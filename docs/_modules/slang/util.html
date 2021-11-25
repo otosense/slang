@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.util &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snippers.html">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>slang.util</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for slang.util</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Slang utils&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span><span class="p">,</span> <span class="n">nan</span><span class="p">,</span> <span class="n">arange</span><span class="p">,</span> <span class="n">unique</span><span class="p">,</span> <span class="n">ones</span>
+<span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">choice</span>
+<span class="kn">from</span> <span class="nn">slang.util_data</span> <span class="kn">import</span> <span class="n">displayable_unichr</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
+
+<span class="n">ModuleNotFoundIgnore</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+    <span class="n">suppress</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span>
+<span class="p">)</span>  <span class="c1"># just an alias for back-compatibility</span>
+
+
+<div class="viewcode-block" id="mk_callable"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.mk_callable">[docs]</a><span class="k">def</span> <span class="nf">mk_callable</span><span class="p">(</span><span class="n">call_func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A class decorator that adds a __call__ method. Specialized for sklearn models.</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.decomposition import PCA</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; CallablePCA = mk_callable(&#39;single_transform&#39;)(PCA)</span>
+<span class="sd">    &gt;&gt;&gt; pca = CallablePCA(n_components=3).fit(np.random.rand(100, 5))</span>
+<span class="sd">    &gt;&gt;&gt; x = np.random.rand(5)</span>
+<span class="sd">    &gt;&gt;&gt; all(pca(x) == pca.transform([x])[0])</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; from sklearn.neighbors import NearestNeighbors</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; def nearest_neighbors_indices(self, x):</span>
+<span class="sd">    ...     _, indices = self.kneighbors([x])</span>
+<span class="sd">    ...     return indices[0]</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; @mk_callable(nearest_neighbors_indices)</span>
+<span class="sd">    ... class CallableKnn(NearestNeighbors):</span>
+<span class="sd">    ...     &#39;&#39;&#39;NearestNeighbors with callable instances that give you the indices of the neighbors</span>
+<span class="sd">    ...     without the kerfuffle.&#39;&#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; knn = CallableKnn().fit(np.arange(1000).reshape(200, 5))</span>
+<span class="sd">    &gt;&gt;&gt; x = np.array([10, 20, 30, 40, 50])  # say we have a single point we want to get neighbors for</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # This is the standard way to do it</span>
+<span class="sd">    &gt;&gt;&gt; _, indices = knn.kneighbors([x])</span>
+<span class="sd">    &gt;&gt;&gt; neighbors = indices[0]</span>
+<span class="sd">    &gt;&gt;&gt; neighbors</span>
+<span class="sd">    array([6, 5, 7, 4, 8])</span>
+<span class="sd">    &gt;&gt;&gt; # but now, you can just do this instead:</span>
+<span class="sd">    &gt;&gt;&gt; knn(x)</span>
+<span class="sd">    array([6, 5, 7, 4, 8])</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; assert all(knn(x) == neighbors)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">call_func_str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">call_func</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">call_func_str</span> <span class="o">=</span> <span class="n">call_func</span>
+
+    <span class="k">def</span> <span class="nf">add_call_method</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">call_func_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">call_func_str</span><span class="p">):</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="fm">__call__</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">call_func_str</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">call_func_str</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;single_&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span>
+                <span class="bp">cls</span><span class="p">,</span> <span class="n">call_func_str</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;single_&#39;</span><span class="p">)</span> <span class="p">:]</span>
+            <span class="p">):</span>
+                <span class="n">call_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">call_func_str</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s1">&#39;single_&#39;</span><span class="p">)</span> <span class="p">:])</span>
+
+                <span class="k">def</span> <span class="nf">_call_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">call_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="p">[</span><span class="n">x</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="bp">cls</span><span class="o">.</span><span class="fm">__call__</span> <span class="o">=</span> <span class="n">_call_func</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;call_func was specified by a string, but was neither the name of the method of the class&#39;</span>
+                    <span class="sa">f</span><span class="s2">&quot;nor &#39;single_METHOD_NAME&#39; where METHOD_NAME is a method of the class: </span><span class="si">{</span><span class="n">call_func_str</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span>
+                <span class="n">call_func</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;call_func must be callable but was </span><span class="si">{</span><span class="n">call_func</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="fm">__call__</span> <span class="o">=</span> <span class="n">call_func</span>
+        <span class="k">return</span> <span class="bp">cls</span>
+
+    <span class="k">return</span> <span class="n">add_call_method</span></div>
+
+
+<span class="c1">####### Seeing snips ###################################################################################################</span>
+
+<span class="n">unichr_code_of_snip</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span>
+    <span class="n">displayable_unichr</span>
+    <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="mi">20000</span><span class="p">))</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">displayable_unichr</span><span class="p">))))</span>
+<span class="p">)</span>
+<span class="n">snip_of_unichr_code</span> <span class="o">=</span> <span class="p">(</span><span class="n">nan</span> <span class="o">*</span> <span class="n">ones</span><span class="p">(</span><span class="n">unichr_code_of_snip</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">snip_of_unichr_code</span><span class="p">[</span><span class="n">unichr_code_of_snip</span><span class="p">]</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unichr_code_of_snip</span><span class="p">))</span>
+
+<span class="c1"># assert that snip_of_unichr_code is the inverse of unichr_code_of_snip</span>
+<span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">snip_of_unichr_code</span><span class="p">[</span><span class="n">unichr_code_of_snip</span><span class="p">]</span> <span class="o">==</span> <span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unichr_code_of_snip</span><span class="p">)))</span>
+
+
+<span class="k">def</span> <span class="nf">snip_to_str</span><span class="p">(</span><span class="n">snip</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">chr</span><span class="p">(</span><span class="n">unichr_code_of_snip</span><span class="p">[</span><span class="n">snip</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">snips_to_str</span><span class="p">(</span><span class="n">snips</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">chr</span><span class="p">,</span> <span class="n">unichr_code_of_snip</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">snips</span><span class="p">)]))</span>
+
+
+<span class="k">def</span> <span class="nf">str_to_snips</span><span class="p">(</span><span class="n">snips_str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">array</span><span class="p">(</span><span class="n">snip_of_unichr_code</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">ord</span><span class="p">,</span> <span class="n">snips_str</span><span class="p">))])</span>
+
+
+<span class="n">snips_of_str</span> <span class="o">=</span> <span class="n">str_to_snips</span>  <span class="c1"># alias for back-compatibility</span>
+<span class="n">str_of_snips</span> <span class="o">=</span> <span class="n">snips_to_str</span>  <span class="c1"># alias for back-compatibility</span>
+
+<span class="c1">####### Misc ###########################################################################################################</span>
+<span class="n">ddir</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">obj</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]</span>
+
+
+<div class="viewcode-block" id="row_euclidean_distance"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.row_euclidean_distance">[docs]</a><span class="k">def</span> <span class="nf">row_euclidean_distance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Euclidean distance between aligned rows of A. An array of length len(A) (==len(B)).</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; A = np.arange(5 * 16).reshape((5, 16))</span>
+<span class="sd">    &gt;&gt;&gt; B = 1 + A</span>
+
+<span class="sd">    &gt;&gt;&gt; assert all(row_euclidean_distance(A, A) == np.zeros(5))</span>
+<span class="sd">    &gt;&gt;&gt; assert all(row_euclidean_distance(A, B) == np.array([4., 4., 4., 4., 4.]))</span>
+
+<span class="sd">    Note: Not to be confused with the matrix of distances of all pairs of rows. Here, equivalent to the latter diagnonal (see below).</span>
+
+<span class="sd">    ```</span>
+<span class="sd">    from  sklearn.metrics.pairwise import euclidean_distances</span>
+<span class="sd">    A = np.random.rand(5, 7)</span>
+<span class="sd">    B = np.random.rand(5, 7)</span>
+<span class="sd">    assert all(np.diag(euclidean_distances(A, B)) == row_euclidean_distance(A, B))</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">A</span> <span class="o">-</span> <span class="n">B</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">row_euclidean_distance_casting_to_array</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">row_euclidean_distance</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">A</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">B</span><span class="p">)))</span>
+
+
+<div class="viewcode-block" id="lazyprop"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.lazyprop">[docs]</a><span class="k">class</span> <span class="nc">lazyprop</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A descriptor implementation of lazyprop (cached property) from David Beazley&#39;s &quot;Python Cookbook&quot; book.</span>
+<span class="sd">    It&#39;s</span>
+<span class="sd">    &gt;&gt;&gt; class Test:</span>
+<span class="sd">    ...     def __init__(self, a):</span>
+<span class="sd">    ...         self.a = a</span>
+<span class="sd">    ...     @lazyprop</span>
+<span class="sd">    ...     def len(self):</span>
+<span class="sd">    ...         print(&#39;generating &quot;len&quot;&#39;)</span>
+<span class="sd">    ...         return len(self.a)</span>
+<span class="sd">    &gt;&gt;&gt; t = Test([0, 1, 2, 3, 4])</span>
+<span class="sd">    &gt;&gt;&gt; t.__dict__</span>
+<span class="sd">    {&#39;a&#39;: [0, 1, 2, 3, 4]}</span>
+<span class="sd">    &gt;&gt;&gt; t.len</span>
+<span class="sd">    generating &quot;len&quot;</span>
+<span class="sd">    5</span>
+<span class="sd">    &gt;&gt;&gt; t.__dict__</span>
+<span class="sd">    {&#39;a&#39;: [0, 1, 2, 3, 4], &#39;len&#39;: 5}</span>
+<span class="sd">    &gt;&gt;&gt; t.len</span>
+<span class="sd">    5</span>
+<span class="sd">    &gt;&gt;&gt; # But careful when using lazyprop that no one will change the value of a without deleting the property first</span>
+<span class="sd">    &gt;&gt;&gt; t.a = [0, 1, 2]  # if we change a...</span>
+<span class="sd">    &gt;&gt;&gt; t.len  # ... we still get the old cached value of len</span>
+<span class="sd">    5</span>
+<span class="sd">    &gt;&gt;&gt; del t.len  # if we delete the len prop</span>
+<span class="sd">    &gt;&gt;&gt; t.len  # ... then len being recomputed again</span>
+<span class="sd">    generating &quot;len&quot;</span>
+<span class="sd">    3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="balanced_sample_maker"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.balanced_sample_maker">[docs]</a><span class="k">def</span> <span class="nf">balanced_sample_maker</span><span class="p">(</span><span class="n">key_to_tag</span><span class="p">,</span> <span class="n">max_n_keys_per_tag</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">random</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;making a sample of the data (when you want to just test quickly)</span>
+
+<span class="sd">    &gt;&gt;&gt; mk_sample = balanced_sample_maker(key_to_tag=lambda k: k.split(&#39;/&#39;)[0],</span>
+<span class="sd">    ...                                   max_n_keys_per_tag=2,</span>
+<span class="sd">    ...                                   random=False)</span>
+<span class="sd">    &gt;&gt;&gt; mk_sample([&#39;good/1&#39;, &#39;bad/1&#39;, &#39;good/2&#39;, &#39;good/3&#39;, &#39;good/4&#39;, &#39;bad/2&#39;, &#39;good/5&#39;, &#39;bad/3&#39;])</span>
+<span class="sd">    [&#39;good/1&#39;, &#39;good/2&#39;, &#39;bad/1&#39;, &#39;bad/2&#39;]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">mk_balanced_sample</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="n">sample</span><span class="p">[</span><span class="n">key_to_tag</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">sample</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">min_count</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_n_keys_per_tag</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">counts</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">sample_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">random</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+                <span class="n">sample_keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">k</span><span class="p">][:</span><span class="n">min_count</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">:</span>
+                <span class="n">sample_keys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">choice</span><span class="p">(</span><span class="n">sample</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">min_count</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">sample_keys</span>
+
+    <span class="k">return</span> <span class="n">mk_balanced_sample</span></div>
+
+
+<span class="kn">import</span> <span class="nn">operator</span>
+
+
+<span class="k">def</span> <span class="nf">_apply_op</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">dflt_1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">dflt_2</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d2</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v1</span> <span class="ow">in</span> <span class="n">d1</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">v2</span> <span class="o">=</span> <span class="n">d2</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">dflt_2</span><span class="p">)</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">k</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="n">d2</span>
+        <span class="p">):</span>  <span class="c1"># take care of the remainder (those keys in dict_2 that were not in dict_1)</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span><span class="p">(</span><span class="n">dflt_1</span><span class="p">,</span> <span class="n">d2</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">op</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">d2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d1</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span> <span class="nf">_mk_op_method</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">dflt_1</span><span class="p">,</span> <span class="n">dflt_2</span><span class="p">,</span> <span class="n">for_reflexive_op</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">for_reflexive_op</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">op_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">_apply_op</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dflt_1</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">dflt_2</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">op_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">_apply_op</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">dflt_1</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">dflt_2</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">op_method</span>
+
+
+<span class="k">def</span> <span class="nf">_mk_unary_op_method</span><span class="p">(</span><span class="n">op</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">op_method</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">op</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+
+    <span class="k">return</span> <span class="n">op_method</span>
+
+
+<span class="c1"># Notes: Not sure if mod has an identity.</span>
+<span class="c1"># __and__ would have one theoretically (infinity 1s). didn&#39;t think about xor.</span>
+<span class="c1"># __matmul__ has an identity DEPENDING ON square and if so, PER dimensions of matrix</span>
+<span class="c1"># TODO: not sure of the appropriate defaults for __pow__.</span>
+<span class="n">_ops_and_identity</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">({</span><span class="s1">&#39;__add__&#39;</span><span class="p">,</span> <span class="s1">&#39;__sub__&#39;</span><span class="p">,</span> <span class="s1">&#39;__lshift__&#39;</span><span class="p">,</span> <span class="s1">&#39;__rshift__&#39;</span><span class="p">,</span> <span class="s1">&#39;__or__&#39;</span><span class="p">},</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="p">({</span><span class="s1">&#39;__mul__&#39;</span><span class="p">,</span> <span class="s1">&#39;__truediv__&#39;</span><span class="p">,</span> <span class="s1">&#39;__floordiv__&#39;</span><span class="p">,</span> <span class="s1">&#39;__pow__&#39;</span><span class="p">},</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">({</span><span class="s1">&#39;__mod__&#39;</span><span class="p">,</span> <span class="s1">&#39;__and__&#39;</span><span class="p">,</span> <span class="s1">&#39;__xor__&#39;</span><span class="p">,</span> <span class="s1">&#39;__matmul__&#39;</span><span class="p">},</span> <span class="kc">None</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">_unary_ops</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;__pos__&#39;</span><span class="p">,</span> <span class="s1">&#39;__neg__&#39;</span><span class="p">,</span> <span class="s1">&#39;__abs__&#39;</span><span class="p">,</span> <span class="s1">&#39;__invert__&#39;</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="ArithmeDict"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.ArithmeDict">[docs]</a><span class="k">class</span> <span class="nc">ArithmeDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A dict, with arithmetic.</span>
+<span class="sd">    A unary operator is just applied to all values.</span>
+<span class="sd">    When a dict operates with a number, the operation is applied to each value of the dict.</span>
+<span class="sd">    When a dict operates with another dict, the keys are aligned and the operation applied to the aligned values.</span>
+
+<span class="sd">    The class is meant to be used in situations where pandas.Series would be used to operate with (sparse) vectors</span>
+<span class="sd">    such as word counts, etc.</span>
+
+<span class="sd">    Performance:</span>
+
+<span class="sd">    In a nutshell, if you use pandas already in your app, then use pandas.Series instead.</span>
+<span class="sd">    But, if you want weight packages (pandas isn&#39;t light), or have small dicts you want to operate on, use ArithmeDict.</span>
+
+<span class="sd">    Note that both construction and operation are faster on ArithmeDict, for smaller sets.</span>
+
+<span class="sd">    ```</span>
+<span class="sd">    import pandas as pd</span>
+
+<span class="sd">    t = ArithmeDict(a=1, b=2)</span>
+<span class="sd">    tt = ArithmeDict(b=3, c=4)</span>
+<span class="sd">    %timeit t + tt</span>
+<span class="sd">    # 1.41 µs ± 41.6 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)</span>
+
+<span class="sd">    ### versus ###</span>
+
+<span class="sd">    t = pd.Series(dict(a=1, b=2))</span>
+<span class="sd">    tt = pd.Series(dict(b=3, c=4))</span>
+<span class="sd">    %timeit t + tt  # and not even what we want (see later)</span>
+<span class="sd">    # 405 µs ± 7.65 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</span>
+<span class="sd">    % timeit pd.Series.add(t, tt, fill_value=0).to_dict()</span>
+<span class="sd">    # 410 µs ± 11.9 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</span>
+
+<span class="sd">    ### but ###</span>
+<span class="sd">    t = ArithmeDict({i: i for i in range(10000)})</span>
+<span class="sd">    tt = ArithmeDict({i: i for i in range(5000, 15000)})</span>
+<span class="sd">    %timeit t + tt</span>
+<span class="sd">    # 3.22 ms ± 98.8 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)</span>
+
+<span class="sd">    ### not so far from ###</span>
+<span class="sd">    t = pd.Series({i: i for i in range(10000)})</span>
+<span class="sd">    tt = pd.Series({i: i for i in range(5000, 15000)})</span>
+<span class="sd">    %timeit pd.Series.add(t, tt, fill_value=0).to_dict()</span>
+<span class="sd">    3.71 ms ± 100 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)</span>
+<span class="sd">    # and actually much slower than:</span>
+<span class="sd">    %timeit pd.Series.add(t, tt, fill_value=0)</span>
+<span class="sd">    575 µs ± 17.1 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</span>
+
+<span class="sd">    ```</span>
+
+<span class="sd">    On the other hand, memory usage is inconclusive, because I don&#39;t know how to actually make the comparison.</span>
+<span class="sd">    ```</span>
+<span class="sd">    import pickle, sys, pandas</span>
+
+<span class="sd">    t = ArithmeDict({i: i for i in range(10000)})</span>
+<span class="sd">    sys.getsizeof(t), len(pickle.dumps(t))</span>
+<span class="sd">    # (295032, 59539)</span>
+
+<span class="sd">    t = pandas.Series({i: i for i in range(10000)})</span>
+<span class="sd">    sys.getsizeof(t), len(pickle.dumps(t))</span>
+<span class="sd">    # (160032, 240666)</span>
+<span class="sd">    ```</span>
+
+
+<span class="sd">    Notes for enhancement:</span>
+
+<span class="sd">    When dict operates with/on a dict, and therefore we need to align keys,</span>
+<span class="sd">    there are different merge and reduce options that may or may not make sense according to the value type and context.</span>
+<span class="sd">    For example, should we really keep all keys and use operand defaults to get their values, or just drop</span>
+<span class="sd">    those fields all together?</span>
+<span class="sd">    Also, if we choose to keep all keys, what should the operand default be.</span>
+<span class="sd">    Sometimes it might depend on the other operand (example matmul), or need to be created (example __concat__,</span>
+<span class="sd">    since don&#39;t want the mutable list as a default), etc.</span>
+
+<span class="sd">    &gt;&gt;&gt; d1 = ArithmeDict(a=1, b=2)</span>
+<span class="sd">    &gt;&gt;&gt; d2 = ArithmeDict(b=3, c=4)</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # These are still dicts</span>
+<span class="sd">    &gt;&gt;&gt; isinstance(d1, dict)</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; # and display as such</span>
+<span class="sd">    &gt;&gt;&gt; d1</span>
+<span class="sd">    {&#39;a&#39;: 1, &#39;b&#39;: 2}</span>
+<span class="sd">    &gt;&gt;&gt; d2</span>
+<span class="sd">    {&#39;b&#39;: 3, &#39;c&#39;: 4}</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # Unary operators (just applied to all values)</span>
+<span class="sd">    &gt;&gt;&gt; assert -d1 == {&#39;a&#39;: -1, &#39;b&#39;: -2}</span>
+<span class="sd">    &gt;&gt;&gt; assert abs(-d1) == d1  # ... and in case that doesn&#39;t look impressive enough..</span>
+<span class="sd">    &gt;&gt;&gt; assert abs(ArithmeDict(a=-1, b=2, c=-3)) == {&#39;a&#39;: 1, &#39;b&#39;: 2, &#39;c&#39;: 3}</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # An operation with a number is transferred to the values of the dict (applied to each).</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 + 10 == {&#39;a&#39;: 11, &#39;b&#39;: 12}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 - 10 == {&#39;a&#39;: -9, &#39;b&#39;: -8}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 * 10 == {&#39;a&#39;: 10, &#39;b&#39;: 20}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 / 10 == {&#39;a&#39;: 0.1, &#39;b&#39;: 0.2}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 // 2 == {&#39;a&#39;: 0, &#39;b&#39;: 1}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 ** 2 == {&#39;a&#39;: 1, &#39;b&#39;: 4}</span>
+<span class="sd">    &gt;&gt;&gt; assert d2 % 2 == {&#39;b&#39;: 1, &#39;c&#39;: 0}</span>
+<span class="sd">    &gt;&gt;&gt; assert d2 % 3 == {&#39;b&#39;: 0, &#39;c&#39;: 1}</span>
+<span class="sd">    &gt;&gt;&gt; assert d2 &gt;&gt; 1 == {&#39;b&#39;: 1, &#39;c&#39;: 2}  # shift all bits by one bit to the right</span>
+<span class="sd">    &gt;&gt;&gt; assert d2 &lt;&lt; 1 == {&#39;b&#39;: 6, &#39;c&#39;: 8}  # shift all bits by one bit to the left</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; # An operation with another dict will align the keys and apply the operation to the aligned values.</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 + d2 == {&#39;a&#39;: 1, &#39;b&#39;: 5, &#39;c&#39;: 4}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 - d2 == {&#39;a&#39;: 1, &#39;b&#39;: -1, &#39;c&#39;: -4}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 * d2 == {&#39;a&#39;: 1, &#39;b&#39;: 6, &#39;c&#39;: 4}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 / d2 == {&#39;a&#39;: 1, &#39;b&#39;: 0.6666666666666666, &#39;c&#39;: 0.25}</span>
+<span class="sd">    &gt;&gt;&gt; assert d2 // d1 == {&#39;b&#39;: 1, &#39;c&#39;: 4, &#39;a&#39;: 1}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 ** d2 == {&#39;a&#39;: 1, &#39;b&#39;: 8, &#39;c&#39;: 1}</span>
+<span class="sd">    &gt;&gt;&gt; assert ArithmeDict(a=10, b=10) % dict(a=3, b=4) == {&#39;a&#39;: 1, &#39;b&#39;: 2}</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 &lt;&lt; d2 == {&#39;a&#39;: 1, &#39;b&#39;: 16, &#39;c&#39;: 0}  # shifting bits</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 + {&#39;b&#39;: 3, &#39;c&#39;: 4} == {&#39;a&#39;: 1, &#39;b&#39;: 5, &#39;c&#39;: 4}  # works when the right side is a normal dict</span>
+<span class="sd">    &gt;&gt;&gt; assert d1 + ArithmeDict() == d1</span>
+<span class="sd">    &gt;&gt;&gt; assert ArithmeDict() - d1 == -d1</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">_unary_ops</span><span class="p">:</span>
+        <span class="nb">locals</span><span class="p">()[</span><span class="n">op</span><span class="p">]</span> <span class="o">=</span> <span class="n">_mk_unary_op_method</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">op</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">ops</span><span class="p">,</span> <span class="n">identity_val</span> <span class="ow">in</span> <span class="n">_ops_and_identity</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">ops</span><span class="p">:</span>
+            <span class="n">op_func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
+            <span class="nb">locals</span><span class="p">()[</span><span class="n">op</span><span class="p">]</span> <span class="o">=</span> <span class="n">_mk_op_method</span><span class="p">(</span>
+                <span class="n">op_func</span><span class="p">,</span>
+                <span class="n">dflt_1</span><span class="o">=</span><span class="n">identity_val</span><span class="p">,</span>
+                <span class="n">dflt_2</span><span class="o">=</span><span class="n">identity_val</span><span class="p">,</span>
+                <span class="n">for_reflexive_op</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="running_mean_gen"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.running_mean_gen">[docs]</a><span class="k">def</span> <span class="nf">running_mean_gen</span><span class="p">(</span>
+    <span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">):</span>  <span class="c1"># TODO: A version of this with chk_step as well</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Running mean (moving average) on iterator.</span>
+<span class="sd">    Note: When input it is list-like, ut.stats.smooth.sliders version of running_mean is 4 times more efficient with</span>
+<span class="sd">    big (but not too big, because happens in RAM) inputs.</span>
+<span class="sd">    :param it: iterable</span>
+<span class="sd">    :param chk_size: width of the window to take means from</span>
+<span class="sd">    :return:</span>
+
+<span class="sd">    &gt;&gt;&gt; list(running_mean_gen([1, 3, 5, 7, 9], 2))</span>
+<span class="sd">    [2.0, 4.0, 6.0, 8.0]</span>
+<span class="sd">    &gt;&gt;&gt; list(running_mean_gen([1, 3, 5, 7, 9], 2, chk_step=2))</span>
+<span class="sd">    [2.0, 6.0]</span>
+<span class="sd">    &gt;&gt;&gt; list(running_mean_gen([1, 3, 5, 7, 9], 2, chk_step=3))</span>
+<span class="sd">    [2.0, 8.0]</span>
+<span class="sd">    &gt;&gt;&gt; list(running_mean_gen([1, 3, 5, 7, 9], 3))</span>
+<span class="sd">    [3.0, 5.0, 7.0]</span>
+<span class="sd">    &gt;&gt;&gt; list(running_mean_gen([1, -1, 1, -1], 2))</span>
+<span class="sd">    [0.0, 0.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; list(running_mean_gen([-1, -2, -3, -4], 3))</span>
+<span class="sd">    [-2.0, -3.0]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">chk_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_size</span>
+    <span class="k">if</span> <span class="n">chk_step</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># TODO: perhaps there&#39;s a more efficient way. A way that would sum the values</span>
+        <span class="c1">#  of every step and add them in bulk</span>
+        <span class="k">yield from</span> <span class="n">islice</span><span class="p">(</span><span class="n">running_mean</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">),</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">chk_size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">fifo</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([],</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">chk_size</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">fifo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="n">c</span> <span class="o">+=</span> <span class="n">x</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">chk_size</span><span class="p">:</span>
+                    <span class="k">break</span>
+
+            <span class="k">yield</span> <span class="n">c</span> <span class="o">/</span> <span class="n">chk_size</span>
+
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">+=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">fifo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># NOTE: seems faster than fifo.popleft</span>
+                <span class="n">fifo</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">c</span> <span class="o">/</span> <span class="n">chk_size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">x</span></div>
+
+
+<span class="k">def</span> <span class="nf">running_mean</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">):</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">chk_size</span><span class="p">:]</span> <span class="o">-</span> <span class="n">c</span><span class="p">[:</span><span class="o">-</span><span class="n">chk_size</span><span class="p">])</span> <span class="o">/</span> <span class="n">chk_size</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

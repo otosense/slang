@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.util &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="slang.util_data" href="util_data.html" />
+    <link rel="prev" title="slang.tools" href="tools.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="snippers.html">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">slang.tools</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>slang.util</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/slang/util.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-slang.util">
+<span id="slang-util"></span><h1>slang.util<a class="headerlink" href="#module-slang.util" title="Permalink to this headline">¶</a></h1>
+<p>Slang utils</p>
+<dl class="py class">
+<dt id="slang.util.ArithmeDict">
+<em class="property">class </em><code class="sig-prename descclassname">slang.util.</code><code class="sig-name descname">ArithmeDict</code><a class="reference internal" href="../../_modules/slang/util.html#ArithmeDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.util.ArithmeDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dict, with arithmetic.
+A unary operator is just applied to all values.
+When a dict operates with a number, the operation is applied to each value of the dict.
+When a dict operates with another dict, the keys are aligned and the operation applied to the aligned values.</p>
+<p>The class is meant to be used in situations where pandas.Series would be used to operate with (sparse) vectors
+such as word counts, etc.</p>
+<p>Performance:</p>
+<p>In a nutshell, if you use pandas already in your app, then use pandas.Series instead.
+But, if you want weight packages (pandas isn’t light), or have small dicts you want to operate on, use ArithmeDict.</p>
+<p>Note that both construction and operation are faster on ArithmeDict, for smaller sets.</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
+import pandas as pd</p>
+<p>t = ArithmeDict(a=1, b=2)
+tt = ArithmeDict(b=3, c=4)
+%timeit t + tt
+# 1.41 µs ± 41.6 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)</p>
+<p>### versus ###</p>
+<p>t = pd.Series(dict(a=1, b=2))
+tt = pd.Series(dict(b=3, c=4))
+%timeit t + tt  # and not even what we want (see later)
+# 405 µs ± 7.65 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
+% timeit pd.Series.add(t, tt, fill_value=0).to_dict()
+# 410 µs ± 11.9 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</p>
+<p>### but ###
+t = ArithmeDict({i: i for i in range(10000)})
+tt = ArithmeDict({i: i for i in range(5000, 15000)})
+%timeit t + tt
+# 3.22 ms ± 98.8 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)</p>
+<p>### not so far from ###
+t = pd.Series({i: i for i in range(10000)})
+tt = pd.Series({i: i for i in range(5000, 15000)})
+%timeit pd.Series.add(t, tt, fill_value=0).to_dict()
+3.71 ms ± 100 µs per loop (mean ± std. dev. of 7 runs, 100 loops each)
+# and actually much slower than:
+%timeit pd.Series.add(t, tt, fill_value=0)
+575 µs ± 17.1 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)</p>
+<p><a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a></p>
+<p>On the other hand, memory usage is inconclusive, because I don’t know how to actually make the comparison.
+<a href="#id7"><span class="problematic" id="id8">``</span></a>`
+import pickle, sys, pandas</p>
+<p>t = ArithmeDict({i: i for i in range(10000)})
+sys.getsizeof(t), len(pickle.dumps(t))
+# (295032, 59539)</p>
+<p>t = pandas.Series({i: i for i in range(10000)})
+sys.getsizeof(t), len(pickle.dumps(t))
+# (160032, 240666)
+<a href="#id9"><span class="problematic" id="id10">``</span></a><a href="#id11"><span class="problematic" id="id12">`</span></a></p>
+<p>Notes for enhancement:</p>
+<p>When dict operates with/on a dict, and therefore we need to align keys,
+there are different merge and reduce options that may or may not make sense according to the value type and context.
+For example, should we really keep all keys and use operand defaults to get their values, or just drop
+those fields all together?
+Also, if we choose to keep all keys, what should the operand default be.
+Sometimes it might depend on the other operand (example matmul), or need to be created (example __concat__,
+since don’t want the mutable list as a default), etc.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">d1</span> <span class="o">=</span> <span class="n">ArithmeDict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d2</span> <span class="o">=</span> <span class="n">ArithmeDict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># These are still dicts</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">isinstance</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># and display as such</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d1</span>
+<span class="go">{&#39;a&#39;: 1, &#39;b&#39;: 2}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">d2</span>
+<span class="go">{&#39;b&#39;: 3, &#39;c&#39;: 4}</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Unary operators (just applied to all values)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="o">-</span><span class="n">d1</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">2</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="o">-</span><span class="n">d1</span><span class="p">)</span> <span class="o">==</span> <span class="n">d1</span>  <span class="c1"># ... and in case that doesn&#39;t look impressive enough..</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ArithmeDict</span><span class="p">(</span><span class="n">a</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=-</span><span class="mi">3</span><span class="p">))</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># An operation with a number is transferred to the values of the dict (applied to each).</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">8</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d2</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d2</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d2</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>  <span class="c1"># shift all bits by one bit to the right</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d2</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">}</span>  <span class="c1"># shift all bits by one bit to the left</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># An operation with another dict will align the keys and apply the operation to the aligned values.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">+</span> <span class="n">d2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">-</span> <span class="n">d2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mi">4</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">*</span> <span class="n">d2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">/</span> <span class="n">d2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mf">0.6666666666666666</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d2</span> <span class="o">//</span> <span class="n">d1</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">**</span> <span class="n">d2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">ArithmeDict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">&lt;&lt;</span> <span class="n">d2</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>  <span class="c1"># shifting bits</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">+</span> <span class="p">{</span><span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>  <span class="c1"># works when the right side is a normal dict</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">d1</span> <span class="o">+</span> <span class="n">ArithmeDict</span><span class="p">()</span> <span class="o">==</span> <span class="n">d1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">ArithmeDict</span><span class="p">()</span> <span class="o">-</span> <span class="n">d1</span> <span class="o">==</span> <span class="o">-</span><span class="n">d1</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="slang.util.ArithmeDict.op_func">
+<code class="sig-name descname">op_func</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="o">/</span></em><span class="sig-paren">)</span><a class="headerlink" href="#slang.util.ArithmeDict.op_func" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as a &#64; b.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.util.balanced_sample_maker">
+<code class="sig-prename descclassname">slang.util.</code><code class="sig-name descname">balanced_sample_maker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key_to_tag</span></em>, <em class="sig-param"><span class="n">max_n_keys_per_tag</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">random</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/util.html#balanced_sample_maker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.util.balanced_sample_maker" title="Permalink to this definition">¶</a></dt>
+<dd><p>making a sample of the data (when you want to just test quickly)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mk_sample</span> <span class="o">=</span> <span class="n">balanced_sample_maker</span><span class="p">(</span><span class="n">key_to_tag</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>                                  <span class="n">max_n_keys_per_tag</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="gp">... </span>                                  <span class="n">random</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mk_sample</span><span class="p">([</span><span class="s1">&#39;good/1&#39;</span><span class="p">,</span> <span class="s1">&#39;bad/1&#39;</span><span class="p">,</span> <span class="s1">&#39;good/2&#39;</span><span class="p">,</span> <span class="s1">&#39;good/3&#39;</span><span class="p">,</span> <span class="s1">&#39;good/4&#39;</span><span class="p">,</span> <span class="s1">&#39;bad/2&#39;</span><span class="p">,</span> <span class="s1">&#39;good/5&#39;</span><span class="p">,</span> <span class="s1">&#39;bad/3&#39;</span><span class="p">])</span>
+<span class="go">[&#39;good/1&#39;, &#39;good/2&#39;, &#39;bad/1&#39;, &#39;bad/2&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.util.choice">
+<code class="sig-prename descclassname">slang.util.</code><code class="sig-name descname">choice</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">replace</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">p</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#slang.util.choice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a random sample from a given 1-D array</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 1.7.0.</span></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>New code should use the <code class="docutils literal notranslate"><span class="pre">choice</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
+instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>1-D array-like</em><em> or </em><em>int</em>) – If an ndarray, a random sample is generated from its elements.
+If an int, the random sample is generated as if it were <code class="docutils literal notranslate"><span class="pre">np.arange(a)</span></code></p></li>
+<li><p><strong>size</strong> (<em>int</em><em> or </em><em>tuple of ints</em><em>, </em><em>optional</em>) – Output shape.  If the given shape is, e.g., <code class="docutils literal notranslate"><span class="pre">(m,</span> <span class="pre">n,</span> <span class="pre">k)</span></code>, then
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">*</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">k</span></code> samples are drawn.  Default is None, in which case a
+single value is returned.</p></li>
+<li><p><strong>replace</strong> (<em>boolean</em><em>, </em><em>optional</em>) – Whether the sample is with or without replacement. Default is True,
+meaning that a value of <code class="docutils literal notranslate"><span class="pre">a</span></code> can be selected multiple times.</p></li>
+<li><p><strong>p</strong> (<em>1-D array-like</em><em>, </em><em>optional</em>) – The probabilities associated with each entry in a.
+If not given, the sample assumes a uniform distribution over all
+entries in <code class="docutils literal notranslate"><span class="pre">a</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>samples</strong> – The generated random samples</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>single item or ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a is an int and less than zero, if a or p are not 1-dimensional,
+    if a is an array-like of size 0, if p is not a vector of
+    probabilities, if a and p have different lengths, or if
+    replace=False and the sample size is greater than the population
+    size</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">randint</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">shuffle</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">permutation</span></code></p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">Generator.choice</span></code></dt><dd><p>which should be used in new code</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Notes</p>
+<p>Setting user-specified probabilities through <code class="docutils literal notranslate"><span class="pre">p</span></code> uses a more general but less
+efficient sampler than the default. The general sampler produces a different sample
+than the optimized sampler even if each element of <code class="docutils literal notranslate"><span class="pre">p</span></code> is 1 / len(a).</p>
+<p>Sampling random rows from a 2-D array is not possible with this function,
+but is possible with <cite>Generator.choice</cite> through its <code class="docutils literal notranslate"><span class="pre">axis</span></code> keyword.</p>
+<p class="rubric">Examples</p>
+<p>Generate a uniform random sample from np.arange(5) of size 3:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">array([0, 3, 4]) # random</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.randint(0,5,3)</span>
+</pre></div>
+</div>
+<p>Generate a non-uniform random sample from np.arange(5) of size 3:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([3, 3, 0]) # random</span>
+</pre></div>
+</div>
+<p>Generate a uniform random sample from np.arange(5) of size 3 without
+replacement:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">array([3,1,0]) # random</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#This is equivalent to np.random.permutation(np.arange(5))[:3]</span>
+</pre></div>
+</div>
+<p>Generate a non-uniform random sample from np.arange(5) of size
+3 without replacement:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([2, 3, 0]) # random</span>
+</pre></div>
+</div>
+<p>Any of the above can be repeated with an arbitrary array-like
+instead of just integers. For instance:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">aa_milne_arr</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pooh&#39;</span><span class="p">,</span> <span class="s1">&#39;rabbit&#39;</span><span class="p">,</span> <span class="s1">&#39;piglet&#39;</span><span class="p">,</span> <span class="s1">&#39;Christopher&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">aa_milne_arr</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+<span class="go">array([&#39;pooh&#39;, &#39;pooh&#39;, &#39;pooh&#39;, &#39;Christopher&#39;, &#39;piglet&#39;], # random</span>
+<span class="go">      dtype=&#39;&lt;U11&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.util.lazyprop">
+<em class="property">class </em><code class="sig-prename descclassname">slang.util.</code><code class="sig-name descname">lazyprop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/util.html#lazyprop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.util.lazyprop" title="Permalink to this definition">¶</a></dt>
+<dd><p>A descriptor implementation of lazyprop (cached property) from David Beazley’s “Python Cookbook” book.
+It’s
+&gt;&gt;&gt; class Test:
+…     def __init__(self, a):
+…         self.a = a
+…     &#64;lazyprop
+…     def len(self):
+…         print(‘generating “len”’)
+…         return len(self.a)
+&gt;&gt;&gt; t = Test([0, 1, 2, 3, 4])
+&gt;&gt;&gt; t.__dict__
+{‘a’: [0, 1, 2, 3, 4]}
+&gt;&gt;&gt; t.len
+generating “len”
+5
+&gt;&gt;&gt; t.__dict__
+{‘a’: [0, 1, 2, 3, 4], ‘len’: 5}
+&gt;&gt;&gt; t.len
+5
+&gt;&gt;&gt; # But careful when using lazyprop that no one will change the value of a without deleting the property first
+&gt;&gt;&gt; t.a = [0, 1, 2]  # if we change a…
+&gt;&gt;&gt; t.len  # … we still get the old cached value of len
+5
+&gt;&gt;&gt; del t.len  # if we delete the len prop
+&gt;&gt;&gt; t.len  # … then len being recomputed again
+generating “len”
+3</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.util.mk_callable">
+<code class="sig-prename descclassname">slang.util.</code><code class="sig-name descname">mk_callable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">call_func</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/util.html#mk_callable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.util.mk_callable" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class decorator that adds a __call__ method. Specialized for sklearn models.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CallablePCA</span> <span class="o">=</span> <span class="n">mk_callable</span><span class="p">(</span><span class="s1">&#39;single_transform&#39;</span><span class="p">)(</span><span class="n">PCA</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pca</span> <span class="o">=</span> <span class="n">CallablePCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">all</span><span class="p">(</span><span class="n">pca</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">pca</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">x</span><span class="p">])[</span><span class="mi">0</span><span class="p">])</span>
+<span class="go">True</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">NearestNeighbors</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">nearest_neighbors_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">_</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">...</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@mk_callable</span><span class="p">(</span><span class="n">nearest_neighbors_indices</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">class</span> <span class="nc">CallableKnn</span><span class="p">(</span><span class="n">NearestNeighbors</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="sd">&#39;&#39;&#39;NearestNeighbors with callable instances that give you the indices of the neighbors</span>
+<span class="gp">... </span><span class="sd">    without the kerfuffle.&#39;&#39;&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">knn</span> <span class="o">=</span> <span class="n">CallableKnn</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>  <span class="c1"># say we have a single point we want to get neighbors for</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># This is the standard way to do it</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">knn</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neighbors</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">neighbors</span>
+<span class="go">array([6, 5, 7, 4, 8])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># but now, you can just do this instead:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">knn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">array([6, 5, 7, 4, 8])</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">knn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="n">neighbors</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.util.row_euclidean_distance">
+<code class="sig-prename descclassname">slang.util.</code><code class="sig-name descname">row_euclidean_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">A</span></em>, <em class="sig-param"><span class="n">B</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/util.html#row_euclidean_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.util.row_euclidean_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Euclidean distance between aligned rows of A. An array of length len(A) (==len(B)).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">16</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">A</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">row_euclidean_distance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">row_euclidean_distance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>Note: Not to be confused with the matrix of distances of all pairs of rows. Here, equivalent to the latter diagnonal (see below).</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">from</span>&#160; <span class="pre">sklearn.metrics.pairwise</span> <span class="pre">import</span> <span class="pre">euclidean_distances</span>
+<span class="pre">A</span> <span class="pre">=</span> <span class="pre">np.random.rand(5,</span> <span class="pre">7)</span>
+<span class="pre">B</span> <span class="pre">=</span> <span class="pre">np.random.rand(5,</span> <span class="pre">7)</span>
+<span class="pre">assert</span> <span class="pre">all(np.diag(euclidean_distances(A,</span> <span class="pre">B))</span> <span class="pre">==</span> <span class="pre">row_euclidean_distance(A,</span> <span class="pre">B))</span>
+<span class="pre">`</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.util.running_mean_gen">
+<code class="sig-prename descclassname">slang.util.</code><code class="sig-name descname">running_mean_gen</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">it</span></em>, <em class="sig-param"><span class="n">chk_size</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">chk_step</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/util.html#running_mean_gen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.util.running_mean_gen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Running mean (moving average) on iterator.
+Note: When input it is list-like, ut.stats.smooth.sliders version of running_mean is 4 times more efficient with
+big (but not too big, because happens in RAM) inputs.
+:param it: iterable
+:param chk_size: width of the window to take means from
+:return:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">running_mean_gen</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">[2.0, 4.0, 6.0, 8.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">running_mean_gen</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">[2.0, 6.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">running_mean_gen</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+<span class="go">[2.0, 8.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">running_mean_gen</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">[3.0, 5.0, 7.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">running_mean_gen</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">[0.0, 0.0, 0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">running_mean_gen</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">[-2.0, -3.0]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tools.html" class="btn btn-neutral float-left" title="slang.tools" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="util_data.html" class="btn btn-neutral float-right" title="slang.util_data" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

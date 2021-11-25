@@ -1,0 +1,4 @@
+slang
+=====
+.. automodule:: slang
+   :members:

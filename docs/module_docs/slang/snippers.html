@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.snippers &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="slang.spectrop" href="spectrop.html" />
+    <link rel="prev" title="slang.snip_stats" href="snip_stats.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>slang.snippers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/slang/snippers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-slang.snippers">
+<span id="slang-snippers"></span><h1>slang.snippers<a class="headerlink" href="#module-slang.snippers" title="Permalink to this headline">¶</a></h1>
+<p>Snipping: Feature vector quantization</p>
+<dl class="py class">
+<dt id="slang.snippers.ClassificationSnipper">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">ClassificationSnipper</code><span class="sig-paren">(</span><em class="sig-param">wf_to_chks=&lt;slang.snippers.DfltWfToChk object&gt;</em>, <em class="sig-param">chk_to_fv=&lt;class 'slang.snippers.PcaChkToFv'&gt;</em>, <em class="sig-param">fv_to_snip=&lt;class 'slang.snippers.KMeansFvToSnip'&gt;</em>, <em class="sig-param">snip_to_score=&lt;class 'slang.snip_stats.BayesFactors'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#ClassificationSnipper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.ClassificationSnipper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="slang.snippers.DfltChkToFv">
+<code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">DfltChkToFv</code><a class="headerlink" href="#slang.snippers.DfltChkToFv" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#slang.snippers.PcaChkToFv" title="slang.snippers.PcaChkToFv"><code class="xref py py-class docutils literal notranslate"><span class="pre">slang.snippers.PcaChkToFv</span></code></a></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="slang.snippers.DfltFvToSnip">
+<code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">DfltFvToSnip</code><a class="headerlink" href="#slang.snippers.DfltFvToSnip" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#slang.snippers.KMeansFvToSnip" title="slang.snippers.KMeansFvToSnip"><code class="xref py py-class docutils literal notranslate"><span class="pre">slang.snippers.KMeansFvToSnip</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.snippers.FittableSnipper">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">FittableSnipper</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wf_to_chks</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">chk_to_fv</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fv_to_snip</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#FittableSnipper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.FittableSnipper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.snippers.KMeansFvToSnip">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">KMeansFvToSnip</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_clusters</span><span class="o">=</span><span class="default_value">47</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#KMeansFvToSnip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.KMeansFvToSnip" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="slang.snippers.KMeansFvToSnip.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param">fvs: NewType.&lt;locals&gt;.new_type</em>, <em class="sig-param">y=None</em>, <em class="sig-param">sample_weight=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#KMeansFvToSnip.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.KMeansFvToSnip.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute k-means clustering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix} of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Training instances to cluster. It must be noted that the data
+will be converted to C ordering, which will cause a memory
+copy if the given data is not C-contiguous.
+If a sparse matrix is passed, a copy will be made if it’s not in
+CSR format.</p></li>
+<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present here for API consistency by convention.</p></li>
+<li><p><strong>sample_weight</strong> (<em>array-like of shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em><em>, </em><em>default=None</em>) – <p>The weights for each observation in X. If None, all observations
+are assigned equal weight.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.20.</span></p>
+</div>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong> – Fitted estimator.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="slang.snippers.KMeansFvToSnip.fv_of_snip">
+<em class="property">property </em><code class="sig-name descname">fv_of_snip</code><a class="headerlink" href="#slang.snippers.KMeansFvToSnip.fv_of_snip" title="Permalink to this definition">¶</a></dt>
+<dd><p>array providing representative fv for each snip</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="slang.snippers.KMeansFvToSnip.fvs_to_snip_distance_pairs">
+<code class="sig-name descname">fvs_to_snip_distance_pairs</code><span class="sig-paren">(</span><em class="sig-param">fvs: NewType.&lt;locals&gt;.new_type</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#KMeansFvToSnip.fvs_to_snip_distance_pairs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.KMeansFvToSnip.fvs_to_snip_distance_pairs" title="Permalink to this definition">¶</a></dt>
+<dd><p>iterator of (snip, distance_to_snip_centroid) pairs</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.snippers.KMeansFvToSnipDist">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">KMeansFvToSnipDist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_clusters</span><span class="o">=</span><span class="default_value">47</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#KMeansFvToSnipDist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.KMeansFvToSnipDist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.snippers.LdaChkToFv">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">LdaChkToFv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_components</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#LdaChkToFv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.LdaChkToFv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.snippers.PcaChkToFv">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">PcaChkToFv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_components</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#PcaChkToFv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.PcaChkToFv" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="slang.snippers.SlangClassifier">
+<code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">SlangClassifier</code><a class="headerlink" href="#slang.snippers.SlangClassifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#slang.snippers.ClassificationSnipper" title="slang.snippers.ClassificationSnipper"><code class="xref py py-class docutils literal notranslate"><span class="pre">slang.snippers.ClassificationSnipper</span></code></a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.snippers.is_iterable">
+<code class="sig-prename descclassname">slang.snippers.</code><code class="sig-name descname">is_iterable</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snippers.html#is_iterable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snippers.is_iterable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar in nature to <code class="xref py py-func docutils literal notranslate"><span class="pre">callable()</span></code>, <code class="docutils literal notranslate"><span class="pre">is_iterable</span></code> returns
+<code class="docutils literal notranslate"><span class="pre">True</span></code> if an object is <a href="#id1"><span class="problematic" id="id2">`iterable`_</span></a>, <code class="docutils literal notranslate"><span class="pre">False</span></code> if not.
+&gt;&gt;&gt; is_iterable([])
+True
+&gt;&gt;&gt; is_iterable(1)
+False</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="snip_stats.html" class="btn btn-neutral float-left" title="slang.snip_stats" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="spectrop.html" class="btn btn-neutral float-right" title="slang.spectrop" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

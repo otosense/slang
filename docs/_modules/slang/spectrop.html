@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.spectrop &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snippers.html">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>slang.spectrop</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for slang.spectrop</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Spectral projectors&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cumsum</span><span class="p">,</span> <span class="nb">min</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">floor</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">IncrementalPCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="kn">import</span> <span class="n">LinearDiscriminantAnalysis</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils.validation</span> <span class="kn">import</span> <span class="n">NotFittedError</span>
+<span class="kn">from</span> <span class="nn">sklearn.base</span> <span class="kn">import</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">array</span><span class="p">,</span>
+    <span class="n">hanning</span><span class="p">,</span>
+    <span class="n">fft</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># TODO: Get rid of this once we use C-based spectr</span>
+
+<span class="n">DFLT_WIN_FUNC</span> <span class="o">=</span> <span class="n">hanning</span>
+<span class="n">DFLT_CHK_SIZE</span> <span class="o">=</span> <span class="mi">2048</span>
+<span class="n">DFLT_INPUT_SIZE</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">DFLT_CHK_SIZE</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 1025 for chk sie of 2048</span>
+<span class="n">DFLT_N_FREQ</span> <span class="o">=</span> <span class="n">DFLT_INPUT_SIZE</span>  <span class="c1"># backcompat alias</span>
+<span class="n">DFLT_AMPLITUDE_FUNC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span>
+<span class="n">DFLT_FREQ_RANGE</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">DFLT_N_FREQ</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="make_band_matrix_row"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.make_band_matrix_row">[docs]</a><span class="k">def</span> <span class="nf">make_band_matrix_row</span><span class="p">(</span><span class="n">list_entries</span><span class="p">,</span> <span class="n">row_len</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Makes a row for the spectral bucket matrix. The row is zero everywhere except on the entries of index in</span>
+<span class="sd">    list_entries where it is 1 / len(list_entries)</span>
+
+<span class="sd">    :param list_entries: the indices of non zero entries of the row</span>
+<span class="sd">    :param row_len: the length of the row</span>
+<span class="sd">    :return: an array of length row_len as described above</span>
+
+<span class="sd">    &gt;&gt;&gt; make_band_matrix_row([3], 5)</span>
+<span class="sd">    array([0., 0., 0., 1., 0.])</span>
+<span class="sd">    &gt;&gt;&gt; make_band_matrix_row([0, 3], 5)</span>
+<span class="sd">    array([0.5, 0. , 0. , 0.5, 0. ])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_non_zero</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">list_entries</span><span class="p">)</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span><span class="mi">0</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_entries</span> <span class="k">else</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">n_non_zero</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">row_len</span><span class="p">)]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">row</span></div>
+
+
+<div class="viewcode-block" id="make_band_matrix"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.make_band_matrix">[docs]</a><span class="k">def</span> <span class="nf">make_band_matrix</span><span class="p">(</span><span class="n">buckets</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="n">DFLT_INPUT_SIZE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given a list of n list of indices, make a matrix of size n by n_freq where the entries of row k are 0</span>
+<span class="sd">    everywhere except at the index in the k list of buckets, where the entries are the inverse of the length</span>
+<span class="sd">    of that bucket</span>
+
+<span class="sd">    :param buckets: a list of list containing the indices of non zero entries of the corresponding row</span>
+<span class="sd">    :param n_freq: the number of column of the matrix</span>
+<span class="sd">    :return: a len(buckets) by n_freq matrix</span>
+
+<span class="sd">    &gt;&gt;&gt; buckets = make_buckets(n_buckets=15, freqs_weighting=lambda x: np.log(x + 0.001), freq_range=(200, 1000))</span>
+<span class="sd">    &gt;&gt;&gt; M = make_band_matrix(buckets, n_freq=1025)</span>
+<span class="sd">    &gt;&gt;&gt; print(M.shape)</span>
+<span class="sd">    (15, 1025)</span>
+
+<span class="sd">    &gt;&gt;&gt; # the matrix sends each of the 200 first unitary vector to the zero vector (not below is not a mathematical proof of that, but solid clue)</span>
+<span class="sd">    &gt;&gt;&gt; vec = [1] * 200 + [0] * (1025 - 200)</span>
+<span class="sd">    &gt;&gt;&gt; print(np.dot(M, vec))</span>
+<span class="sd">    [0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]</span>
+
+<span class="sd">    &gt;&gt;&gt; # after that, we get non zero output (in general at least)</span>
+<span class="sd">    &gt;&gt;&gt; vec = [1] * 200 + [1] + [0] * (1025 - 201)</span>
+<span class="sd">    &gt;&gt;&gt; print(np.dot(M, vec))</span>
+<span class="sd">    [0.01612903 0.         0.         0.         0.         0.</span>
+<span class="sd">     0.         0.         0.         0.         0.         0.</span>
+<span class="sd">     0.         0.         0.        ]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_bands</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">buckets</span><span class="p">)</span>
+    <span class="n">bucket_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_bands</span><span class="p">,</span> <span class="n">n_freq</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">row_idx</span><span class="p">,</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">buckets</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">make_band_matrix_row</span><span class="p">(</span><span class="n">list_entries</span><span class="o">=</span><span class="n">bucket</span><span class="p">,</span> <span class="n">row_len</span><span class="o">=</span><span class="n">n_freq</span><span class="p">)</span>
+        <span class="n">bucket_matrix</span><span class="p">[</span><span class="n">row_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span>
+    <span class="k">return</span> <span class="n">bucket_matrix</span></div>
+
+
+<div class="viewcode-block" id="decreasing_integer_geometric_sequence"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.decreasing_integer_geometric_sequence">[docs]</a><span class="k">def</span> <span class="nf">decreasing_integer_geometric_sequence</span><span class="p">(</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DFLT_INPUT_SIZE</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mf">0.5</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Generate decreasing positive integers in by multiplying numbers by a constant (between 0 and 1) repeatedly.</span>
+<span class="sd">    Numbers of ther sequence will all be integers and not repeat (so often not a true geometri sequence).</span>
+<span class="sd">    All sequences will end with 1.</span>
+<span class="sd">    An error will be raised if scale_factor is not between 0 and 1 (exclusive).</span>
+
+<span class="sd">    &gt;&gt;&gt; decreasing_integer_geometric_sequence(128)</span>
+<span class="sd">    [128, 64, 32, 16, 8, 4, 2, 1]</span>
+<span class="sd">    &gt;&gt;&gt; decreasing_integer_geometric_sequence(10, 0.3)</span>
+<span class="sd">    [10, 3, 1]</span>
+<span class="sd">    &gt;&gt;&gt; decreasing_integer_geometric_sequence(10, 0.7)</span>
+<span class="sd">    [10, 7, 5, 3, 2, 1]</span>
+
+<span class="sd">    And to see that we indeed don&#39;t get duplicates of the true geometric sequence.</span>
+
+<span class="sd">    &gt;&gt;&gt; decreasing_integer_geometric_sequence(10, 0.9999)</span>
+<span class="sd">    [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">scale_factor</span> <span class="o">&lt;</span> <span class="mi">1</span>
+    <span class="p">),</span> <span class="s1">&#39;This geometric_sequence is meant for decreasing sequences only&#39;</span>
+
+    <span class="k">def</span> <span class="nf">gen</span><span class="p">():</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="k">yield</span> <span class="nb">round</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
+        <span class="k">while</span> <span class="n">cursor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">cursor</span> <span class="o">*=</span> <span class="n">scale_factor</span>
+            <span class="k">yield</span> <span class="nb">round</span><span class="p">(</span><span class="n">cursor</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">gen</span><span class="p">()))</span></div>
+
+
+<span class="c1"># TODO: Continue algorithm further, filling more coarse coverage with static greedy rule, thus making n_buckets unbound</span>
+<span class="c1"># TODO: Make factor=None with n_buckets not None have the effect of choosing factor so n_buckets is exactly reached.</span>
+<div class="viewcode-block" id="logarithmic_bands_matrix"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.logarithmic_bands_matrix">[docs]</a><span class="k">def</span> <span class="nf">logarithmic_bands_matrix</span><span class="p">(</span>
+    <span class="n">n_buckets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_freqs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DFLT_INPUT_SIZE</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Makes a spectral projection matrix that puts more importance on low frequencies than high ones.</span>
+<span class="sd">    Importance both in weight and in precision.</span>
+<span class="sd">    By a factor of 2 by default, but can be any amount.</span>
+<span class="sd">    Note that the factor here is the inverse of the geometric factor of decreasing_integer_geometric_sequence.</span>
+
+<span class="sd">    Note that the sum of the frequencies of the bands is constant from band to band. Not sure if that&#39;s the best choice,</span>
+<span class="sd">    or if equal weight through out is the best choice.</span>
+<span class="sd">    We can discuss what both mean at a later date.</span>
+
+<span class="sd">    Important here is to understand my intent, to see how well I achieve it.</span>
+<span class="sd">    - The features &quot;build on each other&quot;. That is, if you ask (within the same `(n_freqs, factor)` set)</span>
+<span class="sd">    for 7 features in your fv, the first 5 will be the same as if you asked for only 5. This makes it easier to compare</span>
+<span class="sd">    fvs between projects, and possibly even &quot;add to existing features&quot;.</span>
+<span class="sd">    - Note  that the first feature is always total energy.</span>
+<span class="sd">    - Lower frequencies are given less importance -- both in precision and in weight.</span>
+<span class="sd">    - The linear algebraists that are listening will note what the vector space generated actually is,</span>
+<span class="sd">    compared to that created by disjoint bands.</span>
+
+<span class="sd">    &gt;&gt;&gt; print(*logarithmic_bands_matrix(n_freqs=8).tolist(), sep=&#39;\\n&#39;)</span>
+<span class="sd">    [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]</span>
+<span class="sd">    [0.25, 0.25, 0.25, 0.25, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="sd">    [0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="sd">    [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="sd">    &gt;&gt;&gt; print(*logarithmic_bands_matrix(n_freqs=8, factor=1.5).tolist(), sep=&#39;\\n&#39;)</span>
+<span class="sd">    [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]</span>
+<span class="sd">    [0.2, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0]</span>
+<span class="sd">    [0.25, 0.25, 0.25, 0.25, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="sd">    [0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="sd">    [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bucket_upper_bounds</span> <span class="o">=</span> <span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span><span class="n">n_freqs</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span>
+    <span class="n">buckets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">bucket_upper_bounds</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">make_band_matrix</span><span class="p">(</span><span class="n">buckets</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="n">n_freqs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_buckets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">n_buckets</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;you asked for </span><span class="si">{</span><span class="n">n_buckets</span><span class="si">}</span><span class="s1">, but the matrix has only </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="si">}</span><span class="s1"> rows. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Consider decreasing the factor to get more buckets&#39;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n_buckets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">m</span><span class="p">[:</span><span class="n">n_buckets</span><span class="p">]</span></div>
+
+
+<span class="c1"># A few default spectral projection matrices</span>
+<span class="n">geo_mat_11</span> <span class="o">=</span> <span class="n">logarithmic_bands_matrix</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">n_freqs</span><span class="o">=</span><span class="mi">1025</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">geo_mat_17</span> <span class="o">=</span> <span class="n">logarithmic_bands_matrix</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="n">n_freqs</span><span class="o">=</span><span class="mi">1025</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">geo_mat_34</span> <span class="o">=</span> <span class="n">logarithmic_bands_matrix</span><span class="p">(</span><span class="mi">34</span><span class="p">,</span> <span class="n">n_freqs</span><span class="o">=</span><span class="mi">1025</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+
+<span class="n">DFLT_SCALINGS</span> <span class="o">=</span> <span class="n">geo_mat_11</span>
+
+
+<div class="viewcode-block" id="instantiate_class_and_inject_attributes"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.instantiate_class_and_inject_attributes">[docs]</a><span class="k">def</span> <span class="nf">instantiate_class_and_inject_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    instantiates a class with the given kwargs, picking those arguments that are in the signature of cls to</span>
+<span class="sd">    use for the __init__, and adding attributes to the constructed object with the remaining.</span>
+<span class="sd">    :param cls: class to insantiate</span>
+<span class="sd">    :param kwargs: keyword args (some for the class __init__, and others to inject)</span>
+<span class="sd">    :return: An (possibly enhanced) class instance</span>
+<span class="sd">    &gt;&gt;&gt; class C:</span>
+<span class="sd">    ...     def __init__(self, a, b=3):</span>
+<span class="sd">    ...         self.a = a</span>
+<span class="sd">    ...         self.b = b</span>
+<span class="sd">    ...</span>
+<span class="sd">    &gt;&gt;&gt; c = instantiate_class_and_inject_attributes(C, a=10, foo=&#39;bar&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; c.__dict__</span>
+<span class="sd">    {&#39;a&#39;: 10, &#39;b&#39;: 3, &#39;foo&#39;: &#39;bar&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; c = instantiate_class_and_inject_attributes(C, a=10, foo=&#39;bar&#39;, bar=&#39;foo&#39;, b=1000)</span>
+<span class="sd">    &gt;&gt;&gt; c.__dict__</span>
+<span class="sd">    {&#39;a&#39;: 10, &#39;b&#39;: 1000, &#39;foo&#39;: &#39;bar&#39;, &#39;bar&#39;: &#39;foo&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; try:</span>
+<span class="sd">    ...     c = instantiate_class_and_inject_attributes(C, foo=&#39;bar&#39;, bar=&#39;foo&#39;, b=1000)</span>
+<span class="sd">    ... except TypeError:  # expected</span>
+<span class="sd">    ...     pass</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># cls_signature_args = inspect.signature(cls).parameters</span>
+    <span class="n">cls_signature_args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">cls_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">other_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">cls_signature_args</span><span class="p">:</span>
+            <span class="n">cls_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">other_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">cls_kwargs</span><span class="p">)</span>
+    <span class="n">o</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">other_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">o</span></div>
+
+
+<div class="viewcode-block" id="ascertain_array"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.ascertain_array">[docs]</a><span class="k">def</span> <span class="nf">ascertain_array</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Getting an array from an iterable&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">iterable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">iterable</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">iterable</span></div>
+
+
+<span class="k">def</span> <span class="nf">chk_to_spectrum</span><span class="p">(</span>
+    <span class="n">chk</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">DFLT_WIN_FUNC</span><span class="p">,</span> <span class="n">amplitude_func</span><span class="o">=</span><span class="n">DFLT_AMPLITUDE_FUNC</span>
+<span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span> <span class="o">==</span> <span class="n">chk_size</span><span class="p">,</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;This function was made for chk_size=</span><span class="si">{</span><span class="n">chk_size</span><span class="si">}</span><span class="s1">. &#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;You fed a chk of size len(chk)=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span><span class="si">}</span><span class="s1"> instead&#39;</span>
+    <span class="p">)</span>
+    <span class="n">fft_amplitudes</span> <span class="o">=</span> <span class="n">amplitude_func</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">chk</span> <span class="o">*</span> <span class="n">window</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fft_amplitudes</span>
+
+
+<span class="k">def</span> <span class="nf">named_partial</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">partial_func</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">partial_func</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="k">return</span> <span class="n">partial_func</span>
+
+
+<div class="viewcode-block" id="mk_chk_fft"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.mk_chk_fft">[docs]</a><span class="k">def</span> <span class="nf">mk_chk_fft</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">DFLT_WIN_FUNC</span><span class="p">,</span> <span class="n">amplitude_func</span><span class="o">=</span><span class="n">DFLT_AMPLITUDE_FUNC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a chk_fft function that will compute the fft (with given amplitude and window).</span>
+<span class="sd">    Note that this output chk_fft function will enforce a fixed chk_size (given explicitly, or through the</span>
+<span class="sd">    size of the window (if window is given as an array)</span>
+
+<span class="sd">    &gt;&gt;&gt; chk_size = 4 * 5</span>
+<span class="sd">    &gt;&gt;&gt; f = mk_chk_fft(chk_size)</span>
+<span class="sd">    &gt;&gt;&gt; chk = 4 * list(range(chk_size // 4))</span>
+<span class="sd">    &gt;&gt;&gt; f(chk)</span>
+<span class="sd">    array([19.        , 10.214421  ,  0.40774689,  4.34150779,  8.09801978,</span>
+<span class="sd">            4.30684381,  0.26711259,  2.61514496,  5.04588504,  2.6255033 ,</span>
+<span class="sd">            0.21962565])</span>
+<span class="sd">    &gt;&gt;&gt; # verifying that it&#39;s pickable</span>
+<span class="sd">    &gt;&gt;&gt; import pickle</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; ff = pickle.loads(pickle.dumps(f))</span>
+<span class="sd">    &gt;&gt;&gt; assert np.allclose(ff(chk), ff(chk))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">chk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s1">&#39;chk_size must be a positive integer if window is a callable, or None&#39;</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="n">window</span><span class="p">(</span><span class="n">chk_size</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">chk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">window</span><span class="p">)</span> <span class="o">==</span> <span class="n">chk_size</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;chk_size (</span><span class="si">{</span><span class="n">chk_size</span><span class="si">}</span><span class="s2">) and len(window) (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">window</span><span class="p">)</span><span class="si">}</span><span class="s2">) don&#39;t match&quot;</span>
+
+    <span class="n">chk_spectrum</span> <span class="o">=</span> <span class="n">named_partial</span><span class="p">(</span>
+        <span class="s1">&#39;chk_to_spectrum&#39;</span><span class="p">,</span>
+        <span class="n">chk_to_spectrum</span><span class="p">,</span>
+        <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">,</span>
+        <span class="n">window</span><span class="o">=</span><span class="n">window</span><span class="p">,</span>
+        <span class="n">amplitude_func</span><span class="o">=</span><span class="n">amplitude_func</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">chk_spectrum</span><span class="o">.</span><span class="n">chk_size</span> <span class="o">=</span> <span class="n">chk_size</span>
+    <span class="k">return</span> <span class="n">chk_spectrum</span></div>
+
+
+<span class="n">DFLT_CHK_FFT</span> <span class="o">=</span> <span class="n">mk_chk_fft</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">DFLT_WIN_FUNC</span><span class="p">)</span>
+
+<span class="n">matrix_mult</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span>
+<span class="n">DFLT_MATRIX_MULTI</span> <span class="o">=</span> <span class="n">matrix_mult</span>
+
+
+<span class="c1"># TODO: Does the doc match what the function does?</span>
+<span class="c1"># TODO: Better name for this, to distinguish between expressing projection in projected sub-space or original space</span>
+<span class="c1">#   The following expresses it in the original space</span>
+<div class="viewcode-block" id="projection"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.projection">[docs]</a><span class="k">def</span> <span class="nf">projection</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">vectors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The vectors live in a k dimensional space S and the columns of the basis are vectors of the same</span>
+<span class="sd">    space spanning a subspace of S. Gives a representation of the projection of vector into the space</span>
+<span class="sd">    spanned by basis in term of the basis.</span>
+
+<span class="sd">    :param basis: an n-by-k array, a matrix whose vertical columns are the vectors of the basis</span>
+<span class="sd">    :param vectors: an m-by-k array, a vector to be represented in the basis</span>
+<span class="sd">    :return: an m-by-k array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">matrix_mult</span><span class="p">(</span><span class="n">matrix_mult</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">basis</span><span class="p">),</span> <span class="n">basis</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="reducing_proj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.reducing_proj">[docs]</a><span class="k">def</span> <span class="nf">reducing_proj</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">vectors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;What we actually use to get fvs from spectras&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">matrix_mult</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">basis</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Projector"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.Projector">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">Projector</span><span class="p">:</span>
+    <span class="n">scalings_</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">DFLT_SCALINGS</span>
+    <span class="n">mat_mult</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">DFLT_MATRIX_MULTI</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="c1"># return projection(self.scalings_, ascertain_array(X))</span>
+        <span class="k">return</span> <span class="n">reducing_proj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">,</span> <span class="n">ascertain_array</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">to_jdict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;scalings_&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_jdict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">jdict</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">instantiate_class_and_inject_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">jdict</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;scalings_&#39;</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">scalings_</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="k">def</span> <span class="nf">is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;scalings_&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">assert_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span>
+                <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> was not fitted yet.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpectralProjector"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.SpectralProjector">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">SpectralProjector</span><span class="p">(</span><span class="n">Projector</span><span class="p">):</span>
+    <span class="n">chk_fft</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">DFLT_CHK_FFT</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chk_size</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chk_fft</span><span class="p">,</span> <span class="s1">&#39;chk_size&#39;</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">)</span>  <span class="c1"># get chk_size from chk_fft if it has it</span>
+
+    <span class="k">def</span> <span class="nf">spectras</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chks</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">chk_fft</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span> <span class="k">for</span> <span class="n">chk</span> <span class="ow">in</span> <span class="n">chks</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chks</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectras</span><span class="p">(</span><span class="n">chks</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chk</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">chk</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">mk_chk_fft</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span>
+        <span class="n">mk_chk_fft</span>
+    <span class="p">)</span>  <span class="c1"># to have it available to make a chk_fft in __init__</span></div>
+
+
+<span class="c1"># @classmethod</span>
+<span class="c1"># def for_chk_size(cls, scalings_=None,</span>
+<span class="c1">#                  chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC,</span>
+<span class="c1">#                  mat_mult=DFLT_MATRIX_MULTI):</span>
+<span class="c1">#     chk_fft = mk_chk_fft(chk_size, window, amplitude_func)</span>
+<span class="c1">#     return cls(scalings_, chk_fft, mat_mult)</span>
+
+
+<span class="c1"># def handle_iterables(learner_cls):</span>
+<span class="c1">#     @wraps(learner_cls.fit)</span>
+<span class="c1">#     def fit(self, X, y=None, *args, **kwargs):</span>
+<span class="c1">#         # TODO use signature bind to extract the X and y from args, and kwargs (and get rid of X and y explicit arg)</span>
+<span class="c1">#         try:</span>
+<span class="c1">#             self.fit(X, y, *args, **kwargs)</span>
+<span class="c1">#         except Exception:  # TODO: Be less broad</span>
+<span class="c1">#             # Use chunking to fit partial in batches (probably more efficient)</span>
+<span class="c1">#             if hasattr(self, &#39;fit_partial&#39;):</span>
+<span class="c1">#                 for x_item, y_item in zip(X, y):</span>
+<span class="c1">#                     self.fit_partial(x_item, y_item)</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 X = ascertain_array(X)</span>
+<span class="c1">#                 y = ascertain_array(y)</span>
+<span class="c1">#                 self.fit(X, y, *args, **kwargs)</span>
+<span class="c1">#         return self</span>
+<span class="c1">#     learner_cls.fit = fit</span>
+
+
+<span class="k">def</span> <span class="nf">fit_handling_iterables</span><span class="p">(</span><span class="n">learner</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">learner</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># TODO: Be less broad</span>
+        <span class="c1"># Use chunking to fit partial in batches (probably more efficient)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">learner</span><span class="p">,</span> <span class="s1">&#39;fit_partial&#39;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">x_item</span><span class="p">,</span> <span class="n">y_item</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+                <span class="n">learner</span><span class="o">.</span><span class="n">fit_partial</span><span class="p">(</span><span class="n">x_item</span><span class="p">,</span> <span class="n">y_item</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">ascertain_array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">ascertain_array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+            <span class="n">learner</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">learner</span>
+
+
+<div class="viewcode-block" id="SpectralProjectorLearner"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.SpectralProjectorLearner">[docs]</a><span class="k">class</span> <span class="nc">SpectralProjectorLearner</span><span class="p">(</span><span class="n">SpectralProjector</span><span class="p">,</span> <span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">learner</span><span class="p">,</span> <span class="n">chk_fft</span><span class="o">=</span><span class="n">DFLT_CHK_FFT</span><span class="p">,</span> <span class="n">mat_mult</span><span class="o">=</span><span class="n">DFLT_MATRIX_MULTI</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">scalings_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chk_fft</span><span class="o">=</span><span class="n">chk_fft</span><span class="p">,</span> <span class="n">mat_mult</span><span class="o">=</span><span class="n">mat_mult</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learner</span> <span class="o">=</span> <span class="n">learner</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chks</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">spectras</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chk_fft</span><span class="p">,</span> <span class="n">chks</span><span class="p">)</span>
+        <span class="n">fit_handling_iterables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">spectras</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">learner</span><span class="o">.</span><span class="n">scalings_</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<span class="c1"># TODO: Probably better if subclassing PCA</span>
+<div class="viewcode-block" id="TargettedVariancePCA"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.TargettedVariancePCA">[docs]</a><span class="k">class</span> <span class="nc">TargettedVariancePCA</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_variance</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">max_n_components</span><span class="o">=</span><span class="n">inf</span><span class="p">,</span> <span class="n">min_n_components</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">target_variance</span> <span class="o">=</span> <span class="n">target_variance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_n_components</span> <span class="o">=</span> <span class="n">max_n_components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_n_components</span> <span class="o">=</span> <span class="n">min_n_components</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">max_possible_comp</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_n_components</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">max_n_components</span><span class="p">,</span> <span class="n">max_possible_comp</span><span class="p">]))</span>
+        <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">max_n_components</span><span class="p">)</span>
+        <span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">exp_var_rat</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">explained_variance_ratio_</span>
+        <span class="n">sum_exp_var_rat</span> <span class="o">=</span> <span class="n">cumsum</span><span class="p">(</span><span class="n">exp_var_rat</span><span class="p">)</span>
+
+        <span class="n">n_comp_to_retain</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">n_comp_to_retain</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min_n_components</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_n_components</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">sum_exp_var_rat</span><span class="p">[</span><span class="n">n_comp_to_retain</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_variance</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="n">pca</span><span class="o">.</span><span class="n">components_</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">components_</span><span class="p">[:</span><span class="n">n_comp_to_retain</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># Note: pca not needed for the functioning of the class, but keeping around for debug reasons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pca</span> <span class="o">=</span> <span class="n">pca</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">components_</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">matrix_mult</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpectralProjectorUnsupervisedFitter"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.SpectralProjectorUnsupervisedFitter">[docs]</a><span class="k">class</span> <span class="nc">SpectralProjectorUnsupervisedFitter</span><span class="p">(</span><span class="n">SpectralProjector</span><span class="p">,</span> <span class="n">TargettedVariancePCA</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">target_variance</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span>
+        <span class="n">max_n_components</span><span class="o">=</span><span class="n">inf</span><span class="p">,</span>
+        <span class="n">min_n_components</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">scalings_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">chk_fft</span><span class="o">=</span><span class="n">DFLT_CHK_FFT</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">TargettedVariancePCA</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">target_variance</span><span class="p">,</span> <span class="n">max_n_components</span><span class="p">,</span> <span class="n">min_n_components</span>
+        <span class="p">)</span>
+        <span class="n">SpectralProjector</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalings_</span><span class="p">,</span> <span class="n">chk_fft</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chks</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectras</span><span class="p">(</span><span class="n">chks</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MyLDA"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.MyLDA">[docs]</a><span class="k">class</span> <span class="nc">MyLDA</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span> <span class="o">=</span> <span class="n">n_components</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">lda</span> <span class="o">=</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">)</span>
+        <span class="n">lda</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">ascertain_array</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+        <span class="c1"># Note: _lda not needed for the functioning of the class, but keeping around for debug reasons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lda</span> <span class="o">=</span> <span class="n">lda</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="n">lda</span><span class="o">.</span><span class="n">scalings_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span> <span class="o">=</span> <span class="n">lda</span><span class="o">.</span><span class="n">classes_</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">matrix_mult</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SpectralProjectorSupervisedFitter"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.SpectralProjectorSupervisedFitter">[docs]</a><span class="k">class</span> <span class="nc">SpectralProjectorSupervisedFitter</span><span class="p">(</span><span class="n">SpectralProjector</span><span class="p">,</span> <span class="n">MyLDA</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scalings_</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">chk_fft</span><span class="o">=</span><span class="n">DFLT_CHK_FFT</span><span class="p">):</span>
+        <span class="n">MyLDA</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_components</span><span class="p">)</span>
+        <span class="n">SpectralProjector</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalings_</span><span class="p">,</span> <span class="n">chk_fft</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chks</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectras</span><span class="p">(</span><span class="n">chks</span><span class="p">),</span> <span class="n">y</span><span class="p">)</span></div>
+
+
+<span class="c1">########################################################################################################################</span>
+<span class="c1"># Utils to create and extend projections</span>
+
+
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">NeighborhoodComponentsAnalysis</span> <span class="k">as</span> <span class="n">NCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="kn">import</span> <span class="n">LinearDiscriminantAnalysis</span> <span class="k">as</span> <span class="n">LDA</span>
+<span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="n">CLUSTERING_OPTIONS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;KMeans&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SpectralClustering&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AffinityPropagation&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AgglomerativeClustering&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Birch&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;MeanShift&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c1"># Note: All these models (PCA, LDA, NCA, LinReg...) are learned with numpy.dot as matrix mult.</span>
+<span class="c1">#   What happens if we learn with one definition of multiplication and run with another?</span>
+
+<span class="c1"># TODO: Try changing all learn_spect_proj cases into subclasses of Projection and compare pros and cons.</span>
+<span class="c1"># Note: Pro 1; Both cases and per-case arguments and defaults are visible, not hidden in code</span>
+<span class="c1"># Note: Pro 2; Projection will wrap scalings_ and offer consistent methods for projection calculus</span>
+<span class="c1"># Question: Do we want to keep scalings_ as the projecting matrix of Projection?</span>
+<span class="c1">#   Both name and shape (transp) not consistent with pca, nca, linear regression, etc.</span>
+
+<span class="c1"># TODO: Examples of objectivication below. Not verified or tested yet.</span>
+<span class="c1"># Note: A choice to make here: Subclassing versus Delegation. I&#39;ll perform subclassing here.</span>
+
+
+<div class="viewcode-block" id="PcaProj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.PcaProj">[docs]</a><span class="k">class</span> <span class="nc">PcaProj</span><span class="p">(</span><span class="n">PCA</span><span class="p">,</span> <span class="n">Projector</span><span class="p">):</span>
+<div class="viewcode-block" id="PcaProj.fit"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.PcaProj.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">components_</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">Projector</span><span class="o">.</span><span class="n">transform</span></div>
+
+
+<div class="viewcode-block" id="IpcaProj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.IpcaProj">[docs]</a><span class="k">class</span> <span class="nc">IpcaProj</span><span class="p">(</span><span class="n">IncrementalPCA</span><span class="p">,</span> <span class="n">Projector</span><span class="p">):</span>
+<div class="viewcode-block" id="IpcaProj.fit"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.IpcaProj.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">components_</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">Projector</span><span class="o">.</span><span class="n">transform</span></div>
+
+
+<div class="viewcode-block" id="LdaProj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.LdaProj">[docs]</a><span class="k">class</span> <span class="nc">LdaProj</span><span class="p">(</span><span class="n">LinearDiscriminantAnalysis</span><span class="p">,</span> <span class="n">Projector</span><span class="p">):</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">Projector</span><span class="o">.</span><span class="n">transform</span></div>
+
+
+<div class="viewcode-block" id="LinregProj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.LinregProj">[docs]</a><span class="k">class</span> <span class="nc">LinregProj</span><span class="p">(</span><span class="n">LinearRegression</span><span class="p">,</span> <span class="n">Projector</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">LinearRegression</span><span class="o">.</span><span class="n">fit</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<span class="c1"># Example of PCA+Projection, with delegation</span>
+
+
+<div class="viewcode-block" id="PcaProjWithDelegation"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.PcaProjWithDelegation">[docs]</a><span class="k">class</span> <span class="nc">PcaProjWithDelegation</span><span class="p">(</span><span class="n">Projector</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">PCA</span><span class="o">.</span><span class="fm">__init__</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">components_</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">Projector</span><span class="o">.</span><span class="n">transform</span></div>
+
+
+<div class="viewcode-block" id="learn_spect_proj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.learn_spect_proj">[docs]</a><span class="k">def</span> <span class="nf">learn_spect_proj</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">spectral_proj_name</span><span class="o">=</span><span class="s1">&#39;pca&#39;</span><span class="p">,</span>
+    <span class="n">clustering_meth</span><span class="o">=</span><span class="s1">&#39;KMeans&#39;</span><span class="p">,</span>
+    <span class="n">clustering_options</span><span class="o">=</span><span class="n">CLUSTERING_OPTIONS</span><span class="p">,</span>
+    <span class="n">kwargs_feat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">kwargs_clust</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to learn each of the important spectral projection</span>
+
+<span class="sd">    :param X: the fvs, an array of size n*k</span>
+<span class="sd">    :param y: the classes, an array of size n</span>
+<span class="sd">    :param spectral_proj_name: a string of the name of the featurizer</span>
+<span class="sd">    :param args: extra argument to be passed to the featurizer class</span>
+<span class="sd">    :return: a matrix in the form of a numpy array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">clustering_options</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">clustering_options</span><span class="p">)</span>
+    <span class="n">kwargs_feat</span> <span class="o">=</span> <span class="n">kwargs_feat</span> <span class="ow">or</span> <span class="p">{</span><span class="s1">&#39;n_components&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+    <span class="n">kwargs_clust</span> <span class="o">=</span> <span class="n">kwargs_clust</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">clustering_meth</span> <span class="ow">in</span> <span class="n">clustering_options</span>
+    <span class="p">),</span> <span class="s1">&#39;clustering options must one of </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">clustering_options</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="n">clusterer_m</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;sklearn.cluster&#39;</span><span class="p">),</span> <span class="n">clustering_meth</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">spectral_proj_name</span> <span class="o">==</span> <span class="s1">&#39;keep_features&#39;</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">kwargs_feat</span><span class="p">[</span><span class="s1">&#39;indices&#39;</span><span class="p">]</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
+            <span class="n">proj_matrix</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">elif</span> <span class="n">spectral_proj_name</span> <span class="o">==</span> <span class="s1">&#39;pca&#39;</span><span class="p">:</span>
+        <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_feat</span><span class="p">)</span>
+        <span class="n">pca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">components_</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c1"># elif spectral_proj_name == &#39;pseudo_pca&#39;:</span>
+    <span class="c1">#     # make the pseudo pca proj matrix</span>
+    <span class="c1">#     ppca = PseudoPca(**kwargs_feat)</span>
+    <span class="c1">#     ppca.fit(X)</span>
+    <span class="c1">#     proj_matrix = ppca.proj_mat.T</span>
+
+    <span class="k">elif</span> <span class="n">spectral_proj_name</span> <span class="o">==</span> <span class="s1">&#39;lda&#39;</span><span class="p">:</span>
+        <span class="n">lda</span> <span class="o">=</span> <span class="n">LDA</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_feat</span><span class="p">)</span>
+        <span class="n">lda</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">n_components</span> <span class="o">=</span> <span class="n">kwargs_feat</span><span class="p">[</span><span class="s1">&#39;n_components&#39;</span><span class="p">]</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">lda</span><span class="o">.</span><span class="n">scalings_</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_components</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">spectral_proj_name</span> <span class="o">==</span> <span class="s1">&#39;unsupervised_lda&#39;</span><span class="p">:</span>
+        <span class="n">n_components</span> <span class="o">=</span> <span class="n">kwargs_feat</span><span class="p">[</span><span class="s1">&#39;n_components&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;y will be replaced by classes found by the chosen clusterer&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;n_clusters&#39;</span> <span class="ow">in</span> <span class="n">clusterer_m</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">clusterer_m</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_components</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_clust</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">clusterer_m</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_clust</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">lda</span> <span class="o">=</span> <span class="n">LDA</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_feat</span><span class="p">)</span>
+        <span class="n">lda</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">lda</span><span class="o">.</span><span class="n">scalings_</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_components</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="n">spectral_proj_name</span> <span class="o">==</span> <span class="s1">&#39;nca&#39;</span><span class="p">:</span>
+        <span class="n">nca</span> <span class="o">=</span> <span class="n">NCA</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_feat</span><span class="p">)</span>
+        <span class="n">nca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">nca</span><span class="o">.</span><span class="n">components_</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">elif</span> <span class="n">spectral_proj_name</span> <span class="o">==</span> <span class="s1">&#39;unsupervised_nca&#39;</span><span class="p">:</span>
+        <span class="n">n_components</span> <span class="o">=</span> <span class="n">kwargs_feat</span><span class="p">[</span><span class="s1">&#39;n_components&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;y will be replaced by classes found by the chosen clusterer&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;n_clusters&#39;</span> <span class="ow">in</span> <span class="n">clusterer_m</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">clusterer_m</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">n_components</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs_clust</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">clusterer_m</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_clust</span><span class="p">)</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">nca</span> <span class="o">=</span> <span class="n">NCA</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_feat</span><span class="p">)</span>
+        <span class="n">nca</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">nca</span><span class="o">.</span><span class="n">components_</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">elif</span> <span class="n">spectral_proj_name</span> <span class="o">==</span> <span class="s1">&#39;linear regression&#39;</span><span class="p">:</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs_feat</span><span class="p">)</span>
+        <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">all_spectral_proj</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="s1">&#39;keep_features&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;pca&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;lda&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;pseudo_pca&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;unsupervised_lda&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;unsupervised_nca&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;nca&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;linear regression&#39;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;the spectral projector must be one of: </span><span class="si">{</span><span class="n">all_spectral_proj</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">proj_matrix</span></div>
+
+
+<div class="viewcode-block" id="residue"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.residue">[docs]</a><span class="k">def</span> <span class="nf">residue</span><span class="p">(</span><span class="n">scalings</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    find the residue of each of vectors after projection in basis</span>
+
+<span class="sd">    residues will be vectors in the original space (same number of dimensions)</span>
+
+<span class="sd">    :param scalings: an n-by-m array, spanning a vector space A</span>
+<span class="sd">    :param X: an n-by-k array</span>
+<span class="sd">    :return: an n-by-l array, the residues of vectors with the respect of the projection in basis</span>
+
+<span class="sd">    &gt;&gt;&gt; A = np.array([[1,0],[0,1]])</span>
+<span class="sd">    &gt;&gt;&gt; B = np.array([[2,3]])</span>
+<span class="sd">    &gt;&gt;&gt; print(residue(A, B))</span>
+<span class="sd">    [[0 0]]</span>
+<span class="sd">    &gt;&gt;&gt; A = np.array([[1,0],[0,0]])</span>
+<span class="sd">    &gt;&gt;&gt; B = np.array([[2,3]])</span>
+<span class="sd">    &gt;&gt;&gt; print(residue(A, B))</span>
+<span class="sd">    [[0 3]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># assert X - projection(scalings, X) == X * (scalings - 1)</span>
+    <span class="k">return</span> <span class="n">X</span> <span class="o">-</span> <span class="n">projection</span><span class="p">(</span><span class="n">scalings</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span></div>
+
+
+<span class="c1"># TODO: Check. Not consistent with normal projection (scalings_ is not used as projection), though it is a linear trans.</span>
+<span class="c1"># Note: Perhaps this is better seen as the compliment/dual of a projection?</span>
+<div class="viewcode-block" id="Residues"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.Residues">[docs]</a><span class="k">class</span> <span class="nc">Residues</span><span class="p">(</span><span class="n">Projector</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">X</span> <span class="o">-</span> <span class="n">projection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="keep_only_indices"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.keep_only_indices">[docs]</a><span class="k">def</span> <span class="nf">keep_only_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="n">DFLT_INPUT_SIZE</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Makes a matrix which when a spectra is multiplied with it, only the entires in the list indices are kept</span>
+<span class="sd">    :param indices: a list of indices to keep</span>
+<span class="sd">    :param input_size: the total number of frequencies in the spectra</span>
+<span class="sd">    :return: a matrix of size (input_size, len(indices))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">input_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)))</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)):</span>
+        <span class="n">proj_matrix</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">proj_matrix</span></div>
+
+
+<span class="k">def</span> <span class="nf">mk_pre_projection_from_indices</span><span class="p">(</span><span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="n">DFLT_INPUT_SIZE</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">keep_only_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="n">input_size</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="learn_chain_proj_matrix"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.learn_chain_proj_matrix">[docs]</a><span class="k">def</span> <span class="nf">learn_chain_proj_matrix</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">chain</span><span class="o">=</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;n_components&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}},),</span>
+    <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">input_size</span><span class="o">=</span><span class="mi">1025</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A function successively learning a projections matrix on the residue of the previous one. The projections</span>
+<span class="sd">    matrices are then concatenated and return as one single projection matrix. Note that the final projection</span>
+<span class="sd">    matrix may not produce fvs of the size the sum of the components of each part, i.e., care must be taken</span>
+<span class="sd">    to ensure each classes called must be able to produce the required number of components. For example,</span>
+<span class="sd">    if the number of classes is 10, then lda can only produce 9 dimensions. To obtain say 12 dimension, the user</span>
+<span class="sd">    will need to chain two lda&#39;s, for example with size 9 and 3 respectively.</span>
+
+<span class="sd">    :param X: the fvs, an array of size n*k</span>
+<span class="sd">    :param y: the classes, an array of size n</span>
+<span class="sd">    :param chain: a tuple of dictionaries each containing the type of projection along with its parameters</span>
+<span class="sd">    :param indices: the indices of the spectra to work with, anything else is discarded</span>
+<span class="sd">    :param input_size: the total number of entries from the spectra.</span>
+<span class="sd">        Only needed if n_freq is not None, in order to</span>
+<span class="sd">        determine the size of the freq_selection_matrix</span>
+<span class="sd">    :return: a single projection matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">freq_selection_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">freq_selection_matrix</span> <span class="o">=</span> <span class="n">keep_only_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="n">n_freq</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">freq_selection_matrix</span><span class="p">)</span>
+
+    <span class="n">all_proj_matrices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">mat_dict</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">:</span>
+        <span class="n">kwargs_feat</span> <span class="o">=</span> <span class="n">mat_dict</span><span class="p">[</span><span class="s1">&#39;args&#39;</span><span class="p">]</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">learn_spect_proj</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">spectral_proj_name</span><span class="o">=</span><span class="n">mat_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">kwargs_feat</span><span class="o">=</span><span class="n">kwargs_feat</span>
+        <span class="p">)</span>
+        <span class="n">all_proj_matrices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proj_matrix</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">residue</span><span class="p">(</span><span class="n">proj_matrix</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+
+    <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">all_proj_matrices</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">freq_selection_matrix</span><span class="p">,</span> <span class="n">proj_matrix</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">proj_matrix</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">old_learn_chain_proj_matrix</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">chain</span><span class="o">=</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="s1">&#39;kwargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;n_components&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}},),</span>
+    <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">input_size</span><span class="o">=</span><span class="n">DFLT_INPUT_SIZE</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="n">freq_selection_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">freq_selection_matrix</span> <span class="o">=</span> <span class="n">keep_only_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="n">input_size</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">freq_selection_matrix</span><span class="p">)</span>
+
+    <span class="n">all_proj_matrices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">mat_dict</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">:</span>
+        <span class="n">kwargs_feat</span> <span class="o">=</span> <span class="n">mat_dict</span><span class="p">[</span><span class="s1">&#39;kwargs&#39;</span><span class="p">]</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">learn_spect_proj</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">spectral_proj_name</span><span class="o">=</span><span class="n">mat_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">kwargs_feat</span><span class="o">=</span><span class="n">kwargs_feat</span>
+        <span class="p">)</span>
+        <span class="n">all_proj_matrices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proj_matrix</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">residue</span><span class="p">(</span><span class="n">proj_matrix</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+
+    <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">all_proj_matrices</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">proj_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">freq_selection_matrix</span><span class="p">,</span> <span class="n">proj_matrix</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">proj_matrix</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GeneralProjectionLearner"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.GeneralProjectionLearner">[docs]</a><span class="k">class</span> <span class="nc">GeneralProjectionLearner</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">TransformerMixin</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">chain</span><span class="o">=</span><span class="p">({</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;pca&#39;</span><span class="p">,</span> <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;n_components&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}},),</span>
+        <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_freq</span><span class="o">=</span><span class="mi">1025</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chain</span> <span class="o">=</span> <span class="n">chain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span> <span class="o">=</span> <span class="n">n_freq</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span> <span class="o">=</span> <span class="n">learn_chain_proj_matrix</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">chain</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projection</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="GeneralProjectionLearner.transform"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.GeneralProjectionLearner.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Projection within projected space (reduces dimensions)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GeneralProjectionLearner.project"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.GeneralProjectionLearner.project">[docs]</a>    <span class="k">def</span> <span class="nf">project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Projection within original space (remains same dimensions, no reduction)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="make_buckets"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.make_buckets">[docs]</a><span class="k">def</span> <span class="nf">make_buckets</span><span class="p">(</span>
+    <span class="n">n_buckets</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+    <span class="n">freq_range</span><span class="o">=</span><span class="n">DFLT_FREQ_RANGE</span><span class="p">,</span>
+    <span class="n">non_empty_bucket</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create greedily buckets starting by aggregating lower frequencies, when the sum of</span>
+<span class="sd">    the frequencies values so far exceed the number of buckets created times the target</span>
+<span class="sd">    average value for a single bucket, a new bucket is created with or without the last</span>
+<span class="sd">    term according to which choice will be closest.</span>
+
+<span class="sd">    :param n_buckets: final number of buckets</span>
+<span class="sd">    :param freqs_weighting: any function assigning a non-negative value to each</span>
+<span class="sd">                            element in the freq_range</span>
+<span class="sd">                            If given a list, the function will be assumed</span>
+<span class="sd">                            to be the one to one mapping the frequencies to the value in the list</span>
+
+<span class="sd">    :param freq_range: the range of frequencies considered, inclusive on both ends</span>
+<span class="sd">    :param non_empty_bucket: if set to true, all buckets will have at least one element</span>
+<span class="sd">    :param reverse: if set to true, will start aggregating higher frequencies instead, which for an increasing weight</span>
+<span class="sd">    function will aggregate the higher frequencies into larger bins as typical</span>
+<span class="sd">    :return: a partition of freq_range</span>
+
+<span class="sd">    &gt;&gt;&gt; buckets = make_buckets(n_buckets=15, freqs_weighting=lambda x: np.log(x + 0.001), freq_range=(200, 1000))</span>
+<span class="sd">    &gt;&gt;&gt; len(buckets) == 15</span>
+<span class="sd">    True</span>
+<span class="sd">    &gt;&gt;&gt; buckets[0][0] # the first bucket starts at the first term of freq_range</span>
+<span class="sd">    200</span>
+<span class="sd">    &gt;&gt;&gt; buckets[-1][-1] # the last bucket ends at the last term of freq_range - 1</span>
+<span class="sd">    999</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># total number of frequencies</span>
+    <span class="n">low_freq</span> <span class="o">=</span> <span class="n">freq_range</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">high_freq</span> <span class="o">=</span> <span class="n">freq_range</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">n_freqs</span> <span class="o">=</span> <span class="n">high_freq</span> <span class="o">-</span> <span class="n">low_freq</span>
+    <span class="k">if</span> <span class="n">n_freqs</span> <span class="o">&lt;</span> <span class="n">n_buckets</span> <span class="ow">and</span> <span class="n">non_empty_bucket</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s1">&#39;You asked for more buckets than the number of frequencies available, &#39;</span>
+            <span class="s1">&#39;some will necessarily be empty&#39;</span>
+        <span class="p">)</span>
+        <span class="n">non_empty_bucket</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="c1"># indices of the frequencies</span>
+    <span class="n">freq_range</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">low_freq</span><span class="p">,</span> <span class="n">high_freq</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+        <span class="n">freq_range</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="c1"># get the value of each frequency</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">freqs_weighting</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+        <span class="n">freq_values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">freqs_weighting</span><span class="p">,</span> <span class="n">freq_range</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">freq_values</span> <span class="o">=</span> <span class="n">freqs_weighting</span>
+    <span class="c1"># ideal average sum of bucket value</span>
+    <span class="n">target_bucket_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">freq_values</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_buckets</span>
+
+    <span class="c1"># position of the next term to consider</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># sum of all the existing buckets plus the current bucket under construction</span>
+    <span class="n">existing_bucket_sum</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># list of indices for each bucket, empty at moment</span>
+    <span class="n">idx_bucket_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_buckets</span><span class="p">):</span>
+        <span class="c1"># the list of indices in the bucket under construction</span>
+        <span class="n">bucket_idx</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="n">existing_bucket_sum</span> <span class="o">&lt;</span> <span class="n">target_bucket_sum</span> <span class="o">*</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">bucket_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+            <span class="n">existing_bucket_sum</span> <span class="o">+=</span> <span class="n">freq_values</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+            <span class="c1"># increment the position if we are not running out of terms</span>
+            <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="n">n_freqs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">position</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># otherwise we stop and return all the buckets, including the one under construction</span>
+            <span class="c1"># which is non empty by construction</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">idx_bucket_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bucket_idx</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">low_freq</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">idx_bucket_list</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">low_freq</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">idx_bucket_list</span>
+                    <span class="p">]</span>
+                <span class="k">return</span> <span class="n">idx_bucket_list</span>
+
+        <span class="c1"># if we skipped the loop above, our newly constructed bucket is empty</span>
+        <span class="c1"># if we specified that empty buckets are not ok, we force one guy in it</span>
+        <span class="k">if</span> <span class="n">non_empty_bucket</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">bucket_idx</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">bucket_idx</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+            <span class="n">idx_bucket_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bucket_idx</span><span class="p">)</span>
+            <span class="c1"># increment the position if we are not running out of terms</span>
+            <span class="k">if</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="n">n_freqs</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">position</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># otherwise we stop and return all the buckets, including the one under construction</span>
+            <span class="c1"># which is non empty by construction</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">idx_bucket_list</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># we now have a non empty bucket, so we check what is best, including the last added term or no</span>
+            <span class="n">total_dif_small</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span>
+                <span class="n">existing_bucket_sum</span>
+                <span class="o">-</span> <span class="n">freq_values</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+                <span class="o">-</span> <span class="n">target_bucket_sum</span> <span class="o">*</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">total_diff_large</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">existing_bucket_sum</span> <span class="o">-</span> <span class="n">target_bucket_sum</span> <span class="o">*</span> <span class="p">(</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+            <span class="c1"># we don&#39;t remove the last if it is better not too or if we want non empty buckets</span>
+            <span class="c1"># and remove it would violate that rule</span>
+            <span class="k">if</span> <span class="n">total_diff_large</span> <span class="o">&lt;</span> <span class="n">total_dif_small</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">bucket_idx</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">non_empty_bucket</span>
+            <span class="p">):</span>
+                <span class="n">idx_bucket_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bucket_idx</span><span class="p">)</span>
+            <span class="c1"># otherwise remove last term</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">idx_bucket_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bucket_idx</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="c1"># below is to ensure that if the last bucket is empty, we increment the position</span>
+                <span class="c1"># effectively skipping that position. Otherwise we will end up with a list of empty lists</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bucket_idx</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">existing_bucket_sum</span> <span class="o">-=</span> <span class="n">freq_values</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+                    <span class="n">position</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+    <span class="n">idx_bucket_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq_range</span><span class="p">[</span><span class="n">idx_bucket_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="p">:]</span>
+    <span class="k">if</span> <span class="n">low_freq</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">idx_bucket_list</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span> <span class="o">+</span> <span class="n">low_freq</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">idx_bucket_list</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">idx_bucket_list</span></div>
+
+
+<span class="c1"># class GeneralProjectionLearner(BaseEstimator, TransformerMixin):</span>
+<span class="c1">#     def __init__(self, chain=({&#39;type&#39;: &#39;pca&#39;, &#39;kwargs&#39;: {&#39;n_components&#39;: 5}},), indices=None,</span>
+<span class="c1">#                  input_size=DFLT_INPUT_SIZE):</span>
+<span class="c1">#         self.chain = chain</span>
+<span class="c1">#         self.indices = indices</span>
+<span class="c1">#         self.input_size = input_size</span>
+<span class="c1">#</span>
+<span class="c1">#     def fit(self, X, y=None):</span>
+<span class="c1">#         pre_projection = mk_pre_projection_from_indices(self.indices, self.input_size)</span>
+<span class="c1">#         self.scalings_ = learn_chain_proj_matrix(X, y, self.chain, pre_projection)</span>
+<span class="c1">#         return self</span>
+<span class="c1">#</span>
+<span class="c1">#     def fit(self, X, y=None):</span>
+<span class="c1">#         self.scalings_ = learn_chain_proj_matrix(X, y, self.chain, indices=self.indices, n_freq=self.n_freq)</span>
+<span class="c1">#         self.projection = np.dot(self.scalings_, self.scalings_.T)</span>
+<span class="c1">#         return self</span>
+<span class="c1">#</span>
+<span class="c1">#     def transform(self, X):</span>
+<span class="c1">#         &quot;&quot;&quot;Projection within projected space (reduces dimensions)&quot;&quot;&quot;</span>
+<span class="c1">#         return np.dot(X, self.scalings_)</span>
+<span class="c1">#</span>
+<span class="c1">#     def project(self, X):</span>
+<span class="c1">#         &quot;&quot;&quot;Projection within original space (remains same dimensions, no reduction)&quot;&quot;&quot;</span>
+<span class="c1">#         return np.dot(X, self.projection)</span>
+<span class="c1">#</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

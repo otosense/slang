@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.spectrop &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="slang.stypes" href="stypes.html" />
+    <link rel="prev" title="slang.snippers" href="snippers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="snippers.html">slang.snippers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>slang.spectrop</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/slang/spectrop.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-slang.spectrop">
+<span id="slang-spectrop"></span><h1>slang.spectrop<a class="headerlink" href="#module-slang.spectrop" title="Permalink to this headline">¶</a></h1>
+<p>Spectral projectors</p>
+<dl class="py class">
+<dt id="slang.spectrop.GeneralProjectionLearner">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">GeneralProjectionLearner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chain</span><span class="o">=</span><span class="default_value">({'type': 'pca', 'args': {'n_components': 5}})</span></em>, <em class="sig-param"><span class="n">indices</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_freq</span><span class="o">=</span><span class="default_value">1025</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#GeneralProjectionLearner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.GeneralProjectionLearner" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="slang.spectrop.GeneralProjectionLearner.project">
+<code class="sig-name descname">project</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#GeneralProjectionLearner.project"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.GeneralProjectionLearner.project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projection within original space (remains same dimensions, no reduction)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="slang.spectrop.GeneralProjectionLearner.transform">
+<code class="sig-name descname">transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#GeneralProjectionLearner.transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.GeneralProjectionLearner.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Projection within projected space (reduces dimensions)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.IpcaProj">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">IpcaProj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_components</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">whiten</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#IpcaProj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.IpcaProj" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="slang.spectrop.IpcaProj.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#IpcaProj.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.IpcaProj.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model with X, using minibatches of size batch_size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix} of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Training data, where <cite>n_samples</cite> is the number of samples and
+<cite>n_features</cite> is the number of features.</p></li>
+<li><p><strong>y</strong> (<em>Ignored</em>) – Not used, present for API consistency by convention.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong> – Returns the instance itself.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.LdaProj">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">LdaProj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">solver</span><span class="o">=</span><span class="default_value">'svd'</span></em>, <em class="sig-param"><span class="n">shrinkage</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">priors</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_components</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">store_covariance</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.0001</span></em>, <em class="sig-param"><span class="n">covariance_estimator</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#LdaProj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.LdaProj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.LinregProj">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">LinregProj</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">fit_intercept</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">normalize</span><span class="o">=</span><span class="default_value">'deprecated'</span></em>, <em class="sig-param"><span class="n">copy_X</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">n_jobs</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">positive</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#LinregProj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.LinregProj" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="slang.spectrop.LinregProj.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">sample_weight</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#slang.spectrop.LinregProj.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit linear model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>{array-like</em><em>, </em><em>sparse matrix} of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Training data.</p></li>
+<li><p><strong>y</strong> (<em>array-like of shape</em><em> (</em><em>n_samples</em><em>,</em><em>) or </em><em>(</em><em>n_samples</em><em>, </em><em>n_targets</em><em>)</em>) – Target values. Will be cast to X’s dtype if necessary.</p></li>
+<li><p><strong>sample_weight</strong> (<em>array-like of shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em><em>, </em><em>default=None</em>) – <p>Individual weights for each sample.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version 0.17: </span>parameter <em>sample_weight</em> support to LinearRegression.</p>
+</div>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong> – Fitted Estimator.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.MyLDA">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">MyLDA</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_components</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#MyLDA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.MyLDA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.PcaProj">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">PcaProj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_components</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">copy</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">whiten</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">svd_solver</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">tol</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">iterated_power</span><span class="o">=</span><span class="default_value">'auto'</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#PcaProj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.PcaProj" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="slang.spectrop.PcaProj.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#PcaProj.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.PcaProj.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit the model with X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array-like of shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – Training data, where <cite>n_samples</cite> is the number of samples
+and <cite>n_features</cite> is the number of features.</p></li>
+<li><p><strong>y</strong> (<em>Ignored</em>) – Ignored.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>self</strong> – Returns the instance itself.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.PcaProjWithDelegation">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">PcaProjWithDelegation</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#PcaProjWithDelegation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.PcaProjWithDelegation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.Projector">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">Projector</code><span class="sig-paren">(</span><em class="sig-param">scalings_: numpy.ndarray = array([[9.75609756e-04, 9.75609756e-04, 9.75609756e-04, ...,         9.75609756e-04, 9.75609756e-04, 9.75609756e-04],        [1.95312500e-03, 1.95312500e-03, 1.95312500e-03, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [3.90625000e-03, 3.90625000e-03, 3.90625000e-03, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        ...,        [2.50000000e-01, 2.50000000e-01, 2.50000000e-01, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [5.00000000e-01, 5.00000000e-01, 0.00000000e+00, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [1.00000000e+00, 0.00000000e+00, 0.00000000e+00, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#Projector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.Projector" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Projector(<a href="#id1"><span class="problematic" id="id2">scalings_</span></a>: numpy.ndarray = array([[9.75609756e-04, 9.75609756e-04, 9.75609756e-04, …,</dt><dd><p>9.75609756e-04, 9.75609756e-04, 9.75609756e-04],</p>
+</dd>
+<dt>[1.95312500e-03, 1.95312500e-03, 1.95312500e-03, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
+</dd>
+<dt>[3.90625000e-03, 3.90625000e-03, 3.90625000e-03, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
+</dd>
+</dl>
+<p>…,
+[2.50000000e-01, 2.50000000e-01, 2.50000000e-01, …,</p>
+<blockquote>
+<div><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
+</div></blockquote>
+<dl class="simple">
+<dt>[5.00000000e-01, 5.00000000e-01, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
+</dd>
+<dt>[1.00000000e+00, 0.00000000e+00, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot at 0x7f66fb2379d0&gt;)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="slang.spectrop.Projector.mat_mult">
+<code class="sig-name descname">mat_mult</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slang.spectrop.Projector.mat_mult" title="Permalink to this definition">¶</a></dt>
+<dd><p>dot(a, b, out=None)</p>
+<p>Dot product of two arrays. Specifically,</p>
+<ul>
+<li><p>If both <cite>a</cite> and <cite>b</cite> are 1-D arrays, it is inner product of vectors
+(without complex conjugation).</p></li>
+<li><p>If both <cite>a</cite> and <cite>b</cite> are 2-D arrays, it is matrix multiplication,
+but using <code class="xref py py-func docutils literal notranslate"><span class="pre">matmul()</span></code> or <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">&#64;</span> <span class="pre">b</span></code> is preferred.</p></li>
+<li><p>If either <cite>a</cite> or <cite>b</cite> is 0-D (scalar), it is equivalent to <code class="xref py py-func docutils literal notranslate"><span class="pre">multiply()</span></code>
+and using <code class="docutils literal notranslate"><span class="pre">numpy.multiply(a,</span> <span class="pre">b)</span></code> or <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">*</span> <span class="pre">b</span></code> is preferred.</p></li>
+<li><p>If <cite>a</cite> is an N-D array and <cite>b</cite> is a 1-D array, it is a sum product over
+the last axis of <cite>a</cite> and <cite>b</cite>.</p></li>
+<li><p>If <cite>a</cite> is an N-D array and <cite>b</cite> is an M-D array (where <code class="docutils literal notranslate"><span class="pre">M&gt;=2</span></code>), it is a
+sum product over the last axis of <cite>a</cite> and the second-to-last axis of <cite>b</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="n">k</span><span class="p">,:,</span><span class="n">m</span><span class="p">])</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>array_like</em>) – First argument.</p></li>
+<li><p><strong>b</strong> (<em>array_like</em>) – Second argument.</p></li>
+<li><p><strong>out</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – Output argument. This must have the exact kind that would be returned
+if it was not used. In particular, it must have the right type, must be
+C-contiguous, and its dtype must be the dtype that would be returned
+for <cite>dot(a,b)</cite>. This is a performance feature. Therefore, if these
+conditions are not met, an exception is raised, instead of attempting
+to be flexible.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>output</strong> – Returns the dot product of <cite>a</cite> and <cite>b</cite>.  If <cite>a</cite> and <cite>b</cite> are both
+scalars or both 1-D arrays then a scalar is returned; otherwise
+an array is returned.
+If <cite>out</cite> is given, then it is returned.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the last dimension of <cite>a</cite> is not the same size as
+    the second-to-last dimension of <cite>b</cite>.</p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">vdot</span></code></dt><dd><p>Complex-conjugating dot product.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensordot</span></code></dt><dd><p>Sum products over arbitrary axes.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">einsum</span></code></dt><dd><p>Einstein summation convention.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">matmul</span></code></dt><dd><p>‘&#64;’ operator as method with out parameter.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">linalg.multi_dot</span></code></dt><dd><p>Chained dot product.</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">12</span>
+</pre></div>
+</div>
+<p>Neither argument is complex-conjugated:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">([</span><span class="mi">2</span><span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="n">j</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="n">j</span><span class="p">,</span> <span class="mi">3</span><span class="n">j</span><span class="p">])</span>
+<span class="go">(-13+0j)</span>
+</pre></div>
+</div>
+<p>For 2-D arrays it is the matrix product:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="go">array([[4, 1],</span>
+<span class="go">       [2, 2]])</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">5</span><span class="o">*</span><span class="mi">6</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="mi">4</span><span class="o">*</span><span class="mi">5</span><span class="o">*</span><span class="mi">6</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="go">499128</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">sum</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,:,</span><span class="mi">2</span><span class="p">])</span>
+<span class="go">499128</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.Residues">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">Residues</code><span class="sig-paren">(</span><em class="sig-param">scalings_: numpy.ndarray = array([[9.75609756e-04, 9.75609756e-04, 9.75609756e-04, ...,         9.75609756e-04, 9.75609756e-04, 9.75609756e-04],        [1.95312500e-03, 1.95312500e-03, 1.95312500e-03, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [3.90625000e-03, 3.90625000e-03, 3.90625000e-03, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        ...,        [2.50000000e-01, 2.50000000e-01, 2.50000000e-01, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [5.00000000e-01, 5.00000000e-01, 0.00000000e+00, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [1.00000000e+00, 0.00000000e+00, 0.00000000e+00, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#Residues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.Residues" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.SpectralProjector">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">SpectralProjector</code><span class="sig-paren">(</span><em class="sig-param">scalings_: numpy.ndarray = array([[9.75609756e-04, 9.75609756e-04, 9.75609756e-04, ...,         9.75609756e-04, 9.75609756e-04, 9.75609756e-04],        [1.95312500e-03, 1.95312500e-03, 1.95312500e-03, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [3.90625000e-03, 3.90625000e-03, 3.90625000e-03, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        ...,        [2.50000000e-01, 2.50000000e-01, 2.50000000e-01, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [5.00000000e-01, 5.00000000e-01, 0.00000000e+00, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00],        [1.00000000e+00, 0.00000000e+00, 0.00000000e+00, ...,         0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot&gt;, chk_fft: Callable = functools.partial(&lt;function chk_to_spectrum&gt;, chk_size=2048, window=array([0.00000000e+00, 2.35539484e-06, 9.42155716e-06, ...,        9.42155716e-06, 2.35539484e-06, 0.00000000e+00]), amplitude_func=&lt;ufunc 'absolute'&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#SpectralProjector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.SpectralProjector" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>SpectralProjector(<a href="#id3"><span class="problematic" id="id4">scalings_</span></a>: numpy.ndarray = array([[9.75609756e-04, 9.75609756e-04, 9.75609756e-04, …,</dt><dd><p>9.75609756e-04, 9.75609756e-04, 9.75609756e-04],</p>
+</dd>
+<dt>[1.95312500e-03, 1.95312500e-03, 1.95312500e-03, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
+</dd>
+<dt>[3.90625000e-03, 3.90625000e-03, 3.90625000e-03, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
+</dd>
+</dl>
+<p>…,
+[2.50000000e-01, 2.50000000e-01, 2.50000000e-01, …,</p>
+<blockquote>
+<div><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
+</div></blockquote>
+<dl class="simple">
+<dt>[5.00000000e-01, 5.00000000e-01, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
+</dd>
+<dt>[1.00000000e+00, 0.00000000e+00, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot at 0x7f66fb2379d0&gt;, chk_fft: Callable = functools.partial(&lt;function chk_to_spectrum at 0x7f66e8236040&gt;, chk_size=2048, window=array([0.00000000e+00, 2.35539484e-06, 9.42155716e-06, …,</p>
+</dd>
+</dl>
+<p>9.42155716e-06, 2.35539484e-06, 0.00000000e+00]), amplitude_func=&lt;ufunc ‘absolute’&gt;))</p>
+<dl class="py method">
+<dt id="slang.spectrop.SpectralProjector.mk_chk_fft">
+<em class="property">static </em><code class="sig-name descname">mk_chk_fft</code><span class="sig-paren">(</span><em class="sig-param">chk_size=None</em>, <em class="sig-param">window=&lt;function hanning&gt;</em>, <em class="sig-param">amplitude_func=&lt;ufunc 'absolute'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#slang.spectrop.SpectralProjector.mk_chk_fft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a chk_fft function that will compute the fft (with given amplitude and window).
+Note that this output chk_fft function will enforce a fixed chk_size (given explicitly, or through the
+size of the window (if window is given as an array)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chk_size</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">mk_chk_fft</span><span class="p">(</span><span class="n">chk_size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">chk_size</span> <span class="o">//</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span>
+<span class="go">array([19.        , 10.214421  ,  0.40774689,  4.34150779,  8.09801978,</span>
+<span class="go">        4.30684381,  0.26711259,  2.61514496,  5.04588504,  2.6255033 ,</span>
+<span class="go">        0.21962565])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># verifying that it&#39;s pickable</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ff</span><span class="p">(</span><span class="n">chk</span><span class="p">),</span> <span class="n">ff</span><span class="p">(</span><span class="n">chk</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.SpectralProjectorLearner">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">SpectralProjectorLearner</code><span class="sig-paren">(</span><em class="sig-param">learner</em>, <em class="sig-param">chk_fft=functools.partial(&lt;function chk_to_spectrum&gt;</em>, <em class="sig-param">chk_size=2048</em>, <em class="sig-param">window=array([0.00000000e+00</em>, <em class="sig-param">2.35539484e-06</em>, <em class="sig-param">9.42155716e-06</em>, <em class="sig-param">...</em>, <em class="sig-param">9.42155716e-06</em>, <em class="sig-param">2.35539484e-06</em>, <em class="sig-param">0.00000000e+00])</em>, <em class="sig-param">amplitude_func=&lt;ufunc 'absolute'&gt;)</em>, <em class="sig-param">mat_mult=&lt;function dot&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#SpectralProjectorLearner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.SpectralProjectorLearner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.SpectralProjectorSupervisedFitter">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">SpectralProjectorSupervisedFitter</code><span class="sig-paren">(</span><em class="sig-param">n_components=None</em>, <em class="sig-param">scalings_=None</em>, <em class="sig-param">chk_fft=functools.partial(&lt;function chk_to_spectrum&gt;</em>, <em class="sig-param">chk_size=2048</em>, <em class="sig-param">window=array([0.00000000e+00</em>, <em class="sig-param">2.35539484e-06</em>, <em class="sig-param">9.42155716e-06</em>, <em class="sig-param">...</em>, <em class="sig-param">9.42155716e-06</em>, <em class="sig-param">2.35539484e-06</em>, <em class="sig-param">0.00000000e+00])</em>, <em class="sig-param">amplitude_func=&lt;ufunc 'absolute'&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#SpectralProjectorSupervisedFitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.SpectralProjectorSupervisedFitter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.SpectralProjectorUnsupervisedFitter">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">SpectralProjectorUnsupervisedFitter</code><span class="sig-paren">(</span><em class="sig-param">target_variance=0.95</em>, <em class="sig-param">max_n_components=inf</em>, <em class="sig-param">min_n_components=1</em>, <em class="sig-param">scalings_=None</em>, <em class="sig-param">chk_fft=functools.partial(&lt;function chk_to_spectrum&gt;</em>, <em class="sig-param">chk_size=2048</em>, <em class="sig-param">window=array([0.00000000e+00</em>, <em class="sig-param">2.35539484e-06</em>, <em class="sig-param">9.42155716e-06</em>, <em class="sig-param">...</em>, <em class="sig-param">9.42155716e-06</em>, <em class="sig-param">2.35539484e-06</em>, <em class="sig-param">0.00000000e+00])</em>, <em class="sig-param">amplitude_func=&lt;ufunc 'absolute'&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#SpectralProjectorUnsupervisedFitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.SpectralProjectorUnsupervisedFitter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.spectrop.TargettedVariancePCA">
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">TargettedVariancePCA</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_variance</span><span class="o">=</span><span class="default_value">0.95</span></em>, <em class="sig-param"><span class="n">max_n_components</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">min_n_components</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#TargettedVariancePCA"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.TargettedVariancePCA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.ascertain_array">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">ascertain_array</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iterable</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#ascertain_array"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.ascertain_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting an array from an iterable</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.decreasing_integer_geometric_sequence">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">decreasing_integer_geometric_sequence</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">start</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1025</span></em>, <em class="sig-param"><span class="n">scale_factor</span><span class="o">=</span><span class="default_value">0.5</span></em><span class="sig-paren">)</span> &#x2192; list<a class="reference internal" href="../../_modules/slang/spectrop.html#decreasing_integer_geometric_sequence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.decreasing_integer_geometric_sequence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate decreasing positive integers in by multiplying numbers by a constant (between 0 and 1) repeatedly.
+Numbers of ther sequence will all be integers and not repeat (so often not a true geometri sequence).
+All sequences will end with 1.
+An error will be raised if scale_factor is not between 0 and 1 (exclusive).</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+<span class="go">[128, 64, 32, 16, 8, 4, 2, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+<span class="go">[10, 3, 1]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>
+<span class="go">[10, 7, 5, 3, 2, 1]</span>
+</pre></div>
+</div>
+<p>And to see that we indeed don’t get duplicates of the true geometric sequence.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.9999</span><span class="p">)</span>
+<span class="go">[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.instantiate_class_and_inject_attributes">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">instantiate_class_and_inject_attributes</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cls</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#instantiate_class_and_inject_attributes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.instantiate_class_and_inject_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>instantiates a class with the given kwargs, picking those arguments that are in the signature of cls to
+use for the __init__, and adding attributes to the constructed object with the remaining.
+:param cls: class to insantiate
+:param kwargs: keyword args (some for the class __init__, and others to inject)
+:return: An (possibly enhanced) class instance
+&gt;&gt;&gt; class C:
+…     def __init__(self, a, b=3):
+…         self.a = a
+…         self.b = b
+…
+&gt;&gt;&gt; c = instantiate_class_and_inject_attributes(C, a=10, foo=’bar’)
+&gt;&gt;&gt; c.__dict__
+{‘a’: 10, ‘b’: 3, ‘foo’: ‘bar’}
+&gt;&gt;&gt; c = instantiate_class_and_inject_attributes(C, a=10, foo=’bar’, bar=’foo’, b=1000)
+&gt;&gt;&gt; c.__dict__
+{‘a’: 10, ‘b’: 1000, ‘foo’: ‘bar’, ‘bar’: ‘foo’}
+&gt;&gt;&gt; try:
+…     c = instantiate_class_and_inject_attributes(C, foo=’bar’, bar=’foo’, b=1000)
+… except TypeError:  # expected
+…     pass</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.keep_only_indices">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">keep_only_indices</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">indices</span></em>, <em class="sig-param"><span class="n">input_size</span><span class="o">=</span><span class="default_value">1025</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#keep_only_indices"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.keep_only_indices" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a matrix which when a spectra is multiplied with it, only the entires in the list indices are kept
+:param indices: a list of indices to keep
+:param input_size: the total number of frequencies in the spectra
+:return: a matrix of size (input_size, len(indices))</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.learn_chain_proj_matrix">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">learn_chain_proj_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">chain</span><span class="o">=</span><span class="default_value">({'type': 'pca', 'args': {'n_components': 5}})</span></em>, <em class="sig-param"><span class="n">indices</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">input_size</span><span class="o">=</span><span class="default_value">1025</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#learn_chain_proj_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.learn_chain_proj_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function successively learning a projections matrix on the residue of the previous one. The projections
+matrices are then concatenated and return as one single projection matrix. Note that the final projection
+matrix may not produce fvs of the size the sum of the components of each part, i.e., care must be taken
+to ensure each classes called must be able to produce the required number of components. For example,
+if the number of classes is 10, then lda can only produce 9 dimensions. To obtain say 12 dimension, the user
+will need to chain two lda’s, for example with size 9 and 3 respectively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – the fvs, an array of size n*k</p></li>
+<li><p><strong>y</strong> – the classes, an array of size n</p></li>
+<li><p><strong>chain</strong> – a tuple of dictionaries each containing the type of projection along with its parameters</p></li>
+<li><p><strong>indices</strong> – the indices of the spectra to work with, anything else is discarded</p></li>
+<li><p><strong>input_size</strong> – the total number of entries from the spectra.
+Only needed if n_freq is not None, in order to
+determine the size of the freq_selection_matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a single projection matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.learn_spect_proj">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">learn_spect_proj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">spectral_proj_name</span><span class="o">=</span><span class="default_value">'pca'</span></em>, <em class="sig-param"><span class="n">clustering_meth</span><span class="o">=</span><span class="default_value">'KMeans'</span></em>, <em class="sig-param"><span class="n">clustering_options</span><span class="o">=</span><span class="default_value">('KMeans', 'SpectralClustering', 'AffinityPropagation', 'AgglomerativeClustering', 'Birch', 'MeanShift')</span></em>, <em class="sig-param"><span class="n">kwargs_feat</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">kwargs_clust</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#learn_spect_proj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.learn_spect_proj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to learn each of the important spectral projection</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> – the fvs, an array of size n*k</p></li>
+<li><p><strong>y</strong> – the classes, an array of size n</p></li>
+<li><p><strong>spectral_proj_name</strong> – a string of the name of the featurizer</p></li>
+<li><p><strong>args</strong> – extra argument to be passed to the featurizer class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a matrix in the form of a numpy array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.logarithmic_bands_matrix">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">logarithmic_bands_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_buckets</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">n_freqs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1025</span></em>, <em class="sig-param"><span class="n">factor</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../../_modules/slang/spectrop.html#logarithmic_bands_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.logarithmic_bands_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a spectral projection matrix that puts more importance on low frequencies than high ones.
+Importance both in weight and in precision.
+By a factor of 2 by default, but can be any amount.
+Note that the factor here is the inverse of the geometric factor of decreasing_integer_geometric_sequence.</p>
+<p>Note that the sum of the frequencies of the bands is constant from band to band. Not sure if that’s the best choice,
+or if equal weight through out is the best choice.
+We can discuss what both mean at a later date.</p>
+<p>Important here is to understand my intent, to see how well I achieve it.
+- The features “build on each other”. That is, if you ask (within the same <cite>(n_freqs, factor)</cite> set)
+for 7 features in your fv, the first 5 will be the same as if you asked for only 5. This makes it easier to compare
+fvs between projects, and possibly even “add to existing features”.
+- Note  that the first feature is always total energy.
+- Lower frequencies are given less importance – both in precision and in weight.
+- The linear algebraists that are listening will note what the vector space generated actually is,
+compared to that created by disjoint bands.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">logarithmic_bands_matrix</span><span class="p">(</span><span class="n">n_freqs</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">[0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]</span>
+<span class="go">[0.25, 0.25, 0.25, 0.25, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="go">[0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="go">[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">logarithmic_bands_matrix</span><span class="p">(</span><span class="n">n_freqs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="go">[0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]</span>
+<span class="go">[0.2, 0.2, 0.2, 0.2, 0.2, 0.0, 0.0, 0.0]</span>
+<span class="go">[0.25, 0.25, 0.25, 0.25, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="go">[0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+<span class="go">[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.make_band_matrix">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">make_band_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">buckets</span></em>, <em class="sig-param"><span class="n">n_freq</span><span class="o">=</span><span class="default_value">1025</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#make_band_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.make_band_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of n list of indices, make a matrix of size n by n_freq where the entries of row k are 0
+everywhere except at the index in the k list of buckets, where the entries are the inverse of the length
+of that bucket</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buckets</strong> – a list of list containing the indices of non zero entries of the corresponding row</p></li>
+<li><p><strong>n_freq</strong> – the number of column of the matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a len(buckets) by n_freq matrix</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">buckets</span> <span class="o">=</span> <span class="n">make_buckets</span><span class="p">(</span><span class="n">n_buckets</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.001</span><span class="p">),</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">M</span> <span class="o">=</span> <span class="n">make_band_matrix</span><span class="p">(</span><span class="n">buckets</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="mi">1025</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">(15, 1025)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># the matrix sends each of the 200 first unitary vector to the zero vector (not below is not a mathematical proof of that, but solid clue)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vec</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">200</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1025</span> <span class="o">-</span> <span class="mi">200</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+<span class="go">[0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0. 0.]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># after that, we get non zero output (in general at least)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vec</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">200</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1025</span> <span class="o">-</span> <span class="mi">201</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">vec</span><span class="p">))</span>
+<span class="go">[0.01612903 0.         0.         0.         0.         0.</span>
+<span class="go"> 0.         0.         0.         0.         0.         0.</span>
+<span class="go"> 0.         0.         0.        ]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.make_band_matrix_row">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">make_band_matrix_row</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">list_entries</span></em>, <em class="sig-param"><span class="n">row_len</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#make_band_matrix_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.make_band_matrix_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a row for the spectral bucket matrix. The row is zero everywhere except on the entries of index in
+list_entries where it is 1 / len(list_entries)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>list_entries</strong> – the indices of non zero entries of the row</p></li>
+<li><p><strong>row_len</strong> – the length of the row</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an array of length row_len as described above</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make_band_matrix_row</span><span class="p">([</span><span class="mi">3</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
+<span class="go">array([0., 0., 0., 1., 0.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make_band_matrix_row</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
+<span class="go">array([0.5, 0. , 0. , 0.5, 0. ])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.make_buckets">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">make_buckets</code><span class="sig-paren">(</span><em class="sig-param">n_buckets=15</em>, <em class="sig-param">freqs_weighting=&lt;function &lt;lambda&gt;&gt;</em>, <em class="sig-param">freq_range=(0</em>, <em class="sig-param">1025)</em>, <em class="sig-param">non_empty_bucket=True</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#make_buckets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.make_buckets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create greedily buckets starting by aggregating lower frequencies, when the sum of
+the frequencies values so far exceed the number of buckets created times the target
+average value for a single bucket, a new bucket is created with or without the last
+term according to which choice will be closest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_buckets</strong> – final number of buckets</p></li>
+<li><p><strong>freqs_weighting</strong> – any function assigning a non-negative value to each
+element in the freq_range
+If given a list, the function will be assumed
+to be the one to one mapping the frequencies to the value in the list</p></li>
+<li><p><strong>freq_range</strong> – the range of frequencies considered, inclusive on both ends</p></li>
+<li><p><strong>non_empty_bucket</strong> – if set to true, all buckets will have at least one element</p></li>
+<li><p><strong>reverse</strong> – if set to true, will start aggregating higher frequencies instead, which for an increasing weight</p></li>
+</ul>
+</dd>
+</dl>
+<p>function will aggregate the higher frequencies into larger bins as typical
+:return: a partition of freq_range</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">buckets</span> <span class="o">=</span> <span class="n">make_buckets</span><span class="p">(</span><span class="n">n_buckets</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.001</span><span class="p">),</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">buckets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">15</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buckets</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># the first bucket starts at the first term of freq_range</span>
+<span class="go">200</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">buckets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># the last bucket ends at the last term of freq_range - 1</span>
+<span class="go">999</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.mk_chk_fft">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">mk_chk_fft</code><span class="sig-paren">(</span><em class="sig-param">chk_size=None</em>, <em class="sig-param">window=&lt;function hanning&gt;</em>, <em class="sig-param">amplitude_func=&lt;ufunc 'absolute'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#mk_chk_fft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.mk_chk_fft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a chk_fft function that will compute the fft (with given amplitude and window).
+Note that this output chk_fft function will enforce a fixed chk_size (given explicitly, or through the
+size of the window (if window is given as an array)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chk_size</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span> <span class="o">=</span> <span class="n">mk_chk_fft</span><span class="p">(</span><span class="n">chk_size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chk</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">chk_size</span> <span class="o">//</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">f</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span>
+<span class="go">array([19.        , 10.214421  ,  0.40774689,  4.34150779,  8.09801978,</span>
+<span class="go">        4.30684381,  0.26711259,  2.61514496,  5.04588504,  2.6255033 ,</span>
+<span class="go">        0.21962565])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># verifying that it&#39;s pickable</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pickle</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ff</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">ff</span><span class="p">(</span><span class="n">chk</span><span class="p">),</span> <span class="n">ff</span><span class="p">(</span><span class="n">chk</span><span class="p">))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.projection">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">projection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis</span></em>, <em class="sig-param"><span class="n">vectors</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#projection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.projection" title="Permalink to this definition">¶</a></dt>
+<dd><p>The vectors live in a k dimensional space S and the columns of the basis are vectors of the same
+space spanning a subspace of S. Gives a representation of the projection of vector into the space
+spanned by basis in term of the basis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basis</strong> – an n-by-k array, a matrix whose vertical columns are the vectors of the basis</p></li>
+<li><p><strong>vectors</strong> – an m-by-k array, a vector to be represented in the basis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an m-by-k array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.reducing_proj">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">reducing_proj</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">basis</span></em>, <em class="sig-param"><span class="n">vectors</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#reducing_proj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.reducing_proj" title="Permalink to this definition">¶</a></dt>
+<dd><p>What we actually use to get fvs from spectras</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.residue">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">residue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">scalings</span></em>, <em class="sig-param"><span class="n">X</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#residue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.residue" title="Permalink to this definition">¶</a></dt>
+<dd><p>find the residue of each of vectors after projection in basis</p>
+<p>residues will be vectors in the original space (same number of dimensions)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scalings</strong> – an n-by-m array, spanning a vector space A</p></li>
+<li><p><strong>X</strong> – an n-by-k array</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an n-by-l array, the residues of vectors with the respect of the projection in basis</p>
+</dd>
+</dl>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">residue</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span>
+<span class="go">[[0 0]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">residue</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">))</span>
+<span class="go">[[0 3]]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="snippers.html" class="btn btn-neutral float-left" title="slang.snippers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stypes.html" class="btn btn-neutral float-right" title="slang.stypes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

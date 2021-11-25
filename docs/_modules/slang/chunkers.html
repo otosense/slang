@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.chunkers &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snip_stats.html">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/snippers.html">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../module_docs/slang/util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>slang.chunkers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for slang.chunkers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Chunker functions&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span><span class="p">,</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+
+<span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+
+<span class="n">DFLT_CHK_SIZE</span> <span class="o">=</span> <span class="mi">2048</span>
+
+
+<div class="viewcode-block" id="mk_chunker"><a class="viewcode-back" href="../../module_docs/slang/chunkers.html#slang.chunkers.mk_chunker">[docs]</a><span class="k">def</span> <span class="nf">mk_chunker</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">use_numpy_reshape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generator of (fixed size and fixed step) chunks of an iterable.</span>
+<span class="sd">    This function-making function will try to choose an optimized chunker for you depending on the parameters and</span>
+<span class="sd">    environment (if you have numpy and chk_size==chk_step, it&#39;s the fastest).</span>
+
+<span class="sd">    Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the type that is yield.</span>
+
+<span class="sd">    :param chk_size: Size of chunk (default 2048)</span>
+<span class="sd">    :param chk_step: Size of step (step of sliding window). If not specified, will be taken to be chk_size</span>
+<span class="sd">    :param use_numpy_reshape: If None (default), will use numpy (reshape) if numpy is importable.</span>
+<span class="sd">        If True, will try to use numpy.reshape systematically.</span>
+<span class="sd">        If False, will not use numpy.reshape, even if numpy present.</span>
+<span class="sd">    :return: A generator of chunks (numpy.arrays, tuples, or lists, depending on the context)</span>
+
+<span class="sd">    &gt;&gt;&gt; a = range(6)</span>
+<span class="sd">    &gt;&gt;&gt; chunker = mk_chunker(3)</span>
+<span class="sd">    &gt;&gt;&gt; list(chunker(a))</span>
+<span class="sd">    [array([0, 1, 2]), array([3, 4, 5])]</span>
+<span class="sd">    &gt;&gt;&gt; list(mk_chunker(2)(a))</span>
+<span class="sd">    [array([0, 1]), array([2, 3]), array([4, 5])]</span>
+<span class="sd">    &gt;&gt;&gt; list(tuple(x) for x in mk_chunker(1)(a))</span>
+<span class="sd">    [(0,), (1,), (2,), (3,), (4,), (5,)]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; chunker = mk_chunker(4, 2)</span>
+<span class="sd">    &gt;&gt;&gt; list(chunker(a))</span>
+<span class="sd">    [[0, 1, 2, 3], [2, 3, 4, 5]]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_step</span> <span class="ow">or</span> <span class="n">chk_size</span>  <span class="c1"># default to chk_size == chk_step</span>
+
+    <span class="k">if</span> <span class="n">chk_step</span> <span class="o">==</span> <span class="n">chk_size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">use_numpy_reshape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">use_numpy_reshape</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">reshape</span>
+
+                <span class="n">use_numpy_reshape</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">use_numpy_reshape</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">raise</span>  <span class="c1"># make sure the user knows she doesn&#39;t have numpy</span>
+                <span class="n">use_numpy_reshape</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">use_numpy_reshape</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+                <span class="k">yield from</span> <span class="n">reshape</span><span class="p">(</span><span class="n">a</span><span class="p">[:</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">chk_size</span><span class="p">))],</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+
+            <span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+                <span class="k">yield from</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="nb">iter</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span> <span class="o">*</span> <span class="n">chk_size</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+            <span class="k">yield from</span> <span class="n">fixed_step_chunker</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">)</span>
+
+    <span class="n">chunker</span><span class="o">.</span><span class="n">chk_size</span> <span class="o">=</span> <span class="n">chk_size</span>
+    <span class="n">chunker</span><span class="o">.</span><span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_step</span>
+
+    <span class="k">return</span> <span class="n">chunker</span></div>
+
+
+<span class="n">DFLT_CHUNKER</span> <span class="o">=</span> <span class="n">mk_chunker</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="simple_fixed_step_chunker"><a class="viewcode-back" href="../../module_docs/slang/chunkers.html#slang.chunkers.simple_fixed_step_chunker">[docs]</a><span class="k">def</span> <span class="nf">simple_fixed_step_chunker</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates chunks of fixed size and step.</span>
+<span class="sd">    Yields chunks as lists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span>
+
+    <span class="k">if</span> <span class="n">chk_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_size</span>
+
+    <span class="k">if</span> <span class="n">chk_step</span> <span class="o">==</span> <span class="n">chk_size</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="nb">iter</span><span class="p">(</span><span class="n">it</span><span class="p">)]</span> <span class="o">*</span> <span class="n">chk_step</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">chk_step</span> <span class="o">&lt;</span> <span class="n">chk_size</span><span class="p">:</span>
+
+        <span class="n">chk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">))</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span> <span class="o">==</span> <span class="n">chk_size</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">chk</span>
+            <span class="n">chk</span> <span class="o">=</span> <span class="n">chk</span><span class="p">[</span><span class="n">chk_step</span><span class="p">:]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">chk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">))</span>
+        <span class="n">gap</span> <span class="o">=</span> <span class="n">chk_step</span> <span class="o">-</span> <span class="n">chk_size</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span> <span class="o">==</span> <span class="n">chk_size</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">chk</span>
+            <span class="n">chk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">gap</span><span class="p">,</span> <span class="n">gap</span> <span class="o">+</span> <span class="n">chk_size</span><span class="p">))</span></div>
+
+
+<span class="k">def</span> <span class="nf">_validate_chk_size</span><span class="p">(</span><span class="n">chk_size</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">chk_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">chk_size</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">),</span> <span class="s1">&#39;chk_size should be a positive interger&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">_validate_chk_size_and_step</span><span class="p">(</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">):</span>
+    <span class="n">_validate_chk_size</span><span class="p">(</span><span class="n">chk_size</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">chk_step</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_size</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">chk_step</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">chk_step</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="p">),</span> <span class="s1">&#39;chk_step should be a positive integer&#39;</span>
+    <span class="k">return</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span>
+
+
+<span class="k">def</span> <span class="nf">_validate_fixed_step_chunker_args</span><span class="p">(</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">,</span> <span class="n">start_at</span><span class="p">,</span> <span class="n">stop_at</span><span class="p">):</span>
+    <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span> <span class="o">=</span> <span class="n">_validate_chk_size_and_step</span><span class="p">(</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">start_at</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">start_at</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">stop_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">stop_at</span> <span class="o">&gt;</span> <span class="n">start_at</span><span class="p">,</span> <span class="s1">&#39;stop_at should be larger than start_at&#39;</span>
+        <span class="k">if</span> <span class="n">stop_at</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">inf</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stop_at</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;stop_at should be an integer&#39;</span>
+
+    <span class="c1"># checking a few things</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start_at</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;start_at should be an integer&#39;</span>
+    <span class="k">assert</span> <span class="n">start_at</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;start_at should be a non negative integer&#39;</span>
+    <span class="k">return</span> <span class="n">chk_step</span><span class="p">,</span> <span class="n">start_at</span>
+
+
+<div class="viewcode-block" id="rechunker"><a class="viewcode-back" href="../../module_docs/slang/chunkers.html#slang.chunkers.rechunker">[docs]</a><span class="k">def</span> <span class="nf">rechunker</span><span class="p">(</span>
+    <span class="n">chks</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stop_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_tail</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes an iterable of chks and produces another iterable of chunks.</span>
+<span class="sd">    The chunks generated by the input chks iterable is assumed to be gap-less and without overlap,</span>
+<span class="sd">    but these do not need to be of fixed size.</span>
+<span class="sd">    The output will be though.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">yield from</span> <span class="n">fixed_step_chunker</span><span class="p">(</span>
+        <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">chks</span><span class="p">),</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">,</span> <span class="n">start_at</span><span class="p">,</span> <span class="n">stop_at</span><span class="p">,</span> <span class="n">return_tail</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="fixed_step_chunker"><a class="viewcode-back" href="../../module_docs/slang/chunkers.html#slang.chunkers.fixed_step_chunker">[docs]</a><span class="k">def</span> <span class="nf">fixed_step_chunker</span><span class="p">(</span>
+    <span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stop_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_tail</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">      a function to get (an iterator of) segments (bt, tt) of chunks from an iterator (or list)</span>
+<span class="sd">      of the for [it_1, it_2...], given a chk_size, chk_step, and a start_at and a stop_at.</span>
+<span class="sd">      The start_at, stop_at act like slices indices for a list: start_at is included and stop_at is excluded</span>
+
+<span class="sd">      :param it: iterator of elements of any type</span>
+<span class="sd">      :param chk_size: length of the chunks</span>
+<span class="sd">      :param chk_step: step between chunks</span>
+<span class="sd">      :param start_at: index of the first term of the iterator at which we begin building the chunks (inclusive)</span>
+<span class="sd">      :param stop_at: index of the last term from the iterator included in the chunks</span>
+<span class="sd">      :param return_tail: if set to false, only the chunks with max element with index less than stop_at are yielded</span>
+<span class="sd">      if set to true, any chunks with minimum index value no more than stop_at are returned but they contain</span>
+<span class="sd">      term with index no more than stop_at</span>
+<span class="sd">      :return: an iterator of the chunks</span>
+
+<span class="sd">      1) If stop_at is not None and return_tail is False:</span>
+<span class="sd">         will return all full chunks with maximum element index less than stop_at</span>
+<span class="sd">         or until the iterator is exhausted. Only full chunks are returned here.</span>
+
+<span class="sd">      2) If stop_at is not None and return_tail is True:</span>
+<span class="sd">         will return all full chunks as above along with possibly cut off chunks</span>
+<span class="sd">         containing one term whose index is stop_at-1 or one (last) term which is the</span>
+<span class="sd">         last element of it</span>
+
+<span class="sd">      3) If stop_at is None and return_tail is False:</span>
+<span class="sd">         will return all full chunks with maximum element index less or equal to the last</span>
+<span class="sd">         element of it</span>
+
+<span class="sd">      4) If stop_at is None and return_tail is True:</span>
+<span class="sd">         will return all full chunks with maximum element index less or equal to the last</span>
+<span class="sd">         element of it plus cut off chunks whose maximum term index is the last term of it</span>
+
+<span class="sd">        # testing chk_step &lt; chk_size with return_tail=TRUE, stop and start_at PRESENT</span>
+<span class="sd">        # and stop_at SMALLER than the largest index of it</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=1, start_at=2, stop_at=5, return_tail=True)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[3, 4, 5], [4, 5], [5]]</span>
+
+<span class="sd">        # testing chk_step &lt; chk_size with return_tail=FALSE, stop and start_at PRESENT</span>
+<span class="sd">        # and stop_at SMALLER than the largest index of it</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=1, start_at=2, stop_at=5, return_tail=False)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[3, 4, 5]]</span>
+
+<span class="sd">        # testing chk_step &lt; chk_size with return_tail=TRUE, stop and start_at PRESENT</span>
+<span class="sd">        # and stop_at LARGER than the largest index of it</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=1, start_at=1, stop_at=20, return_tail=True)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[2, 3, 4], [3, 4, 5], [4, 5, 6], [5, 6, 7], [6, 7, 8], [7, 8, 9], [8, 9, 10], [9, 10, 11], [10, 11, 12], [11, 12, 13], [12, 13, 14], [13, 14, 15], [14, 15, 16], [15, 16], [16]]</span>
+
+<span class="sd">        # testing chk_step &lt; chk_size with return_tail=FALSE, stop and start_at PRESENT</span>
+<span class="sd">        # and stop_at LARGER than the largest index of it</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=1, start_at=1, stop_at=20, return_tail=False)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[2, 3, 4], [3, 4, 5], [4, 5, 6], [5, 6, 7], [6, 7, 8], [7, 8, 9], [8, 9, 10], [9, 10, 11], [10, 11, 12], [11, 12, 13], [12, 13, 14], [13, 14, 15], [14, 15, 16]]</span>
+
+<span class="sd">        # testing chk_step = chk_size with return_tail=TRUE, stop and start_at PRESENT</span>
+<span class="sd">        # and stop_at SMALLER than the largest index of it</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=3, start_at=1, stop_at=7, return_tail=True)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[2, 3, 4], [5, 6, 7]]</span>
+
+<span class="sd">        # testing chk_size &gt; len(it) with return_tail=False, no stop_at or start_at</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=30, chk_step=3, start_at=None, stop_at=None, return_tail=False)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        []</span>
+
+<span class="sd">        # testing chk_size &gt; len(it) with return_tail=True, no stop_at or start_at</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=30, chk_step=3, start_at=None, stop_at=None, return_tail=True)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], [7, 8, 9, 10, 11, 12, 13, 14, 15, 16], [10, 11, 12, 13, 14, 15, 16], [13, 14, 15, 16], [16]]</span>
+
+<span class="sd">        # testing chk_step &gt; chk_size with return_tail=TRUE, stop and start_at PRESENT</span>
+<span class="sd">        # and stop_at SMALLER than the largest index of it</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=1, stop_at=7, return_tail=True)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[2, 3, 4], [6, 7]]</span>
+
+<span class="sd">        # testing chk_step &gt; chk_size with return_tail=FALSE, stop and start_at PRESENT</span>
+<span class="sd">        # and stop_at SMALLER than the largest index of it</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=1, stop_at=7, return_tail=False)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[2, 3, 4]]</span>
+
+<span class="sd">        # testing chk_step &gt; chk_size with return_tail=FALSE, stop and start_at NOT PRESENT</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=None, stop_at=None, return_tail=False)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 17, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[1, 2, 3], [5, 6, 7], [9, 10, 11], [13, 14, 15]]</span>
+
+<span class="sd">        # testing chk_step &gt; chk_size with return_tail=TRUE, stop and start_at NOT PRESENT</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=None, stop_at=None, return_tail=True)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(1, 19, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[1, 2, 3], [5, 6, 7], [9, 10, 11], [13, 14, 15], [17, 18]]</span>
+
+<span class="sd">        # testing chk_step &gt; chk_size with return_tail=TRUE, stop and start_at NOT PRESENT</span>
+<span class="sd">        # with negative values in the iterator</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=4, start_at=None, stop_at=None, return_tail=True)</span>
+<span class="sd">        &gt;&gt;&gt; it = range(-10, 19, 1)</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[-10, -9, -8], [-6, -5, -4], [-2, -1, 0], [2, 3, 4], [6, 7, 8], [10, 11, 12], [14, 15, 16], [18]]</span>
+
+<span class="sd">        # testing chk_step &gt; chk_size with return_tail=TRUE, stop and start_at NOT PRESENT</span>
+<span class="sd">        # with items of various types in the iterator</span>
+<span class="sd">        &gt;&gt;&gt; f = lambda it: fixed_step_chunker(it, chk_size=3, chk_step=2, start_at=None, stop_at=None, return_tail=True)</span>
+<span class="sd">        &gt;&gt;&gt; it = [&#39;a&#39;, 3, -10, 9.2, str, [1,2,3], set([10,20])]</span>
+<span class="sd">        &gt;&gt;&gt; A = list(f(it)); B = list(f(iter(it)));  # trying the function on it (a list) and iter(it) (and iterator)</span>
+<span class="sd">        &gt;&gt;&gt; assert A == B  # it and iter(it) should give the same thing!</span>
+<span class="sd">        &gt;&gt;&gt; A  # and that thing is:</span>
+<span class="sd">        [[&#39;a&#39;, 3, -10], [-10, 9.2, &lt;class &#39;str&#39;&gt;], [&lt;class &#39;str&#39;&gt;, [1, 2, 3], {10, 20}], [{10, 20}]]</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+    <span class="n">chk_step</span><span class="p">,</span> <span class="n">start_at</span> <span class="o">=</span> <span class="n">_validate_fixed_step_chunker_args</span><span class="p">(</span>
+        <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">,</span> <span class="n">start_at</span><span class="p">,</span> <span class="n">stop_at</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">chk_step</span> <span class="o">==</span> <span class="n">chk_size</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_tail</span><span class="p">:</span>
+        <span class="k">yield from</span> <span class="nb">map</span><span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="nb">iter</span><span class="p">(</span><span class="n">it</span><span class="p">)]</span> <span class="o">*</span> <span class="n">chk_step</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">chk_step</span> <span class="o">&lt;</span> <span class="n">chk_size</span><span class="p">:</span>
+
+        <span class="n">it</span> <span class="o">=</span> <span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">start_at</span><span class="p">,</span> <span class="n">stop_at</span><span class="p">)</span>
+        <span class="n">chk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">))</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span> <span class="o">==</span> <span class="n">chk_size</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">chk</span>
+            <span class="n">chk</span> <span class="o">=</span> <span class="n">chk</span><span class="p">[</span><span class="n">chk_step</span><span class="p">:]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">))</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">it</span> <span class="o">=</span> <span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">start_at</span><span class="p">,</span> <span class="n">stop_at</span><span class="p">)</span>
+        <span class="n">chk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">))</span>
+        <span class="n">gap</span> <span class="o">=</span> <span class="n">chk_step</span> <span class="o">-</span> <span class="n">chk_size</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span> <span class="o">==</span> <span class="n">chk_size</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">chk</span>
+            <span class="n">chk</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">islice</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">gap</span><span class="p">,</span> <span class="n">gap</span> <span class="o">+</span> <span class="n">chk_size</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">return_tail</span><span class="p">:</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">chk</span>
+            <span class="n">chk</span> <span class="o">=</span> <span class="n">chk</span><span class="p">[</span><span class="n">chk_step</span><span class="p">:]</span></div>
+
+
+<span class="c1">#</span>
+<span class="c1"># from collections import deque</span>
+<span class="c1"># from itertools import islice, chain</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># class nothing: ...</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># strip_nothing_out = lambda item: tuple(filter(lambda x: x is not nothing, item))</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># def new_fixed_step_chunker(it, chk_size, chk_step=None, start_at=None, stop_at=None, return_tail=False):</span>
+<span class="c1">#     chk_step, start_at = _validate_fixed_step_chunker_args(chk_size, chk_step, start_at, stop_at)</span>
+<span class="c1">#     if start_at is not None or stop_at is not None:</span>
+<span class="c1">#         it = islice(it, start_at, stop_at)</span>
+<span class="c1">#</span>
+<span class="c1">#     iit = iter(it)</span>
+<span class="c1">#     window = deque([], chk_size)</span>
+<span class="c1">#     push_to_queue = window.extend</span>
+<span class="c1">#</span>
+<span class="c1">#     # and there after... push new step data to queue and yield queue contents</span>
+<span class="c1">#     if not return_tail:</span>
+<span class="c1">#         if chk_step == chk_size:</span>
+<span class="c1">#             yield from zip(*([iit] * chk_step))</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             chk = tuple(islice(iit, chk_size))</span>
+<span class="c1">#             if len(chk) &gt;= chk_size:</span>
+<span class="c1">#                 yield chk</span>
+<span class="c1">#                 push_to_queue(chk)</span>
+<span class="c1">#                 for step_data in zip(*([iit] * chk_step)):</span>
+<span class="c1">#                     push_to_queue(step_data)</span>
+<span class="c1">#                     yield tuple(window)</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         iiit = chain(iit, [nothing] * (chk_step - 1))</span>
+<span class="c1">#         yield from map(strip_nothing_out, new_fixed_step_chunker(iiit, chk_size, chk_step, return_tail=False))</span>
+<span class="c1">#         # step_nibs = zip(*([iiit] * chk_step))</span>
+<span class="c1">#         # last_nib = next(step_nibs)</span>
+<span class="c1">#         # for step_nib in step_nibs:</span>
+<span class="c1">#         #     push_to_queue(last_nib)</span>
+<span class="c1">#         #     yield tuple(window)</span>
+<span class="c1">#         #     last_nib = step_nib</span>
+<span class="c1">#         # push_to_queue(last_nib)</span>
+<span class="c1">#         # last_part = list(window)</span>
+<span class="c1">#         # yield strip_nothing_out(last_part)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

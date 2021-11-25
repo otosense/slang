@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>slang.snip_stats &mdash; slang 0.1.0 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/toggleprompt.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="slang.snippers" href="snippers.html" />
+    <link rel="prev" title="slang.scrap.the_apis_i_wish_for" href="scrap/the_apis_i_wish_for.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> slang
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../slang.html">slang</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chunkers.html">slang.chunkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">slang.core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="featurizers.html">slang.featurizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/learning_pipeline_01.html">slang.scrap.learning_pipeline_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/scrap_01.html">slang.scrap.scrap_01</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrap/the_apis_i_wish_for.html">slang.scrap.the_apis_i_wish_for</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">slang.snip_stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="snippers.html">slang.snippers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spectrop.html">slang.spectrop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stypes.html">slang.stypes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">slang.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">slang.util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util_data.html">slang.util_data</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">slang</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>slang.snip_stats</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/module_docs/slang/snip_stats.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-slang.snip_stats">
+<span id="slang-snip-stats"></span><h1>slang.snip_stats<a class="headerlink" href="#module-slang.snip_stats" title="Permalink to this headline">¶</a></h1>
+<p>Snip statistics functions</p>
+<dl class="py class">
+<dt id="slang.snip_stats.BayesFactors">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">BayesFactors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pseudocount</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">tag_order</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alphabet_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#BayesFactors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.BayesFactors" title="Permalink to this definition">¶</a></dt>
+<dd><p>BayesFactors classifier with sklearn-like interface. predict_probas are the log2 of the bayes factor.
+It is sklearn-like, but to avoid depending on sklearn, it isn’t a subclass of BaseEstimator and ClassifierMixin.
+It just has the essentials of the classifier: a <cite>fit</cite>, a <cite>predict_proba</cite> and a derived <cite>predict</cite> method, and
+a <cite>classes_</cite> attribute that indices the columns of the <cite>predict_proba</cite> matrix.</p>
+<dl class="py method">
+<dt id="slang.snip_stats.BayesFactors.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snips</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#BayesFactors.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.BayesFactors.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict class labels for each snip of snips sequence.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="slang.snip_stats.ClassifiedMomentsFitter">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">ClassifiedMomentsFitter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_classes_</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">initial_count</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#ClassifiedMomentsFitter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.ClassifiedMomentsFitter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.snip_stats.PredictBF">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">PredictBF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pseudocount</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">tag_order</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alphabet_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#PredictBF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.PredictBF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.snip_stats.PredictProbaBF">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">PredictProbaBF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pseudocount</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">tag_order</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alphabet_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#PredictProbaBF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.PredictProbaBF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="slang.snip_stats.TagProbsBF">
+<em class="property">class </em><code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">TagProbsBF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pseudocount</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">tag_order</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">alphabet_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#TagProbsBF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.TagProbsBF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="slang.snip_stats.bar_plot_of_tag_snip_stats">
+<code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">bar_plot_of_tag_snip_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snip_stats_for_tag</span></em>, <em class="sig-param"><span class="n">snips_to_str</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(14, 10)</span></em>, <em class="sig-param"><span class="n">snip_order</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">tag_order</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_fig</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ylabel_fontsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel_rotation</span><span class="o">=</span><span class="default_value">90</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#bar_plot_of_tag_snip_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.bar_plot_of_tag_snip_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplot of snip count bars for each tag (in a different row). First row is the total count for each snip.
+:param snip_count_for_tag: {tag: {snip: count, …},…} nested dict
+:param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)
+:param figsize:
+:param output_fig:
+:param tag_order: Serves both to specify an order of the tags, and to specify a subset of tags if we don’t want all
+:param ylabel_rotation: Will be applied to the ylabel
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.snip_stats.df_of_snip_count_for_tag">
+<code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">df_of_snip_count_for_tag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snip_count_for_tag</span></em>, <em class="sig-param"><span class="n">snips_to_str</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fillna</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">tag_order</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#df_of_snip_count_for_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.df_of_snip_count_for_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>A df representation of snip_count_for_tag
+:param snip_count_for_tag: {tag: {snip: count, …},…} dict
+:param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)
+:param fillna: What to fill missing values with
+:param tag_order: Serves both to specify an order of the tags, and to specify a subset of tags if we don’t want all
+:return: A dataframe of snip (in rows) counts for each tag (in columns)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.snip_stats.plot_snip_count_for_tag">
+<code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">plot_snip_count_for_tag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">snip_count_for_tag</span></em>, <em class="sig-param"><span class="n">snips_to_str</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(14, 10)</span></em>, <em class="sig-param"><span class="n">tag_order</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_fig</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">ylabel_fontsize</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ylabel_rotation</span><span class="o">=</span><span class="default_value">90</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#plot_snip_count_for_tag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.plot_snip_count_for_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiplot of snip count bars for each tag (in a different row). First row is the total count for each snip.
+:param snip_count_for_tag: {tag: {snip: count, …},…} nested dict
+:param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)
+:param figsize:
+:param output_fig:
+:param tag_order: Serves both to specify an order of the tags, and to specify a subset of tags if we don’t want all
+:param ylabel_rotation: Will be applied to the ylabel
+:return:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.snip_stats.tag_slice_iter_from_slices_of_tag_dict">
+<code class="sig-prename descclassname">slang.snip_stats.</code><code class="sig-name descname">tag_slice_iter_from_slices_of_tag_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slices_of_tag</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/snip_stats.html#tag_slice_iter_from_slices_of_tag_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.snip_stats.tag_slice_iter_from_slices_of_tag_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an iterator of (tag, (bt, tt)) pairs
+:param slices_of_tag: a {tag: [(bt, tt),…], …} dict listing slices annotated by tags
+:return: a tag, (bt, tt) iterator</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="scrap/the_apis_i_wish_for.html" class="btn btn-neutral float-left" title="slang.scrap.the_apis_i_wish_for" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="snippers.html" class="btn btn-neutral float-right" title="slang.snippers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 
+2020
+Otosense.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

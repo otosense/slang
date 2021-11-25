@@ -5039,4 +5039,3 @@ first_snip_chars = [
 displayable_unichr = first_snip_chars + [
     x for x in displayable_unichr if x not in first_snip_chars
 ]
-
