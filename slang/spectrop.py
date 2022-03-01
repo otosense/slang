@@ -4,6 +4,7 @@ from functools import wraps, partial
 import inspect
 from dataclasses import dataclass, field
 from typing import Union, Optional, Callable
+import warnings
 
 from numpy import cumsum, min, inf, ndarray, floor
 from sklearn.decomposition import PCA, IncrementalPCA
@@ -109,7 +110,7 @@ def decreasing_integer_geometric_sequence(
     """
     assert (
         0 < scale_factor < 1
-    ), 'This geometric_sequence is meant for decreasing sequences only'
+    ), "This geometric_sequence is meant for decreasing sequences only"
 
     def gen():
         cursor = start
@@ -162,8 +163,8 @@ def logarithmic_bands_matrix(
     m = make_band_matrix(buckets, n_freq=n_freqs)
     if n_buckets is not None:
         assert n_buckets <= len(m), (
-            f'you asked for {n_buckets}, but the matrix has only {len(m)} rows. '
-            f'Consider decreasing the factor to get more buckets'
+            f"you asked for {n_buckets}, but the matrix has only {len(m)} rows. "
+            f"Consider decreasing the factor to get more buckets"
         )
     else:
         n_buckets = len(m)
@@ -229,8 +230,8 @@ def chk_to_spectrum(
     chk, chk_size, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC
 ):
     assert len(chk) == chk_size, (
-        f'This function was made for chk_size={chk_size}. '
-        f'You fed a chk of size len(chk)={len(chk)} instead'
+        f"This function was made for chk_size={chk_size}. "
+        f"You fed a chk of size len(chk)={len(chk)} instead"
     )
     fft_amplitudes = amplitude_func(np.fft.rfft(chk * window))
     return fft_amplitudes
@@ -263,7 +264,7 @@ def mk_chk_fft(chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUD
     if callable(window):
         assert (
             chk_size is not None
-        ), 'chk_size must be a positive integer if window is a callable, or None'
+        ), "chk_size must be a positive integer if window is a callable, or None"
         window = window(chk_size)
     elif window is None:
         window = 1
@@ -275,7 +276,7 @@ def mk_chk_fft(chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUD
             ), f"chk_size ({chk_size}) and len(window) ({len(window)}) don't match"
 
     chk_spectrum = named_partial(
-        'chk_to_spectrum',
+        "chk_to_spectrum",
         chk_to_spectrum,
         chk_size=chk_size,
         window=window,
@@ -323,23 +324,23 @@ class Projector:
 
     def to_jdict(self):
         return {
-            'scalings_': self.scalings_.tolist(),
+            "scalings_": self.scalings_.tolist(),
         }
 
     @classmethod
     def from_jdict(cls, jdict):
         obj = instantiate_class_and_inject_attributes(cls, **jdict)
-        if hasattr(obj, 'scalings_'):
+        if hasattr(obj, "scalings_"):
             obj.scalings_ = array(obj.scalings_)
         return obj
 
     def is_fitted(self):
-        return hasattr(self, 'scalings_') and self.scalings_ is not None
+        return hasattr(self, "scalings_") and self.scalings_ is not None
 
     def assert_is_fitted(self):
         if not self.is_fitted():
             raise NotFittedError(
-                '{} was not fitted yet.'.format(self.__class__.__name__)
+                "{} was not fitted yet.".format(self.__class__.__name__)
             )
 
 
@@ -349,7 +350,7 @@ class SpectralProjector(Projector):
 
     def __post_init__(self):
         self.chk_size = getattr(
-            self.chk_fft, 'chk_size', None
+            self.chk_fft, "chk_size", None
         )  # get chk_size from chk_fft if it has it
 
     def spectras(self, chks):
@@ -398,7 +399,7 @@ def fit_handling_iterables(learner, X, y=None, *args, **kwargs):
         learner.fit(X, y, *args, **kwargs)
     except Exception:  # TODO: Be less broad
         # Use chunking to fit partial in batches (probably more efficient)
-        if hasattr(learner, 'fit_partial'):
+        if hasattr(learner, "fit_partial"):
             for x_item, y_item in zip(X, y):
                 learner.fit_partial(x_item, y_item)
         else:
@@ -510,12 +511,12 @@ from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 
 CLUSTERING_OPTIONS = (
-    'KMeans',
-    'SpectralClustering',
-    'AffinityPropagation',
-    'AgglomerativeClustering',
-    'Birch',
-    'MeanShift',
+    "KMeans",
+    "SpectralClustering",
+    "AffinityPropagation",
+    "AgglomerativeClustering",
+    "Birch",
+    "MeanShift",
 )
 
 
@@ -581,8 +582,8 @@ class PcaProjWithDelegation(Projector):
 def learn_spect_proj(
     X,
     y=None,
-    spectral_proj_name='pca',
-    clustering_meth='KMeans',
+    spectral_proj_name="pca",
+    clustering_meth="KMeans",
     clustering_options=CLUSTERING_OPTIONS,
     kwargs_feat=None,
     kwargs_clust=None,
@@ -598,23 +599,23 @@ def learn_spect_proj(
     """
 
     clustering_options = set(clustering_options)
-    kwargs_feat = kwargs_feat or {'n_components': 10}
+    kwargs_feat = kwargs_feat or {"n_components": 10}
     kwargs_clust = kwargs_clust or {}
 
     assert (
         clustering_meth in clustering_options
-    ), 'clustering options must one of {}'.format(
-        ', '.join(map(str, clustering_options))
+    ), "clustering options must one of {}".format(
+        ", ".join(map(str, clustering_options))
     )
-    clusterer_m = getattr(importlib.import_module('sklearn.cluster'), clustering_meth)
+    clusterer_m = getattr(importlib.import_module("sklearn.cluster"), clustering_meth)
 
-    if spectral_proj_name == 'keep_features':
-        indices = kwargs_feat['indices']
+    if spectral_proj_name == "keep_features":
+        indices = kwargs_feat["indices"]
         proj_matrix = np.zeros((X.shape[1], len(indices)))
         for idx in range(len(indices)):
             proj_matrix[indices[idx], idx] = 1
 
-    elif spectral_proj_name == 'pca':
+    elif spectral_proj_name == "pca":
         pca = PCA(**kwargs_feat)
         pca.fit(X)
         proj_matrix = pca.components_.T
@@ -625,17 +626,17 @@ def learn_spect_proj(
     #     ppca.fit(X)
     #     proj_matrix = ppca.proj_mat.T
 
-    elif spectral_proj_name == 'lda':
+    elif spectral_proj_name == "lda":
         lda = LDA(**kwargs_feat)
         lda.fit(X, y)
-        n_components = kwargs_feat['n_components']
+        n_components = kwargs_feat["n_components"]
         proj_matrix = lda.scalings_[:, :n_components]
 
-    elif spectral_proj_name == 'unsupervised_lda':
-        n_components = kwargs_feat['n_components']
+    elif spectral_proj_name == "unsupervised_lda":
+        n_components = kwargs_feat["n_components"]
         if y is not None:
-            print('y will be replaced by classes found by the chosen clusterer')
-        if 'n_clusters' in clusterer_m.__init__.__code__.co_varnames:
+            print("y will be replaced by classes found by the chosen clusterer")
+        if "n_clusters" in clusterer_m.__init__.__code__.co_varnames:
             y = clusterer_m(n_clusters=n_components + 1, **kwargs_clust).fit_predict(X)
         else:
             y = clusterer_m(**kwargs_clust).fit_predict(X)
@@ -643,16 +644,16 @@ def learn_spect_proj(
         lda.fit(X, y)
         proj_matrix = lda.scalings_[:, :n_components]
 
-    elif spectral_proj_name == 'nca':
+    elif spectral_proj_name == "nca":
         nca = NCA(**kwargs_feat)
         nca.fit(X, y)
         proj_matrix = nca.components_.T
 
-    elif spectral_proj_name == 'unsupervised_nca':
-        n_components = kwargs_feat['n_components']
+    elif spectral_proj_name == "unsupervised_nca":
+        n_components = kwargs_feat["n_components"]
         if y is not None:
-            print('y will be replaced by classes found by the chosen clusterer')
-        if 'n_clusters' in clusterer_m.__init__.__code__.co_varnames:
+            print("y will be replaced by classes found by the chosen clusterer")
+        if "n_clusters" in clusterer_m.__init__.__code__.co_varnames:
             y = clusterer_m(n_clusters=n_components + 1, **kwargs_clust).fit_predict(X)
         else:
             y = clusterer_m(**kwargs_clust).fit_predict(X)
@@ -660,25 +661,25 @@ def learn_spect_proj(
         nca.fit(X, y)
         proj_matrix = nca.components_.T
 
-    elif spectral_proj_name == 'linear regression':
+    elif spectral_proj_name == "linear regression":
         lr = LinearRegression(**kwargs_feat)
         lr.fit(X, y)
         proj_matrix = lr.coef_.T
 
     else:
-        all_spectral_proj = ', '.join(
+        all_spectral_proj = ", ".join(
             [
-                'keep_features',
-                'pca',
-                'lda',
-                'pseudo_pca',
-                'unsupervised_lda',
-                'unsupervised_nca',
-                'nca',
-                'linear regression',
+                "keep_features",
+                "pca",
+                "lda",
+                "pseudo_pca",
+                "unsupervised_lda",
+                "unsupervised_nca",
+                "nca",
+                "linear regression",
             ]
         )
-        raise ValueError(f'the spectral projector must be one of: {all_spectral_proj}')
+        raise ValueError(f"the spectral projector must be one of: {all_spectral_proj}")
 
     return proj_matrix
 
@@ -734,7 +735,7 @@ def mk_pre_projection_from_indices(indices=None, input_size=DFLT_INPUT_SIZE):
 def learn_chain_proj_matrix(
     X,
     y=None,
-    chain=({'type': 'pca', 'args': {'n_components': 5}},),
+    chain=({"type": "pca", "args": {"n_components": 5}},),
     indices=None,
     input_size=1025,
 ):
@@ -758,14 +759,14 @@ def learn_chain_proj_matrix(
 
     freq_selection_matrix = None
     if indices is not None:
-        freq_selection_matrix = keep_only_indices(indices, input_size=n_freq)
+        freq_selection_matrix = keep_only_indices(indices, input_size=input_size)
         X = np.dot(X, freq_selection_matrix)
 
     all_proj_matrices = []
     for mat_dict in chain:
-        kwargs_feat = mat_dict['args']
+        kwargs_feat = mat_dict["args"]
         proj_matrix = learn_spect_proj(
-            X, y, spectral_proj_name=mat_dict['type'], kwargs_feat=kwargs_feat
+            X, y, spectral_proj_name=mat_dict["type"], kwargs_feat=kwargs_feat
         )
         all_proj_matrices.append(proj_matrix)
         X = residue(proj_matrix, X)
@@ -779,7 +780,7 @@ def learn_chain_proj_matrix(
 def old_learn_chain_proj_matrix(
     X,
     y=None,
-    chain=({'type': 'pca', 'kwargs': {'n_components': 5}},),
+    chain=({"type": "pca", "kwargs": {"n_components": 5}},),
     indices=None,
     input_size=DFLT_INPUT_SIZE,
 ):
@@ -790,9 +791,9 @@ def old_learn_chain_proj_matrix(
 
     all_proj_matrices = []
     for mat_dict in chain:
-        kwargs_feat = mat_dict['kwargs']
+        kwargs_feat = mat_dict["kwargs"]
         proj_matrix = learn_spect_proj(
-            X, y, spectral_proj_name=mat_dict['type'], kwargs_feat=kwargs_feat
+            X, y, spectral_proj_name=mat_dict["type"], kwargs_feat=kwargs_feat
         )
         all_proj_matrices.append(proj_matrix)
         X = residue(proj_matrix, X)
@@ -806,7 +807,7 @@ def old_learn_chain_proj_matrix(
 class GeneralProjectionLearner(BaseEstimator, TransformerMixin):
     def __init__(
         self,
-        chain=({'type': 'pca', 'args': {'n_components': 5}},),
+        chain=({"type": "pca", "args": {"n_components": 5}},),
         indices=None,
         n_freq=1025,
     ):
@@ -845,23 +846,41 @@ def make_buckets(
 
     :param n_buckets: final number of buckets
     :param freqs_weighting: any function assigning a non-negative value to each
-                            element in the freq_range
-                            If given a list, the function will be assumed
-                            to be the one to one mapping the frequencies to the value in the list
+        element in the freq_range.
+        If given a list, the function will be assumed to be the one to one mapping the
+        frequencies to the value in the list
 
     :param freq_range: the range of frequencies considered, inclusive on both ends
     :param non_empty_bucket: if set to true, all buckets will have at least one element
-    :param reverse: if set to true, will start aggregating higher frequencies instead, which for an increasing weight
-    function will aggregate the higher frequencies into larger bins as typical
+    :param reverse: if set to true, will start aggregating higher frequencies instead,
+        which for an increasing weight
+        function will aggregate the higher frequencies into larger bins as typical
     :return: a partition of freq_range
 
-    >>> buckets = make_buckets(n_buckets=15, freqs_weighting=lambda x: np.log(x + 0.001), freq_range=(200, 1000))
+    >>> buckets = make_buckets(
+    ... n_buckets=15,
+    ... freqs_weighting=lambda x: np.log(x + 0.001),
+    ... freq_range=(200, 1000))
     >>> len(buckets) == 15
     True
     >>> buckets[0][0] # the first bucket starts at the first term of freq_range
     200
     >>> buckets[-1][-1] # the last bucket ends at the last term of freq_range - 1
     999
+
+    >>> make_buckets(3, freq_range=(0, 10))
+    [[0, 1, 2, 3, 4, 5, 6], [7, 8, 9]]
+    >>> make_buckets(3, freqs_weighting=lambda x: x, freq_range=(0, 9))
+    [[0, 1, 2, 3, 4, 5], [6, 7, 8]]
+    >>> make_buckets(3, freqs_weighting=lambda x: 3, freq_range=(0, 9))
+    [[0, 1, 2], [3, 4, 5, 6], [7, 8]]
+    >>>
+    >>> make_buckets(3, freqs_weighting=lambda x: 1 / (x + 1), freq_range=(0, 9))
+    [[0], [1, 2], [3, 4, 5, 6, 7, 8]]
+    >>> list(map(len, make_buckets(
+    ... 8, freqs_weighting=lambda x: 1 / (x + 1), freq_range=(0, 1000)))
+    ... )
+    [1, 2, 5, 14, 34, 88, 225, 632]
 
     """
 
@@ -871,8 +890,8 @@ def make_buckets(
     n_freqs = high_freq - low_freq
     if n_freqs < n_buckets and non_empty_bucket:
         warnings.warn(
-            'You asked for more buckets than the number of frequencies available, '
-            'some will necessarily be empty'
+            "You asked for more buckets than the number of frequencies available, "
+            "some will necessarily be empty"
         )
         non_empty_bucket = False
 
@@ -881,7 +900,7 @@ def make_buckets(
     if reverse:
         freq_range.reverse()
     # get the value of each frequency
-    if not hasattr(freqs_weighting, '__iter__'):
+    if not hasattr(freqs_weighting, "__iter__"):
         freq_values = list(map(freqs_weighting, freq_range))
     else:
         freq_values = freqs_weighting
@@ -958,6 +977,29 @@ def make_buckets(
         idx_bucket_list = [[i + low_freq for i in l] for l in idx_bucket_list]
 
     return idx_bucket_list
+
+
+def _plus_one_inverse(x):
+    return 1 / (x + 1)
+
+
+def frequency_weight_based_bands_matrix(
+    n_buckets=15, freqs_weighting=_plus_one_inverse, n_freq=1025, reverse=False
+):
+    """
+    Get a projection matrix of disjoint bands based on a frequency weighting function.
+
+    >>> assert frequency_weight_based_bands_matrix(3, n_freq=9).tolist() == [
+    ... [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    ... [0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    ... [0.0, 0.0, 0.0, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]
+    ... ]
+
+    """
+    buckets = make_buckets(
+        n_buckets, freqs_weighting, freq_range=(0, n_freq + 1), reverse=reverse
+    )
+    return make_band_matrix(buckets, n_freq=n_freq)
 
 
 # class GeneralProjectionLearner(BaseEstimator, TransformerMixin):
