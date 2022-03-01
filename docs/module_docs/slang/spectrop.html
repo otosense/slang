@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.spectrop &mdash; slang 0.1.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.spectrop &mdash; slang 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -20,7 +20,6 @@
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -221,7 +220,7 @@ and <cite>n_features</cite> is the number of features.</p></li>
 <dl class="simple">
 <dt>[5.00000000e-01, 5.00000000e-01, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
 </dd>
-<dt>[1.00000000e+00, 0.00000000e+00, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot at 0x7feb78c8d9d0&gt;)</p>
+<dt>[1.00000000e+00, 0.00000000e+00, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot at 0x7fdb089e5310&gt;)</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -341,7 +340,7 @@ If <cite>out</cite> is given, then it is returned.</p>
 <dl class="simple">
 <dt>[5.00000000e-01, 5.00000000e-01, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00],</p>
 </dd>
-<dt>[1.00000000e+00, 0.00000000e+00, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot at 0x7feb78c8d9d0&gt;, chk_fft: Callable = functools.partial(&lt;function chk_to_spectrum at 0x7feb65c85040&gt;, chk_size=2048, window=array([0.00000000e+00, 2.35539484e-06, 9.42155716e-06, …,</p>
+<dt>[1.00000000e+00, 0.00000000e+00, 0.00000000e+00, …,</dt><dd><p>0.00000000e+00, 0.00000000e+00, 0.00000000e+00]]), mat_mult: numpy.ndarray = &lt;function dot at 0x7fdb089e5310&gt;, chk_fft: Callable = functools.partial(&lt;function chk_to_spectrum at 0x7fdafc9ed040&gt;, chk_size=2048, window=array([0.00000000e+00, 2.35539484e-06, 9.42155716e-06, …,</p>
 </dd>
 </dl>
 <p>9.42155716e-06, 2.35539484e-06, 0.00000000e+00]), amplitude_func=&lt;ufunc ‘absolute’&gt;))</p>
@@ -413,6 +412,19 @@ An error will be raised if scale_factor is not between 0 and 1 (exclusive).</p>
 <p>And to see that we indeed don’t get duplicates of the true geometric sequence.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">0.9999</span><span class="p">)</span>
 <span class="go">[10, 9, 8, 7, 6, 5, 4, 3, 2, 1]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="slang.spectrop.frequency_weight_based_bands_matrix">
+<code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">frequency_weight_based_bands_matrix</code><span class="sig-paren">(</span><em class="sig-param">n_buckets=15</em>, <em class="sig-param">freqs_weighting=&lt;function _plus_one_inverse&gt;</em>, <em class="sig-param">n_freq=1025</em>, <em class="sig-param">reverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#frequency_weight_based_bands_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.frequency_weight_based_bands_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a projection matrix of disjoint bands based on a frequency weighting function.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="n">frequency_weight_based_bands_matrix</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span><span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.125</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -605,24 +617,45 @@ term according to which choice will be closest.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>n_buckets</strong> – final number of buckets</p></li>
 <li><p><strong>freqs_weighting</strong> – any function assigning a non-negative value to each
-element in the freq_range
-If given a list, the function will be assumed
-to be the one to one mapping the frequencies to the value in the list</p></li>
+element in the freq_range.
+If given a list, the function will be assumed to be the one to one mapping the
+frequencies to the value in the list</p></li>
 <li><p><strong>freq_range</strong> – the range of frequencies considered, inclusive on both ends</p></li>
 <li><p><strong>non_empty_bucket</strong> – if set to true, all buckets will have at least one element</p></li>
-<li><p><strong>reverse</strong> – if set to true, will start aggregating higher frequencies instead, which for an increasing weight</p></li>
+<li><p><strong>reverse</strong> – if set to true, will start aggregating higher frequencies instead,
+which for an increasing weight
+function will aggregate the higher frequencies into larger bins as typical</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a partition of freq_range</p>
+</dd>
 </dl>
-<p>function will aggregate the higher frequencies into larger bins as typical
-:return: a partition of freq_range</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">buckets</span> <span class="o">=</span> <span class="n">make_buckets</span><span class="p">(</span><span class="n">n_buckets</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.001</span><span class="p">),</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">buckets</span> <span class="o">=</span> <span class="n">make_buckets</span><span class="p">(</span>
+<span class="gp">... </span><span class="n">n_buckets</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+<span class="gp">... </span><span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.001</span><span class="p">),</span>
+<span class="gp">... </span><span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">buckets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">15</span>
 <span class="go">True</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">buckets</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># the first bucket starts at the first term of freq_range</span>
 <span class="go">200</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">buckets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># the last bucket ends at the last term of freq_range - 1</span>
 <span class="go">999</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">make_buckets</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="go">[[0, 1, 2, 3, 4, 5, 6], [7, 8, 9]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make_buckets</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="go">[[0, 1, 2, 3, 4, 5], [6, 7, 8]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make_buckets</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="go">[[0, 1, 2], [3, 4, 5, 6], [7, 8]]</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">make_buckets</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+<span class="go">[[0], [1, 2], [3, 4, 5, 6, 7, 8]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">make_buckets</span><span class="p">(</span>
+<span class="gp">... </span><span class="mi">8</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)))</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">[1, 2, 5, 14, 34, 88, 225, 632]</span>
 </pre></div>
 </div>
 </dd></dl>
