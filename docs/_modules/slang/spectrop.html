@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.spectrop &mdash; slang 0.1.1 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.spectrop &mdash; slang 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -19,7 +19,6 @@
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -89,6 +88,7 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cumsum</span><span class="p">,</span> <span class="nb">min</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">floor</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">IncrementalPCA</span>
@@ -843,7 +843,7 @@
 
     <span class="n">freq_selection_matrix</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">freq_selection_matrix</span> <span class="o">=</span> <span class="n">keep_only_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="n">n_freq</span><span class="p">)</span>
+        <span class="n">freq_selection_matrix</span> <span class="o">=</span> <span class="n">keep_only_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="n">input_size</span><span class="p">)</span>
         <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">freq_selection_matrix</span><span class="p">)</span>
 
     <span class="n">all_proj_matrices</span> <span class="o">=</span> <span class="p">[]</span>
@@ -930,23 +930,41 @@
 
 <span class="sd">    :param n_buckets: final number of buckets</span>
 <span class="sd">    :param freqs_weighting: any function assigning a non-negative value to each</span>
-<span class="sd">                            element in the freq_range</span>
-<span class="sd">                            If given a list, the function will be assumed</span>
-<span class="sd">                            to be the one to one mapping the frequencies to the value in the list</span>
+<span class="sd">        element in the freq_range.</span>
+<span class="sd">        If given a list, the function will be assumed to be the one to one mapping the</span>
+<span class="sd">        frequencies to the value in the list</span>
 
 <span class="sd">    :param freq_range: the range of frequencies considered, inclusive on both ends</span>
 <span class="sd">    :param non_empty_bucket: if set to true, all buckets will have at least one element</span>
-<span class="sd">    :param reverse: if set to true, will start aggregating higher frequencies instead, which for an increasing weight</span>
-<span class="sd">    function will aggregate the higher frequencies into larger bins as typical</span>
+<span class="sd">    :param reverse: if set to true, will start aggregating higher frequencies instead,</span>
+<span class="sd">        which for an increasing weight</span>
+<span class="sd">        function will aggregate the higher frequencies into larger bins as typical</span>
 <span class="sd">    :return: a partition of freq_range</span>
 
-<span class="sd">    &gt;&gt;&gt; buckets = make_buckets(n_buckets=15, freqs_weighting=lambda x: np.log(x + 0.001), freq_range=(200, 1000))</span>
+<span class="sd">    &gt;&gt;&gt; buckets = make_buckets(</span>
+<span class="sd">    ... n_buckets=15,</span>
+<span class="sd">    ... freqs_weighting=lambda x: np.log(x + 0.001),</span>
+<span class="sd">    ... freq_range=(200, 1000))</span>
 <span class="sd">    &gt;&gt;&gt; len(buckets) == 15</span>
 <span class="sd">    True</span>
 <span class="sd">    &gt;&gt;&gt; buckets[0][0] # the first bucket starts at the first term of freq_range</span>
 <span class="sd">    200</span>
 <span class="sd">    &gt;&gt;&gt; buckets[-1][-1] # the last bucket ends at the last term of freq_range - 1</span>
 <span class="sd">    999</span>
+
+<span class="sd">    &gt;&gt;&gt; make_buckets(3, freq_range=(0, 10))</span>
+<span class="sd">    [[0, 1, 2, 3, 4, 5, 6], [7, 8, 9]]</span>
+<span class="sd">    &gt;&gt;&gt; make_buckets(3, freqs_weighting=lambda x: x, freq_range=(0, 9))</span>
+<span class="sd">    [[0, 1, 2, 3, 4, 5], [6, 7, 8]]</span>
+<span class="sd">    &gt;&gt;&gt; make_buckets(3, freqs_weighting=lambda x: 3, freq_range=(0, 9))</span>
+<span class="sd">    [[0, 1, 2], [3, 4, 5, 6], [7, 8]]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &gt;&gt;&gt; make_buckets(3, freqs_weighting=lambda x: 1 / (x + 1), freq_range=(0, 9))</span>
+<span class="sd">    [[0], [1, 2], [3, 4, 5, 6, 7, 8]]</span>
+<span class="sd">    &gt;&gt;&gt; list(map(len, make_buckets(</span>
+<span class="sd">    ... 8, freqs_weighting=lambda x: 1 / (x + 1), freq_range=(0, 1000)))</span>
+<span class="sd">    ... )</span>
+<span class="sd">    [1, 2, 5, 14, 34, 88, 225, 632]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -1043,6 +1061,29 @@
         <span class="n">idx_bucket_list</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span> <span class="o">+</span> <span class="n">low_freq</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">l</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">idx_bucket_list</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">idx_bucket_list</span></div>
+
+
+<span class="k">def</span> <span class="nf">_plus_one_inverse</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="frequency_weight_based_bands_matrix"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.frequency_weight_based_bands_matrix">[docs]</a><span class="k">def</span> <span class="nf">frequency_weight_based_bands_matrix</span><span class="p">(</span>
+    <span class="n">n_buckets</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="n">_plus_one_inverse</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="mi">1025</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a projection matrix of disjoint bands based on a frequency weighting function.</span>
+
+<span class="sd">    &gt;&gt;&gt; assert frequency_weight_based_bands_matrix(3, n_freq=9).tolist() == [</span>
+<span class="sd">    ... [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],</span>
+<span class="sd">    ... [0.0, 0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],</span>
+<span class="sd">    ... [0.0, 0.0, 0.0, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]</span>
+<span class="sd">    ... ]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">buckets</span> <span class="o">=</span> <span class="n">make_buckets</span><span class="p">(</span>
+        <span class="n">n_buckets</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="p">,</span> <span class="n">freq_range</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_freq</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">make_band_matrix</span><span class="p">(</span><span class="n">buckets</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="n">n_freq</span><span class="p">)</span></div>
 
 
 <span class="c1"># class GeneralProjectionLearner(BaseEstimator, TransformerMixin):</span>

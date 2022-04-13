@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sklearn.linear_model._base &mdash; slang 0.1.1 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>sklearn.linear_model._base &mdash; slang 0.1.2 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -19,7 +19,6 @@
         <script src="../../../_static/clipboard.min.js"></script>
         <script src="../../../_static/copybutton.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -477,15 +476,15 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X : array-like or sparse matrix, shape (n_samples, n_features)</span>
-<span class="sd">            Samples.</span>
+<span class="sd">        X : {array-like, sparse matrix} of shape (n_samples, n_features)</span>
+<span class="sd">            The data matrix for which we want to get the confidence scores.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        array, shape=(n_samples,) if n_classes == 2 else (n_samples, n_classes)</span>
-<span class="sd">            Confidence scores per (sample, class) combination. In the binary</span>
-<span class="sd">            case, confidence score for self.classes_[1] where &gt;0 means this</span>
-<span class="sd">            class would be predicted.</span>
+<span class="sd">        scores : ndarray of shape (n_samples,) or (n_samples, n_classes)</span>
+<span class="sd">            Confidence scores per `(n_samples, n_classes)` combination. In the</span>
+<span class="sd">            binary case, confidence score for `self.classes_[1]` where &gt;0 means</span>
+<span class="sd">            this class would be predicted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">check_is_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -499,13 +498,13 @@
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        X : array-like or sparse matrix, shape (n_samples, n_features)</span>
-<span class="sd">            Samples.</span>
+<span class="sd">        X : {array-like, sparse matrix} of shape (n_samples, n_features)</span>
+<span class="sd">            The data matrix for which we want to get the predictions.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        C : array, shape [n_samples]</span>
-<span class="sd">            Predicted class label per sample.</span>
+<span class="sd">        y_pred : ndarray of shape (n_samples,)</span>
+<span class="sd">            Vector containing the class labels for each sample.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decision_function</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
