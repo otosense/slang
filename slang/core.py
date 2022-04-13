@@ -91,6 +91,7 @@ class AnnotedWfSource(WfSource):
 class KvDataSource:
     def __init__(self, kv_store, key_to_tag=None, key_filt=None):
         self.kv_store = kv_store
+        self.wfs = kv_store  # normalization alias
         self.key_to_tag = key_to_tag
         self.key_filt = key_filt
 
