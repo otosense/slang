@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.chunkers &mdash; slang 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.chunkers &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -85,12 +85,77 @@
 <span></span><span class="sd">&quot;&quot;&quot;Chunker functions&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span><span class="p">,</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 
 <span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
 
 <span class="n">DFLT_CHK_SIZE</span> <span class="o">=</span> <span class="mi">2048</span>
+
+
+<div class="viewcode-block" id="fannout_chunker"><a class="viewcode-back" href="../../module_docs/slang/chunkers.html#slang.chunkers.fannout_chunker">[docs]</a><span class="k">def</span> <span class="nf">fannout_chunker</span><span class="p">(</span>
+    <span class="n">objects</span><span class="p">,</span>
+    <span class="n">chunker</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">extract_chunkable</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">extract_info</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">include_chunk_key</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Chunk parts of an iterable of objects.</span>
+
+<span class="sd">    Transform things like iterables of ``(info1, iterable, info2)`` to iterables</span>
+<span class="sd">    ``(info2, iterable_chk_0), (info2, iterable_chk_1), ...``.</span>
+
+<span class="sd">    :param objects: The iterable of objects that contain both the iterable to chunk and</span>
+<span class="sd">    the extra info</span>
+<span class="sd">    :param chunker: The chunker. A function taking the iterable to chunk and returns</span>
+<span class="sd">    an iterable of chunks</span>
+<span class="sd">    :param extract_chunkable: The function that extracts the iterable to be chunked</span>
+<span class="sd">    :param extract_info: The function that extracts from the object the extra info to</span>
+<span class="sd">    yield for each chunk</span>
+
+<span class="sd">    Most of the time you&#39;ll be dealing with tuple or dicts as objects, so</span>
+<span class="sd">    ``operator.itemgetter`` is your friend for creating the extractors.</span>
+
+<span class="sd">    &gt;&gt;&gt; from functools import partial</span>
+<span class="sd">    &gt;&gt;&gt; from operator import itemgetter</span>
+<span class="sd">    &gt;&gt;&gt; tuple_chunker = partial(</span>
+<span class="sd">    ...     fannout_chunker,</span>
+<span class="sd">    ...     chunker=partial(fixed_step_chunker, chk_size=2),</span>
+<span class="sd">    ...     extract_chunkable=itemgetter(0),</span>
+<span class="sd">    ...     extract_info=itemgetter(1))</span>
+<span class="sd">    &gt;&gt;&gt; objects = [([1,2,3,4], &#39;alice&#39;), ([5,6,7], &#39;bob&#39;)]</span>
+<span class="sd">    &gt;&gt;&gt; list(tuple_chunker(objects))</span>
+<span class="sd">    [(&#39;alice&#39;, [1, 2]), (&#39;alice&#39;, [3, 4]), (&#39;bob&#39;, [5, 6])]</span>
+
+<span class="sd">    If you wanted to have get an index for your chunk as well, you can specify</span>
+<span class="sd">    ``include_chunk_key=True``:</span>
+
+<span class="sd">    &gt;&gt;&gt; tuple_chunker_w_chk_index = partial(tuple_chunker, include_chunk_key=True)</span>
+<span class="sd">    &gt;&gt;&gt; list(tuple_chunker_w_chk_index(objects))</span>
+<span class="sd">    [(0, (&#39;alice&#39;, [1, 2])), (1, (&#39;alice&#39;, [3, 4])), (0, (&#39;bob&#39;, [5, 6]))]</span>
+
+<span class="sd">    &gt;&gt;&gt; dict_chunker = partial(</span>
+<span class="sd">    ...     tuple_chunker,</span>
+<span class="sd">    ...     extract_chunkable=itemgetter(&#39;wf&#39;),</span>
+<span class="sd">    ...     extract_info=itemgetter(&#39;tag&#39;),</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; objects = [</span>
+<span class="sd">    ...     {&#39;wf&#39;: [1,2,3,4], &#39;tag&#39;: &#39;alice&#39;, &#39;who_cares&#39;: &#39;about_this&#39;},</span>
+<span class="sd">    ...     {&#39;wf&#39;: [5,6,7], &#39;tag&#39;: &#39;bob&#39;, &#39;or&#39;: &#39;this&#39;}</span>
+<span class="sd">    ... ]</span>
+<span class="sd">    &gt;&gt;&gt; list(dict_chunker(objects))</span>
+<span class="sd">    [(&#39;alice&#39;, [1, 2]), (&#39;alice&#39;, [3, 4]), (&#39;bob&#39;, [5, 6])]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+        <span class="n">iterable_to_chunk</span> <span class="o">=</span> <span class="n">extract_chunkable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">extract_info</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">chk_idx</span><span class="p">,</span> <span class="n">chk</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chunker</span><span class="p">(</span><span class="n">iterable_to_chunk</span><span class="p">)):</span>
+            <span class="n">chk_and_info</span> <span class="o">=</span> <span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="n">chk</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">include_chunk_key</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">chk_idx</span><span class="p">,</span> <span class="n">chk_and_info</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">chk_and_info</span></div>
 
 
 <div class="viewcode-block" id="mk_chunker"><a class="viewcode-back" href="../../module_docs/slang/chunkers.html#slang.chunkers.mk_chunker">[docs]</a><span class="k">def</span> <span class="nf">mk_chunker</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">use_numpy_reshape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>

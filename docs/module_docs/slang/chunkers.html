@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.chunkers &mdash; slang 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.chunkers &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -87,6 +87,59 @@
   <section id="module-slang.chunkers">
 <span id="slang-chunkers"></span><h1>slang.chunkers<a class="headerlink" href="#module-slang.chunkers" title="Permalink to this headline">¶</a></h1>
 <p>Chunker functions</p>
+<dl class="py function">
+<dt id="slang.chunkers.fannout_chunker">
+<code class="sig-prename descclassname">slang.chunkers.</code><code class="sig-name descname">fannout_chunker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">objects</span></em>, <em class="sig-param"><span class="n">chunker</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">extract_chunkable</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">extract_info</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">include_chunk_key</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/chunkers.html#fannout_chunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.chunkers.fannout_chunker" title="Permalink to this definition">¶</a></dt>
+<dd><p>Chunk parts of an iterable of objects.</p>
+<p>Transform things like iterables of <code class="docutils literal notranslate"><span class="pre">(info1,</span> <span class="pre">iterable,</span> <span class="pre">info2)</span></code> to iterables
+<code class="docutils literal notranslate"><span class="pre">(info2,</span> <span class="pre">iterable_chk_0),</span> <span class="pre">(info2,</span> <span class="pre">iterable_chk_1),</span> <span class="pre">...</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>objects</strong> – The iterable of objects that contain both the iterable to chunk and</p>
+</dd>
+</dl>
+<p>the extra info
+:param chunker: The chunker. A function taking the iterable to chunk and returns
+an iterable of chunks
+:param extract_chunkable: The function that extracts the iterable to be chunked
+:param extract_info: The function that extracts from the object the extra info to
+yield for each chunk</p>
+<p>Most of the time you’ll be dealing with tuple or dicts as objects, so
+<code class="docutils literal notranslate"><span class="pre">operator.itemgetter</span></code> is your friend for creating the extractors.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tuple_chunker</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">fannout_chunker</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">chunker</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">fixed_step_chunker</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">extract_chunkable</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">extract_info</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">objects</span> <span class="o">=</span> <span class="p">[([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;alice&#39;</span><span class="p">),</span> <span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="s1">&#39;bob&#39;</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">tuple_chunker</span><span class="p">(</span><span class="n">objects</span><span class="p">))</span>
+<span class="go">[(&#39;alice&#39;, [1, 2]), (&#39;alice&#39;, [3, 4]), (&#39;bob&#39;, [5, 6])]</span>
+</pre></div>
+</div>
+<p>If you wanted to have get an index for your chunk as well, you can specify
+<code class="docutils literal notranslate"><span class="pre">include_chunk_key=True</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tuple_chunker_w_chk_index</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">tuple_chunker</span><span class="p">,</span> <span class="n">include_chunk_key</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">tuple_chunker_w_chk_index</span><span class="p">(</span><span class="n">objects</span><span class="p">))</span>
+<span class="go">[(0, (&#39;alice&#39;, [1, 2])), (1, (&#39;alice&#39;, [3, 4])), (0, (&#39;bob&#39;, [5, 6]))]</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dict_chunker</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">tuple_chunker</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">extract_chunkable</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="s1">&#39;wf&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">extract_info</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="s1">&#39;tag&#39;</span><span class="p">),</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">objects</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;wf&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="s1">&#39;alice&#39;</span><span class="p">,</span> <span class="s1">&#39;who_cares&#39;</span><span class="p">:</span> <span class="s1">&#39;about_this&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;wf&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">],</span> <span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;or&#39;</span><span class="p">:</span> <span class="s1">&#39;this&#39;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">dict_chunker</span><span class="p">(</span><span class="n">objects</span><span class="p">))</span>
+<span class="go">[(&#39;alice&#39;, [1, 2]), (&#39;alice&#39;, [3, 4]), (&#39;bob&#39;, [5, 6])]</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py function">
 <dt id="slang.chunkers.fixed_step_chunker">
 <code class="sig-prename descclassname">slang.chunkers.</code><code class="sig-name descname">fixed_step_chunker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">it</span></em>, <em class="sig-param"><span class="n">chk_size</span></em>, <em class="sig-param"><span class="n">chk_step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">start_at</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stop_at</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">return_tail</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/chunkers.html#fixed_step_chunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.chunkers.fixed_step_chunker" title="Permalink to this definition">¶</a></dt>

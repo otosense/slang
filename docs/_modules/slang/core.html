@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.core &mdash; slang 0.1.2 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.core &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -175,6 +175,7 @@
 <span class="k">class</span> <span class="nc">KvDataSource</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kv_store</span><span class="p">,</span> <span class="n">key_to_tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">key_filt</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kv_store</span> <span class="o">=</span> <span class="n">kv_store</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wfs</span> <span class="o">=</span> <span class="n">kv_store</span>  <span class="c1"># normalization alias</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key_to_tag</span> <span class="o">=</span> <span class="n">key_to_tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">key_filt</span> <span class="o">=</span> <span class="n">key_filt</span>
 
