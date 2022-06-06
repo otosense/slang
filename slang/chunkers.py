@@ -1,12 +1,77 @@
 """Chunker functions"""
 
 from itertools import islice, chain
-from functools import partial
-from typing import Iterable
+from typing import Callable
 
 inf = float('inf')
 
 DFLT_CHK_SIZE = 2048
+
+
+def fannout_chunker(
+    objects,
+    chunker,
+    *,
+    extract_chunkable: Callable,
+    extract_info: Callable,
+    include_chunk_key: bool = False
+):
+    """Chunk parts of an iterable of objects.
+
+    Transform things like iterables of ``(info1, iterable, info2)`` to iterables
+    ``(info2, iterable_chk_0), (info2, iterable_chk_1), ...``.
+
+    :param objects: The iterable of objects that contain both the iterable to chunk and
+    the extra info
+    :param chunker: The chunker. A function taking the iterable to chunk and returns
+    an iterable of chunks
+    :param extract_chunkable: The function that extracts the iterable to be chunked
+    :param extract_info: The function that extracts from the object the extra info to
+    yield for each chunk
+
+    Most of the time you'll be dealing with tuple or dicts as objects, so
+    ``operator.itemgetter`` is your friend for creating the extractors.
+
+    >>> from functools import partial
+    >>> from operator import itemgetter
+    >>> tuple_chunker = partial(
+    ...     fannout_chunker,
+    ...     chunker=partial(fixed_step_chunker, chk_size=2),
+    ...     extract_chunkable=itemgetter(0),
+    ...     extract_info=itemgetter(1))
+    >>> objects = [([1,2,3,4], 'alice'), ([5,6,7], 'bob')]
+    >>> list(tuple_chunker(objects))
+    [('alice', [1, 2]), ('alice', [3, 4]), ('bob', [5, 6])]
+
+    If you wanted to have get an index for your chunk as well, you can specify
+    ``include_chunk_key=True``:
+
+    >>> tuple_chunker_w_chk_index = partial(tuple_chunker, include_chunk_key=True)
+    >>> list(tuple_chunker_w_chk_index(objects))
+    [(0, ('alice', [1, 2])), (1, ('alice', [3, 4])), (0, ('bob', [5, 6]))]
+
+    >>> dict_chunker = partial(
+    ...     tuple_chunker,
+    ...     extract_chunkable=itemgetter('wf'),
+    ...     extract_info=itemgetter('tag'),
+    ... )
+    >>> objects = [
+    ...     {'wf': [1,2,3,4], 'tag': 'alice', 'who_cares': 'about_this'},
+    ...     {'wf': [5,6,7], 'tag': 'bob', 'or': 'this'}
+    ... ]
+    >>> list(dict_chunker(objects))
+    [('alice', [1, 2]), ('alice', [3, 4]), ('bob', [5, 6])]
+
+    """
+    for obj in objects:
+        iterable_to_chunk = extract_chunkable(obj)
+        info = extract_info(obj)
+        for chk_idx, chk in enumerate(chunker(iterable_to_chunk)):
+            chk_and_info = (info, chk)
+            if include_chunk_key:
+                yield chk_idx, chk_and_info
+            else:
+                yield chk_and_info
 
 
 def mk_chunker(chk_size=DFLT_CHK_SIZE, chk_step=None, *, use_numpy_reshape=None):
