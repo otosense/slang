@@ -28,6 +28,8 @@ def fannout_chunker(
     :param extract_chunkable: The function that extracts the iterable to be chunked
     :param extract_info: The function that extracts from the object the extra info to
     yield for each chunk
+    :return: A generator of ``(info, chunk),...`` pairs or ``(chk_idx, (info, chunk))``
+    pairs.
 
     Most of the time you'll be dealing with tuple or dicts as objects, so
     ``operator.itemgetter`` is your friend for creating the extractors.
@@ -62,6 +64,18 @@ def fannout_chunker(
     >>> list(dict_chunker(objects))
     [('alice', [1, 2]), ('alice', [3, 4]), ('bob', [5, 6])]
 
+    The output format is fixed to ``(info, chunk),...`` or ``(chk_idx, (info, chunk))``.
+    To get a different output, write egress function and apply it to output
+    systematically. For example:
+
+    >>> from i2 import Pipe
+    >>> egress = lambda tup: {'tag': tup[0], 'chk': tup[1]}
+    >>> new_dict_chunker = Pipe(dict_chunker, lambda x: map(egress, x))
+    >>> assert list(new_dict_chunker(objects)) == [
+    ...     {'tag': 'alice', 'chk': [1, 2]},
+    ...     {'tag': 'alice', 'chk': [3, 4]},
+    ...     {'tag': 'bob', 'chk': [5, 6]}
+    ... ]
     """
     for obj in objects:
         iterable_to_chunk = extract_chunkable(obj)

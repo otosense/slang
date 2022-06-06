@@ -11,6 +11,7 @@ from slang.chunkers import (
     DFLT_CHUNKER,
     DFLT_CHK_SIZE,
     mk_chunker,
+    fannout_chunker,
 )
 
 from slang.featurizers import (
