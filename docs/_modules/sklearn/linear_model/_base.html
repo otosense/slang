@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sklearn.linear_model._base &mdash; slang 0.1.2 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>sklearn.linear_model._base &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -107,6 +107,7 @@
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
 <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">sparse</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse.linalg</span> <span class="kn">import</span> <span class="n">lsqr</span>
 <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">expit</span>
 <span class="kn">from</span> <span class="nn">joblib</span> <span class="kn">import</span> <span class="n">Parallel</span>
 
@@ -118,7 +119,6 @@
 <span class="kn">from</span> <span class="nn">..utils.extmath</span> <span class="kn">import</span> <span class="n">safe_sparse_dot</span>
 <span class="kn">from</span> <span class="nn">..utils.extmath</span> <span class="kn">import</span> <span class="n">_incremental_mean_and_var</span>
 <span class="kn">from</span> <span class="nn">..utils.sparsefuncs</span> <span class="kn">import</span> <span class="n">mean_variance_axis</span><span class="p">,</span> <span class="n">inplace_column_scale</span>
-<span class="kn">from</span> <span class="nn">..utils.fixes</span> <span class="kn">import</span> <span class="n">sparse_lsqr</span>
 <span class="kn">from</span> <span class="nn">..utils._seq_dataset</span> <span class="kn">import</span> <span class="n">ArrayDataset32</span><span class="p">,</span> <span class="n">CSRDataset32</span>
 <span class="kn">from</span> <span class="nn">..utils._seq_dataset</span> <span class="kn">import</span> <span class="n">ArrayDataset64</span><span class="p">,</span> <span class="n">CSRDataset64</span>
 <span class="kn">from</span> <span class="nn">..utils.validation</span> <span class="kn">import</span> <span class="n">check_is_fitted</span><span class="p">,</span> <span class="n">_check_sample_weight</span>
@@ -208,7 +208,7 @@
             <span class="s2">&quot;0. For other values of l1_ratio, no analytic formula is &quot;</span>
             <span class="s2">&quot;available.&quot;</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="n">estimator_name</span> <span class="o">==</span> <span class="s2">&quot;RidgeCV&quot;</span> <span class="ow">or</span> <span class="n">estimator_name</span> <span class="o">==</span> <span class="s2">&quot;RidgeClassifierCV&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">estimator_name</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;RidgeCV&quot;</span><span class="p">,</span> <span class="s2">&quot;RidgeClassifierCV&quot;</span><span class="p">,</span> <span class="s2">&quot;_RidgeGCV&quot;</span><span class="p">):</span>
         <span class="n">alpha_msg</span> <span class="o">=</span> <span class="s2">&quot;Set parameter alphas to: original_alphas * n_samples. &quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">alpha_msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -260,7 +260,8 @@
 <span class="sd">        The weight of each sample</span>
 
 <span class="sd">    random_state : int, RandomState instance or None (default)</span>
-<span class="sd">        Determines random number generation for dataset shuffling and noise.</span>
+<span class="sd">        Determines random number generation for dataset random sampling. It is not</span>
+<span class="sd">        used for dataset shuffling.</span>
 <span class="sd">        Pass an int for reproducible output across multiple function calls.</span>
 <span class="sd">        See :term:`Glossary &lt;random_state&gt;`.</span>
 
@@ -301,7 +302,6 @@
     <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">return_mean</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">check_input</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Center and scale data.</span>
@@ -315,12 +315,27 @@
 
 <span class="sd">    X_scale is the L2 norm of X - X_offset. If sample_weight is not None,</span>
 <span class="sd">    then the weighted mean of X and y is zero, and not the mean itself. If</span>
-<span class="sd">    return_mean=True, the mean, eventually weighted, is returned, independently</span>
+<span class="sd">    fit_intercept=True, the mean, eventually weighted, is returned, independently</span>
 <span class="sd">    of whether X was centered (option used for optimization with sparse data in</span>
 <span class="sd">    coordinate_descend).</span>
 
 <span class="sd">    This is here because nearly all linear models will want their data to be</span>
 <span class="sd">    centered. This function also systematically makes y consistent with X.dtype</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    X_out : {ndarray, sparse matrix} of shape (n_samples, n_features)</span>
+<span class="sd">        If copy=True a copy of the input X is triggered, otherwise operations are</span>
+<span class="sd">        inplace.</span>
+<span class="sd">        If input X is dense, then X_out is centered.</span>
+<span class="sd">        If normalize is True, then X_out is rescaled (dense and sparse case)</span>
+<span class="sd">    y_out : {ndarray, sparse matrix} of shape (n_samples,) or (n_samples, n_targets)</span>
+<span class="sd">        Centered version of y. Likely performed inplace on input y.</span>
+<span class="sd">    X_offset : ndarray of shape (n_features,)</span>
+<span class="sd">        The mean per column of input X.</span>
+<span class="sd">    y_offset : float or ndarray of shape (n_features,)</span>
+<span class="sd">    X_scale : ndarray of shape (n_features,)</span>
+<span class="sd">        The standard deviation per column of input X.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
         <span class="n">sample_weight</span> <span class="o">=</span> <span class="kc">None</span>
@@ -340,8 +355,6 @@
     <span class="k">if</span> <span class="n">fit_intercept</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">sp</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
             <span class="n">X_offset</span><span class="p">,</span> <span class="n">X_var</span> <span class="o">=</span> <span class="n">mean_variance_axis</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">return_mean</span><span class="p">:</span>
-                <span class="n">X_offset</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">normalize</span><span class="p">:</span>
                 <span class="n">X_offset</span><span class="p">,</span> <span class="n">X_var</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_incremental_mean_and_var</span><span class="p">(</span>
@@ -397,7 +410,18 @@
 <span class="k">def</span> <span class="nf">_rescale_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Rescale data sample-wise by square root of sample_weight.</span>
 
-<span class="sd">    For many linear models, this enables easy support for sample_weight.</span>
+<span class="sd">    For many linear models, this enables easy support for sample_weight because</span>
+
+<span class="sd">        (y - X w)&#39; S (y - X w)</span>
+
+<span class="sd">    with S = diag(sample_weight) becomes</span>
+
+<span class="sd">        ||y_rescaled - X_rescaled w||_2^2</span>
+
+<span class="sd">    when setting</span>
+
+<span class="sd">        y_rescaled = sqrt(S) y</span>
+<span class="sd">        X_rescaled = sqrt(S) X</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -409,11 +433,11 @@
     <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">sample_weight</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">sample_weight</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
-    <span class="n">sw_matrix</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">dia_matrix</span><span class="p">((</span><span class="n">sample_weight</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">))</span>
+    <span class="n">sample_weight_sqrt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">)</span>
+    <span class="n">sw_matrix</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">dia_matrix</span><span class="p">((</span><span class="n">sample_weight_sqrt</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">))</span>
     <span class="n">X</span> <span class="o">=</span> <span class="n">safe_sparse_dot</span><span class="p">(</span><span class="n">sw_matrix</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
     <span class="n">y</span> <span class="o">=</span> <span class="n">safe_sparse_dot</span><span class="p">(</span><span class="n">sw_matrix</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight_sqrt</span>
 
 
 <span class="k">class</span> <span class="nc">LinearModel</span><span class="p">(</span><span class="n">BaseEstimator</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">ABCMeta</span><span class="p">):</span>
@@ -444,8 +468,6 @@
 <span class="sd">            Returns predicted values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decision_function</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-
-    <span class="n">_preprocess_data</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">_preprocess_data</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_set_intercept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">X_scale</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set the intercept_&quot;&quot;&quot;</span>
@@ -747,59 +769,55 @@
             <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">accept_sparse</span><span class="o">=</span><span class="n">accept_sparse</span><span class="p">,</span> <span class="n">y_numeric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">multi_output</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">_check_sample_weight</span><span class="p">(</span><span class="n">sample_weight</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">sample_weight</span> <span class="o">=</span> <span class="n">_check_sample_weight</span><span class="p">(</span>
+            <span class="n">sample_weight</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">only_non_negative</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
 
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">X_scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess_data</span><span class="p">(</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">X_scale</span> <span class="o">=</span> <span class="n">_preprocess_data</span><span class="p">(</span>
             <span class="n">X</span><span class="p">,</span>
             <span class="n">y</span><span class="p">,</span>
             <span class="n">fit_intercept</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_intercept</span><span class="p">,</span>
             <span class="n">normalize</span><span class="o">=</span><span class="n">_normalize</span><span class="p">,</span>
             <span class="n">copy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">copy_X</span><span class="p">,</span>
             <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
-            <span class="n">return_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Sample weight can be implemented via a simple rescaling.</span>
-            <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_rescale_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
+        <span class="c1"># Sample weight can be implemented via a simple rescaling.</span>
+        <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight_sqrt</span> <span class="o">=</span> <span class="n">_rescale_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">positive</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residues</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">nnls</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">nnls</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># scipy.optimize.nnls cannot handle y with shape (M, K)</span>
                 <span class="n">outs</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs_</span><span class="p">)(</span>
                     <span class="n">delayed</span><span class="p">(</span><span class="n">optimize</span><span class="o">.</span><span class="n">nnls</span><span class="p">)(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">j</span><span class="p">])</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residues</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">,</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">outs</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">outs</span><span class="p">])</span>
         <span class="k">elif</span> <span class="n">sp</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
             <span class="n">X_offset_scale</span> <span class="o">=</span> <span class="n">X_offset</span> <span class="o">/</span> <span class="n">X_scale</span>
 
             <span class="k">def</span> <span class="nf">matvec</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="n">b</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_offset_scale</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="n">sample_weight_sqrt</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X_offset_scale</span><span class="p">)</span>
 
             <span class="k">def</span> <span class="nf">rmatvec</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="n">X_offset_scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">-</span> <span class="n">X_offset_scale</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sample_weight_sqrt</span><span class="p">)</span>
 
             <span class="n">X_centered</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinearOperator</span><span class="p">(</span>
                 <span class="n">shape</span><span class="o">=</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">matvec</span><span class="o">=</span><span class="n">matvec</span><span class="p">,</span> <span class="n">rmatvec</span><span class="o">=</span><span class="n">rmatvec</span>
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">out</span> <span class="o">=</span> <span class="n">sparse_lsqr</span><span class="p">(</span><span class="n">X_centered</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_residues</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">lsqr</span><span class="p">(</span><span class="n">X_centered</span><span class="p">,</span> <span class="n">y</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># sparse_lstsq cannot handle y with shape (M, K)</span>
                 <span class="n">outs</span> <span class="o">=</span> <span class="n">Parallel</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=</span><span class="n">n_jobs_</span><span class="p">)(</span>
-                    <span class="n">delayed</span><span class="p">(</span><span class="n">sparse_lsqr</span><span class="p">)(</span><span class="n">X_centered</span><span class="p">,</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+                    <span class="n">delayed</span><span class="p">(</span><span class="n">lsqr</span><span class="p">)(</span><span class="n">X_centered</span><span class="p">,</span> <span class="n">y</span><span class="p">[:,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
                     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">outs</span><span class="p">])</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_residues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">out</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">outs</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residues</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">singular_</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">singular_</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="o">.</span><span class="n">T</span>
 
         <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -876,7 +894,10 @@
     <span class="n">check_input</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Aux function used at beginning of fit in linear models</span>
+    <span class="sd">&quot;&quot;&quot;Function used at beginning of fit in linear models with L1 or L0 penalty.</span>
+
+<span class="sd">    This function applies _preprocess_data and additionally computes the gram matrix</span>
+<span class="sd">    `precompute` as needed as well as `Xy`.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -895,8 +916,8 @@
             <span class="n">fit_intercept</span><span class="o">=</span><span class="n">fit_intercept</span><span class="p">,</span>
             <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">,</span>
             <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">return_mean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">check_input</span><span class="o">=</span><span class="n">check_input</span><span class="p">,</span>
+            <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># copy was done in fit if necessary</span>
@@ -909,8 +930,11 @@
             <span class="n">check_input</span><span class="o">=</span><span class="n">check_input</span><span class="p">,</span>
             <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">_rescale_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
+        <span class="c1"># Rescale only in dense case. Sparse cd solver directly deals with</span>
+        <span class="c1"># sample_weight.</span>
+        <span class="k">if</span> <span class="n">sample_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This triggers copies anyway.</span>
+            <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_rescale_data</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="n">sample_weight</span><span class="p">)</span>
 
     <span class="c1"># FIXME: &#39;normalize&#39; to be removed in 1.2</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">precompute</span><span class="p">,</span> <span class="s2">&quot;__array__&quot;</span><span class="p">):</span>
