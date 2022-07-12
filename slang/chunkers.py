@@ -2,10 +2,18 @@
 
 from itertools import islice, chain
 from typing import Callable
+from functools import partial
 
 inf = float('inf')
 
 DFLT_CHK_SIZE = 2048
+
+try:
+    import numpy as np
+
+    NUMPY_PRESENT = True
+except (ImportError, ModuleNotFoundError):
+    NUMPY_PRESENT = False
 
 
 def fannout_chunker(
@@ -88,6 +96,15 @@ def fannout_chunker(
                 yield chk_and_info
 
 
+def _matrix_of_chunks(a, chk_size):
+    n = len(a)
+    return np.reshape(a[: (n - (n % chk_size))], (-1, chk_size))
+
+
+def _chunk_with_zip(a, chk_size):
+    return zip(*([iter(a)] * chk_size))
+
+
 def mk_chunker(chk_size=DFLT_CHK_SIZE, chk_step=None, *, use_numpy_reshape=None):
     """
     Generator of (fixed size and fixed step) chunks of an iterable.
@@ -121,30 +138,24 @@ def mk_chunker(chk_size=DFLT_CHK_SIZE, chk_step=None, *, use_numpy_reshape=None)
 
     if chk_step == chk_size:
         if (use_numpy_reshape is None) or (use_numpy_reshape is True):
-            try:
-                from numpy import reshape
-
+            if NUMPY_PRESENT:
                 use_numpy_reshape = True
-            except ImportError:
+            else:
                 if use_numpy_reshape is True:
-                    raise  # make sure the user knows she doesn't have numpy
+                    raise ModuleNotFoundError(
+                        "You don't have numpy installed, so you can't a reshape chunker"
+                    )
                 use_numpy_reshape = False
 
         if use_numpy_reshape:
-
-            def chunker(a):
-                n = len(a)
-                yield from reshape(a[: (n - (n % chk_size))], (-1, chk_size))
-
+            chunker = partial(_matrix_of_chunks, chk_size=chk_size)
         else:
-
-            def chunker(a):
-                yield from zip(*([iter(a)] * chk_size))
+            chunker = partial(_chunk_with_zip, chk_size=chk_size)
 
     else:
+        chunker = partial(fixed_step_chunker, chk_size=chk_size, chk_step=chk_step)
 
-        def chunker(a):
-            yield from fixed_step_chunker(a, chk_size, chk_step)
+    # Adding the chk_size and chk_step attributes to the chunker
 
     chunker.chk_size = chk_size
     chunker.chk_step = chk_step
