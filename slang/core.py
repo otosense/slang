@@ -4,6 +4,7 @@
 # from functools import partial
 
 from warnings import warn
+from functools import cached_property
 from typing import Callable, Any, Optional, Mapping
 from slang.stypes import (
     Waveform,
@@ -37,15 +38,12 @@ class TagWfStore:
         pass
 
 
-from py2store.util import lazyprop
-
-
 class WfSource:
     def __init__(self, wfs, key_filt=None):
         self.wfs = wfs
         self.key_filt = key_filt
 
-    @lazyprop
+    @cached_property
     def keys(self):
         return tuple(filter(self.key_filt, self.wfs))
 
@@ -63,7 +61,7 @@ class AnnotedWfSource(WfSource):
         super().__init__(wfs, key_filt)
         self.annots = annots
 
-    @lazyprop
+    @cached_property
     def keys(self):
         annots_keys = set(self.annots)
         return tuple([k for k in super().keys() if k in annots_keys])

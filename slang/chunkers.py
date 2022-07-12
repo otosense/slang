@@ -107,15 +107,23 @@ def _chunk_with_zip(a, chk_size):
 
 def mk_chunker(chk_size=DFLT_CHK_SIZE, chk_step=None, *, use_numpy_reshape=None):
     """
-    Generator of (fixed size and fixed step) chunks of an iterable.
-    This function-making function will try to choose an optimized chunker for you depending on the parameters and
-    environment (if you have numpy and chk_size==chk_step, it's the fastest).
+    A fixed step chunker factory. Makes a function that takes an iterable and produces
+    fixed-size fixed-step chunks of it's elements.
 
-    Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the type that is yield.
+    This function-making function will try to choose an optimized chunker for you
+    depending on the parameters and environment (if you have numpy and
+    chk_size==chk_step, it's the fastest).
+
+    Will also add attributes that exhibit the parameters of the chunker.
+
+    Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the
+    type that is yield.
 
     :param chk_size: Size of chunk (default 2048)
-    :param chk_step: Size of step (step of sliding window). If not specified, will be taken to be chk_size
-    :param use_numpy_reshape: If None (default), will use numpy (reshape) if numpy is importable.
+    :param chk_step: Size of step (step of sliding window). If not specified, will be
+    taken to be chk_size
+    :param use_numpy_reshape: If None (default), will use numpy (reshape) if numpy is
+    importable.
         If True, will try to use numpy.reshape systematically.
         If False, will not use numpy.reshape, even if numpy present.
     :return: A generator of chunks (numpy.arrays, tuples, or lists, depending on the context)
@@ -132,6 +140,13 @@ def mk_chunker(chk_size=DFLT_CHK_SIZE, chk_step=None, *, use_numpy_reshape=None)
     >>> chunker = mk_chunker(4, 2)
     >>> list(chunker(a))
     [[0, 1, 2, 3], [2, 3, 4, 5]]
+
+    See that ``chunker`` has parameters describing it:
+
+    >>> chunker.chk_size
+    4
+    >>> chunker.chk_step
+    2
     """
 
     chk_step = chk_step or chk_size  # default to chk_size == chk_step

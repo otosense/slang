@@ -1,6 +1,7 @@
 """Snip statistics functions"""
 
 from collections import defaultdict, Counter
+from operator import itemgetter
 from dataclasses import dataclass
 from functools import reduce
 from typing import Iterable, Tuple, Union
@@ -9,7 +10,7 @@ import matplotlib.pylab as plt
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
-from py2store.util import groupby
+from dol.util import groupby  # TODO: consider changing to use itertools.groupby
 
 from slang.util import lazyprop, running_mean_gen, row_euclidean_distance
 from slang.util import snips_to_str as dflt_snips_to_str
@@ -152,7 +153,7 @@ def iterate_over_pairs(pairs):
 
 
 def mk_snips_of_tag_dict(tags, snips):
-    return groupby(zip(tags, snips), lambda x: x[0], lambda x: x[1])
+    return groupby(zip(tags, snips), itemgetter(0), itemgetter(1))
 
 
 # TODO: Fillna is not additive smoothing, so should make it so?

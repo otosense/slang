@@ -3,6 +3,10 @@
 from numpy import hanning, kaiser, abs, diff, array, std
 from numpy.fft import rfft
 from functools import wraps, partial
+from typing import Sized, Optional, Callable
+from operator import mul
+
+from dol import Pipe
 from slang.stypes import Chunk, Chunks, Featurizer
 
 
@@ -27,28 +31,47 @@ def identity_func(x):
 
 
 def mk_window_func(window_func, *args, **kwargs):
-    window_wf = window_func(*args, **kwargs)
-
-    def wf_preproc(wf):
-        return window_wf * wf
-
-    return wf_preproc
+    """Make a 'window function', which transforms input arrays through an elementsize
+    multiplication by a fixed vector"""
+    return partial(mul, window_wf=window_func(*args, **kwargs))
 
 
 mk_window_func.hanning = wraps(hanning)(partial(mk_window_func, hanning))
 mk_window_func.kaiser = wraps(kaiser)(partial(mk_window_func, kaiser))
 
 
+def _assert_size(a: Sized, size: Optional[int] = None, error_type=ValueError):
+    if size is not None and len(a) != size:
+        raise error_type(f'The size was expected to be {size} but was {len(a)}')
+    return a
+
+
 def mk_wf_to_spectr(
-    preproc: callable = None, fft_func: callable = rfft, postproc: callable = abs,
+    preproc: Callable = None,
+    fft_func: Callable = rfft,
+    postproc: Callable = abs,
+    *,
+    assert_size: Optional[int] = None,
 ):
     """Make a function that computes the spectrogram of a waveform
     By spectrum, we mean the output of the pipeline:
-        `tile -> preproc -> fft -> postproc -> spectrum
+        `tile -> preproc -> [assert_size] -> fft -> postproc -> spectrum
 
-    Because typically, we preprocess the input waveform (say, transform with a hanning function), and post process
+    Because typically, we preprocess the input waveform
+    (say, transform with a hanning function), and post process
     the fft (say take the norm of the complex vector).
 
+    Adds a
+
+    :param preproc: Function to preprocess the array before computing the fft
+    :param fft_func: Function that computes the fft
+    :param postproc: Function post processing the fft array
+    :param assert_size: If an int is given, the returned ``wf_to_spectr`` function
+    will assert that the input array (or ``preproc(array)`` if ``preproc`` given) is of
+    that size before computing the fft.
+
+    :return: A ``wf_to_spectr`` function that computes the fft of a waveform (usually
+    a chunk of fixed size).
 
     >>> import numpy as np
     >>> chk = np.ones(2048)  # the really interesting waveform we'll use as an example.
@@ -71,23 +94,19 @@ def mk_wf_to_spectr(
     >>> len(s)
     1025
     >>> assert s[1] == 0  # the second value is zero (because beta=0.0: with the hanning window, we wouldn't have that!)
-    >>>
+
+
     """
     if callable(preproc):
-
-        def wf_to_spectr(wf):
-            return postproc(fft_func(preproc(wf)))
-
+        wf_to_spectr = Pipe(preproc, fft_func, postproc)
     else:
-
-        def wf_to_spectr(wf):
-            return postproc(fft_func(wf))
-
+        wf_to_spectr = Pipe(fft_func, postproc)
+    wf_to_spectr.assert_size = assert_size
     return wf_to_spectr
 
 
 def _mk_wf_to_spectr_w_hanning(
-    window_size: int, fft_func: callable = rfft, postproc: callable = abs
+    window_size: int, fft_func: Callable = rfft, postproc: Callable = abs
 ):
     """Make a wf_to_spectr function that uses a hanning window preproc.
     """
@@ -98,8 +117,8 @@ def _mk_wf_to_spectr_w_hanning(
 def _mk_wf_to_spectr_w_kaiser(
     window_size: int,
     beta: float = 0.0,
-    fft_func: callable = rfft,
-    postproc: callable = abs,
+    fft_func: Callable = rfft,
+    postproc: Callable = abs,
 ):
     """Make a wf_to_spectr function that uses a kaiser window preproc.
 
@@ -202,9 +221,9 @@ from typing import Union, Iterable
 
 def mk_spectral_moment_featurizer(
     n_moments=100,
-    preproc: callable = None,
-    fft_func: callable = rfft,
-    postproc: callable = abs,
+    preproc: Callable = None,
+    fft_func: Callable = rfft,
+    postproc: Callable = abs,
 ):
     wf_to_spectr = mk_wf_to_spectr(preproc, fft_func, postproc)
     moments = np.arange(1, n_moments + 1)
