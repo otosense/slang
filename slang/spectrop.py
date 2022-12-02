@@ -5,6 +5,7 @@ import inspect
 from dataclasses import dataclass, field
 from typing import Union, Optional, Callable
 import warnings
+from math import sqrt
 
 from numpy import cumsum, min, inf, ndarray, floor
 from sklearn.decomposition import PCA, IncrementalPCA
@@ -110,7 +111,7 @@ def decreasing_integer_geometric_sequence(
     """
     assert (
         0 < scale_factor < 1
-    ), 'This geometric_sequence is meant for decreasing sequences only'
+    ), "This geometric_sequence is meant for decreasing sequences only"
 
     def gen():
         cursor = start
@@ -163,8 +164,8 @@ def logarithmic_bands_matrix(
     m = make_band_matrix(buckets, n_freq=n_freqs)
     if n_buckets is not None:
         assert n_buckets <= len(m), (
-            f'you asked for {n_buckets}, but the matrix has only {len(m)} rows. '
-            f'Consider decreasing the factor to get more buckets'
+            f"you asked for {n_buckets}, but the matrix has only {len(m)} rows. "
+            f"Consider decreasing the factor to get more buckets"
         )
     else:
         n_buckets = len(m)
@@ -230,8 +231,8 @@ def chk_to_spectrum(
     chk, chk_size, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC
 ):
     assert len(chk) == chk_size, (
-        f'This function was made for chk_size={chk_size}. '
-        f'You fed a chk of size len(chk)={len(chk)} instead'
+        f"This function was made for chk_size={chk_size}. "
+        f"You fed a chk of size len(chk)={len(chk)} instead"
     )
     fft_amplitudes = amplitude_func(np.fft.rfft(chk * window))
     return fft_amplitudes
@@ -264,7 +265,7 @@ def mk_chk_fft(chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUD
     if callable(window):
         assert (
             chk_size is not None
-        ), 'chk_size must be a positive integer if window is a callable, or None'
+        ), "chk_size must be a positive integer if window is a callable, or None"
         window = window(chk_size)
     elif window is None:
         window = 1
@@ -276,7 +277,7 @@ def mk_chk_fft(chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUD
             ), f"chk_size ({chk_size}) and len(window) ({len(window)}) don't match"
 
     chk_spectrum = named_partial(
-        'chk_to_spectrum',
+        "chk_to_spectrum",
         chk_to_spectrum,
         chk_size=chk_size,
         window=window,
@@ -295,7 +296,7 @@ DFLT_MATRIX_MULTI = matrix_mult
 # TODO: Does the doc match what the function does?
 # TODO: Better name for this, to distinguish between expressing projection in projected sub-space or original space
 #   The following expresses it in the original space
-def projection(basis, vectors):
+def projection(basis, vectors, mat_mult=DFLT_MATRIX_MULTI):
     """
     The vectors live in a k dimensional space S and the columns of the basis are vectors of the same
     space spanning a subspace of S. Gives a representation of the projection of vector into the space
@@ -303,55 +304,143 @@ def projection(basis, vectors):
 
     :param basis: an n-by-k array, a matrix whose vertical columns are the vectors of the basis
     :param vectors: an m-by-k array, a vector to be represented in the basis
+    :param mat_mult: the function to multiply matrices
     :return: an m-by-k array
     """
-    return matrix_mult(matrix_mult(vectors, basis), basis.T)
+    return mat_mult(mat_mult(vectors, basis), basis.T)
 
 
-def reducing_proj(basis, vectors):
+def reducing_proj(basis, vectors, mat_mult=DFLT_MATRIX_MULTI):
     """What we actually use to get fvs from spectras"""
-    return matrix_mult(vectors, basis.T)
+    return mat_mult(vectors, basis.T)
+
+
+def _assert_spectrum_and_chk_size_match(spectrum_size: int, chk_size: int):
+    assert spectrum_size == int(1 + chk_size / 2), (
+                    f"expected spectrum_size == int(1 + chk_size / 2): "
+                    f"{spectrum_size=} and {chk_size=}"
+                )
+
+def _chk_size_to_spectrum_size(chk_size: int) -> int:
+    return int(1 + chk_size / 2)
+
+
+def _spectrum_size_to_chk_size(spectrum_size: int) -> int:
+    if spectrum_size == 1:
+        return 1
+    return 2 * spectrum_size - 2
+
+def _get_spectrum_size_and_validate_against_chk_size(spectrum_size, chk_size):
+    assert (
+        chk_size is not None or spectrum_size is not None
+    ), "either chk_size or spectrum size must be given"
+    if spectrum_size is None:
+        if chk_size is not None:
+            spectrum_size = int(1 + chk_size / 2)
+        else:
+            _assert_spectrum_and_chk_size_match(spectrum_size, chk_size)
+    return spectrum_size
 
 
 @dataclass
 class Projector:
     scalings_: np.ndarray = DFLT_SCALINGS
-    mat_mult: np.ndarray = DFLT_MATRIX_MULTI
+    mat_mult: Callable = DFLT_MATRIX_MULTI
 
     def transform(self, X):
         # return projection(self.scalings_, ascertain_array(X))
-        return reducing_proj(self.scalings_, ascertain_array(X))
+        return reducing_proj(self.scalings_, ascertain_array(X), mat_mult=self.mat_mult)
 
     def to_jdict(self):
         return {
-            'scalings_': self.scalings_.tolist(),
+            "scalings_": self.scalings_.tolist(),
         }
 
     @classmethod
     def from_jdict(cls, jdict):
         obj = instantiate_class_and_inject_attributes(cls, **jdict)
-        if hasattr(obj, 'scalings_'):
+        if hasattr(obj, "scalings_"):
             obj.scalings_ = array(obj.scalings_)
         return obj
 
     def is_fitted(self):
-        return hasattr(self, 'scalings_') and self.scalings_ is not None
+        return hasattr(self, "scalings_") and self.scalings_ is not None
 
     def assert_is_fitted(self):
         if not self.is_fitted():
             raise NotFittedError(
-                '{} was not fitted yet.'.format(self.__class__.__name__)
+                "{} was not fitted yet.".format(self.__class__.__name__)
             )
 
+    def __call__(self, vector):
+        return self.transform([vector])[0]
 
 @dataclass
 class SpectralProjector(Projector):
     chk_fft: Callable = DFLT_CHK_FFT
 
     def __post_init__(self):
-        self.chk_size = getattr(
-            self.chk_fft, 'chk_size', None
-        )  # get chk_size from chk_fft if it has it
+        if not hasattr(self, 'chk_size'):
+            self.chk_size = getattr(
+                self.chk_fft, "chk_size", None
+            )  # get chk_size from chk_fft if it has it
+
+    # TODO: spectrum_size is elsewhere n_freqs (should we be consistent?)
+    @classmethod
+    def for_sizes(
+        cls,
+        chk_size: Optional[int] = None,
+        n_features: Optional[int] = None,
+        *,
+        spectrum_size: Optional[int] = None,
+        log_factor: float = 2
+    ):
+        """Makes a projector for given (chunk or spectrum) and feature space size.
+        This is a convenience to get a projector given only the input
+        (chunk or spectrum) size, and optionally output (feature space) size.
+        That is, we only need minimal information about the data here, not to fit
+        on the data itself.
+
+        >>> featurizer = SpectralProjector.for_sizes(chk_size=20)
+        >>> featurizer.scalings_.shape
+        (4, 11)
+        >>> SpectralProjector.for_sizes(chk_size=21).scalings_.shape
+        (4, 11)
+        >>> SpectralProjector.for_sizes(chk_size=21, n_features=2).scalings_.shape
+        (2, 11)
+        >>> SpectralProjector.for_sizes(spectrum_size=21).scalings_.shape
+        (5, 21)
+
+        >>> featurizer = SpectralProjector.for_sizes(chk_size=4)
+        >>> chk = [1, 2, 3, 4]
+        >>> fv = featurizer(chk).round(decimals=3)
+        >>> fv
+        array([2.401, 3.227])
+
+        >>> spectrum = featurizer.spectras([chk])[0]
+        >>> spectrum.round(decimals=2)
+        array([3.75, 2.7 , 0.75])
+        >>> featurizer.scalings_.round(2)
+        array([[0.33, 0.33, 0.33],
+               [0.5 , 0.5 , 0.  ]])
+        >>> fv == featurizer.mat_mult(featurizer.scalings_, spectrum).round(decimals=3)
+        array([ True,  True])
+
+        """
+        spectrum_size = _get_spectrum_size_and_validate_against_chk_size(
+            spectrum_size=spectrum_size, chk_size=chk_size
+        )
+        # TODO: Research some scientifically based default n_features based on spectrum
+        n_features = n_features or min((50, int(1 + sqrt(spectrum_size))))
+        scalings_ = logarithmic_bands_matrix(
+            n_buckets=n_features, n_freqs=spectrum_size, factor=log_factor
+        )
+        instance = cls(scalings_)
+        if chk_size is not None:
+            instance.chk_size = chk_size
+        instance.spectrum_size = spectrum_size
+        instance.chk_fft = mk_chk_fft(chk_size=instance.chk_size, window=DFLT_WIN_FUNC)
+        return instance
 
     def spectras(self, chks):
         return array([self.chk_fft(chk) for chk in chks])
@@ -399,7 +488,7 @@ def fit_handling_iterables(learner, X, y=None, *args, **kwargs):
         learner.fit(X, y, *args, **kwargs)
     except Exception:  # TODO: Be less broad
         # Use chunking to fit partial in batches (probably more efficient)
-        if hasattr(learner, 'fit_partial'):
+        if hasattr(learner, "fit_partial"):
             for x_item, y_item in zip(X, y):
                 learner.fit_partial(x_item, y_item)
         else:
@@ -511,12 +600,12 @@ from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 
 CLUSTERING_OPTIONS = (
-    'KMeans',
-    'SpectralClustering',
-    'AffinityPropagation',
-    'AgglomerativeClustering',
-    'Birch',
-    'MeanShift',
+    "KMeans",
+    "SpectralClustering",
+    "AffinityPropagation",
+    "AgglomerativeClustering",
+    "Birch",
+    "MeanShift",
 )
 
 
@@ -582,8 +671,8 @@ class PcaProjWithDelegation(Projector):
 def learn_spect_proj(
     X,
     y=None,
-    spectral_proj_name='pca',
-    clustering_meth='KMeans',
+    spectral_proj_name="pca",
+    clustering_meth="KMeans",
     clustering_options=CLUSTERING_OPTIONS,
     kwargs_feat=None,
     kwargs_clust=None,
@@ -599,23 +688,23 @@ def learn_spect_proj(
     """
 
     clustering_options = set(clustering_options)
-    kwargs_feat = kwargs_feat or {'n_components': 10}
+    kwargs_feat = kwargs_feat or {"n_components": 10}
     kwargs_clust = kwargs_clust or {}
 
     assert (
         clustering_meth in clustering_options
-    ), 'clustering options must one of {}'.format(
-        ', '.join(map(str, clustering_options))
+    ), "clustering options must one of {}".format(
+        ", ".join(map(str, clustering_options))
     )
-    clusterer_m = getattr(importlib.import_module('sklearn.cluster'), clustering_meth)
+    clusterer_m = getattr(importlib.import_module("sklearn.cluster"), clustering_meth)
 
-    if spectral_proj_name == 'keep_features':
-        indices = kwargs_feat['indices']
+    if spectral_proj_name == "keep_features":
+        indices = kwargs_feat["indices"]
         proj_matrix = np.zeros((X.shape[1], len(indices)))
         for idx in range(len(indices)):
             proj_matrix[indices[idx], idx] = 1
 
-    elif spectral_proj_name == 'pca':
+    elif spectral_proj_name == "pca":
         pca = PCA(**kwargs_feat)
         pca.fit(X)
         proj_matrix = pca.components_.T
@@ -626,17 +715,17 @@ def learn_spect_proj(
     #     ppca.fit(X)
     #     proj_matrix = ppca.proj_mat.T
 
-    elif spectral_proj_name == 'lda':
+    elif spectral_proj_name == "lda":
         lda = LDA(**kwargs_feat)
         lda.fit(X, y)
-        n_components = kwargs_feat['n_components']
+        n_components = kwargs_feat["n_components"]
         proj_matrix = lda.scalings_[:, :n_components]
 
-    elif spectral_proj_name == 'unsupervised_lda':
-        n_components = kwargs_feat['n_components']
+    elif spectral_proj_name == "unsupervised_lda":
+        n_components = kwargs_feat["n_components"]
         if y is not None:
-            print('y will be replaced by classes found by the chosen clusterer')
-        if 'n_clusters' in clusterer_m.__init__.__code__.co_varnames:
+            print("y will be replaced by classes found by the chosen clusterer")
+        if "n_clusters" in clusterer_m.__init__.__code__.co_varnames:
             y = clusterer_m(n_clusters=n_components + 1, **kwargs_clust).fit_predict(X)
         else:
             y = clusterer_m(**kwargs_clust).fit_predict(X)
@@ -644,16 +733,16 @@ def learn_spect_proj(
         lda.fit(X, y)
         proj_matrix = lda.scalings_[:, :n_components]
 
-    elif spectral_proj_name == 'nca':
+    elif spectral_proj_name == "nca":
         nca = NCA(**kwargs_feat)
         nca.fit(X, y)
         proj_matrix = nca.components_.T
 
-    elif spectral_proj_name == 'unsupervised_nca':
-        n_components = kwargs_feat['n_components']
+    elif spectral_proj_name == "unsupervised_nca":
+        n_components = kwargs_feat["n_components"]
         if y is not None:
-            print('y will be replaced by classes found by the chosen clusterer')
-        if 'n_clusters' in clusterer_m.__init__.__code__.co_varnames:
+            print("y will be replaced by classes found by the chosen clusterer")
+        if "n_clusters" in clusterer_m.__init__.__code__.co_varnames:
             y = clusterer_m(n_clusters=n_components + 1, **kwargs_clust).fit_predict(X)
         else:
             y = clusterer_m(**kwargs_clust).fit_predict(X)
@@ -661,25 +750,25 @@ def learn_spect_proj(
         nca.fit(X, y)
         proj_matrix = nca.components_.T
 
-    elif spectral_proj_name == 'linear regression':
+    elif spectral_proj_name == "linear regression":
         lr = LinearRegression(**kwargs_feat)
         lr.fit(X, y)
         proj_matrix = lr.coef_.T
 
     else:
-        all_spectral_proj = ', '.join(
+        all_spectral_proj = ", ".join(
             [
-                'keep_features',
-                'pca',
-                'lda',
-                'pseudo_pca',
-                'unsupervised_lda',
-                'unsupervised_nca',
-                'nca',
-                'linear regression',
+                "keep_features",
+                "pca",
+                "lda",
+                "pseudo_pca",
+                "unsupervised_lda",
+                "unsupervised_nca",
+                "nca",
+                "linear regression",
             ]
         )
-        raise ValueError(f'the spectral projector must be one of: {all_spectral_proj}')
+        raise ValueError(f"the spectral projector must be one of: {all_spectral_proj}")
 
     return proj_matrix
 
@@ -735,7 +824,7 @@ def mk_pre_projection_from_indices(indices=None, input_size=DFLT_INPUT_SIZE):
 def learn_chain_proj_matrix(
     X,
     y=None,
-    chain=({'type': 'pca', 'args': {'n_components': 5}},),
+    chain=({"type": "pca", "args": {"n_components": 5}},),
     indices=None,
     input_size=1025,
 ):
@@ -764,9 +853,9 @@ def learn_chain_proj_matrix(
 
     all_proj_matrices = []
     for mat_dict in chain:
-        kwargs_feat = mat_dict['args']
+        kwargs_feat = mat_dict["args"]
         proj_matrix = learn_spect_proj(
-            X, y, spectral_proj_name=mat_dict['type'], kwargs_feat=kwargs_feat
+            X, y, spectral_proj_name=mat_dict["type"], kwargs_feat=kwargs_feat
         )
         all_proj_matrices.append(proj_matrix)
         X = residue(proj_matrix, X)
@@ -780,7 +869,7 @@ def learn_chain_proj_matrix(
 def old_learn_chain_proj_matrix(
     X,
     y=None,
-    chain=({'type': 'pca', 'kwargs': {'n_components': 5}},),
+    chain=({"type": "pca", "kwargs": {"n_components": 5}},),
     indices=None,
     input_size=DFLT_INPUT_SIZE,
 ):
@@ -791,9 +880,9 @@ def old_learn_chain_proj_matrix(
 
     all_proj_matrices = []
     for mat_dict in chain:
-        kwargs_feat = mat_dict['kwargs']
+        kwargs_feat = mat_dict["kwargs"]
         proj_matrix = learn_spect_proj(
-            X, y, spectral_proj_name=mat_dict['type'], kwargs_feat=kwargs_feat
+            X, y, spectral_proj_name=mat_dict["type"], kwargs_feat=kwargs_feat
         )
         all_proj_matrices.append(proj_matrix)
         X = residue(proj_matrix, X)
@@ -807,7 +896,7 @@ def old_learn_chain_proj_matrix(
 class GeneralProjectionLearner(BaseEstimator, TransformerMixin):
     def __init__(
         self,
-        chain=({'type': 'pca', 'args': {'n_components': 5}},),
+        chain=({"type": "pca", "args": {"n_components": 5}},),
         indices=None,
         n_freq=1025,
     ):
@@ -890,8 +979,8 @@ def make_buckets(
     n_freqs = high_freq - low_freq
     if n_freqs < n_buckets and non_empty_bucket:
         warnings.warn(
-            'You asked for more buckets than the number of frequencies available, '
-            'some will necessarily be empty'
+            "You asked for more buckets than the number of frequencies available, "
+            "some will necessarily be empty"
         )
         non_empty_bucket = False
 
@@ -900,7 +989,7 @@ def make_buckets(
     if reverse:
         freq_range.reverse()
     # get the value of each frequency
-    if not hasattr(freqs_weighting, '__iter__'):
+    if not hasattr(freqs_weighting, "__iter__"):
         freq_values = list(map(freqs_weighting, freq_range))
     else:
         freq_values = freqs_weighting
