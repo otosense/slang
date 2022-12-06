@@ -126,7 +126,7 @@ def decreasing_integer_geometric_sequence(
 # TODO: Continue algorithm further, filling more coarse coverage with static greedy rule, thus making n_buckets unbound
 # TODO: Make factor=None with n_buckets not None have the effect of choosing factor so n_buckets is exactly reached.
 def logarithmic_bands_matrix(
-    n_buckets=None, n_freqs: int = DFLT_INPUT_SIZE, factor: float = 2
+    n_buckets=None, n_freqs: int = DFLT_INPUT_SIZE, factor: Optional[float] = None
 ) -> np.ndarray:
     """Makes a spectral projection matrix that puts more importance on low frequencies than high ones.
     Importance both in weight and in precision.
@@ -159,7 +159,8 @@ def logarithmic_bands_matrix(
     [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     """
-    bucket_upper_bounds = decreasing_integer_geometric_sequence(n_freqs, 1 / factor)
+    bucket_upper_bounds = _compute_bucket_upper_bounds(n_buckets, n_freqs, factor)
+
     buckets = list(range(0, i) for i in bucket_upper_bounds)
     m = make_band_matrix(buckets, n_freq=n_freqs)
     if n_buckets is not None:
@@ -170,6 +171,32 @@ def logarithmic_bands_matrix(
     else:
         n_buckets = len(m)
     return m[:n_buckets]
+
+
+def _compute_bucket_upper_bounds(n_buckets, n_freqs, factor, max_tries=20):
+    """Computes bucket upper bounds, trying to compensate for float numerical errors.
+
+    If factor is None, the formula to get the smallest factor that is needded to get
+    the given ``n_buckets`` is ``factor = n_freqs ** (1 / (n_buckets - 1))``.
+    Unfortunately, this theoretical truth doesn't reflect in physical computation
+    due to float precision errors. Our hack here is to ask for the factor for a higher
+    number of buckets until we get a factor that is "sufficient".
+    """
+    if factor is None:
+        # TODO: This formula is not bullet proof. We tried to compensate for numerical
+        #  errors for reasonably small n_buckets and n_freqs
+        for excess in range(max_tries):
+            factor = n_freqs ** (1 / (n_buckets + excess - 1))
+            bucket_upper_bounds = decreasing_integer_geometric_sequence(
+                n_freqs, 1 / factor
+            )
+            if len(bucket_upper_bounds) > n_buckets:
+                return bucket_upper_bounds
+        if excess == max_tries - 1:
+            raise ValueError(f"Maximum number of tries exceeded")
+
+    else:
+        return decreasing_integer_geometric_sequence(n_freqs, 1 / factor)
 
 
 # A few default spectral projection matrices
