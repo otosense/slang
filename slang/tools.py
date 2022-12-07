@@ -1,6 +1,6 @@
 """Various slang tools"""
 from functools import singledispatch
-from collections import Sequence
+from collections.abc import Sequence
 from collections import Counter
 
 DFLT_PRIOR_COUNT = 1

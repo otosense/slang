@@ -33,7 +33,7 @@ def identity_func(x):
 def mk_window_func(window_func, *args, **kwargs):
     """Make a 'window function', which transforms input arrays through an elementsize
     multiplication by a fixed vector"""
-    return partial(mul, window_wf=window_func(*args, **kwargs))
+    return partial(mul, window_func(*args, **kwargs))
 
 
 mk_window_func.hanning = wraps(hanning)(partial(mk_window_func, hanning))
@@ -45,6 +45,7 @@ def _assert_size(a: Sized, size: Optional[int] = None, error_type=ValueError):
         raise error_type(f'The size was expected to be {size} but was {len(a)}')
     return a
 
+ # https://github.com/otosense/slang/blob/2e6ccd208a9f1be0e1d46d134261c2e7807e84dc/slang/featurizers.py#L49
 
 def mk_wf_to_spectr(
     preproc: Callable = None,

@@ -162,6 +162,8 @@ def logarithmic_bands_matrix(
     [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     """
+    if n_buckets is None and factor is None:
+        factor = 2
     bucket_upper_bounds = _compute_bucket_upper_bounds(n_buckets, n_freqs, factor)
 
     buckets = list(range(0, i) for i in bucket_upper_bounds)
