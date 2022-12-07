@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.spectrop &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.spectrop &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -70,9 +70,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>slang.spectrop</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">slang.spectrop</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -89,6 +89,7 @@
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cumsum</span><span class="p">,</span> <span class="nb">min</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">,</span> <span class="n">floor</span>
 <span class="kn">from</span> <span class="nn">sklearn.decomposition</span> <span class="kn">import</span> <span class="n">PCA</span><span class="p">,</span> <span class="n">IncrementalPCA</span>
@@ -206,10 +207,12 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">gen</span><span class="p">()))</span></div>
 
 
-<span class="c1"># TODO: Continue algorithm further, filling more coarse coverage with static greedy rule, thus making n_buckets unbound</span>
-<span class="c1"># TODO: Make factor=None with n_buckets not None have the effect of choosing factor so n_buckets is exactly reached.</span>
+<span class="c1"># TODO: Continue algorithm further, filling more coarse coverage with static greedy</span>
+<span class="c1">#  rule, thus making n_buckets unbound</span>
 <div class="viewcode-block" id="logarithmic_bands_matrix"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.logarithmic_bands_matrix">[docs]</a><span class="k">def</span> <span class="nf">logarithmic_bands_matrix</span><span class="p">(</span>
-    <span class="n">n_buckets</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_freqs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DFLT_INPUT_SIZE</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">n_buckets</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">n_freqs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DFLT_INPUT_SIZE</span><span class="p">,</span>
+    <span class="n">factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Makes a spectral projection matrix that puts more importance on low frequencies than high ones.</span>
 <span class="sd">    Importance both in weight and in precision.</span>
@@ -221,13 +224,14 @@
 <span class="sd">    We can discuss what both mean at a later date.</span>
 
 <span class="sd">    Important here is to understand my intent, to see how well I achieve it.</span>
-<span class="sd">    - The features &quot;build on each other&quot;. That is, if you ask (within the same `(n_freqs, factor)` set)</span>
-<span class="sd">    for 7 features in your fv, the first 5 will be the same as if you asked for only 5. This makes it easier to compare</span>
+<span class="sd">    - The features &quot;build on each other&quot;. That is, if you ask (within the same</span>
+<span class="sd">    `(n_freqs, factor)` set) for 7 features in your fv, the first 5 will be the same</span>
+<span class="sd">    as if you asked for only 5. This makes it easier to compare</span>
 <span class="sd">    fvs between projects, and possibly even &quot;add to existing features&quot;.</span>
 <span class="sd">    - Note  that the first feature is always total energy.</span>
 <span class="sd">    - Lower frequencies are given less importance -- both in precision and in weight.</span>
-<span class="sd">    - The linear algebraists that are listening will note what the vector space generated actually is,</span>
-<span class="sd">    compared to that created by disjoint bands.</span>
+<span class="sd">    - The linear algebraists that are listening will note what the vector space</span>
+<span class="sd">    generated actually is, compared to that created by disjoint bands.</span>
 
 <span class="sd">    &gt;&gt;&gt; print(*logarithmic_bands_matrix(n_freqs=8).tolist(), sep=&#39;\\n&#39;)</span>
 <span class="sd">    [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]</span>
@@ -242,7 +246,10 @@
 <span class="sd">    [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">bucket_upper_bounds</span> <span class="o">=</span> <span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span><span class="n">n_freqs</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_buckets</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">factor</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">bucket_upper_bounds</span> <span class="o">=</span> <span class="n">_compute_bucket_upper_bounds</span><span class="p">(</span><span class="n">n_buckets</span><span class="p">,</span> <span class="n">n_freqs</span><span class="p">,</span> <span class="n">factor</span><span class="p">)</span>
+
     <span class="n">buckets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">bucket_upper_bounds</span><span class="p">)</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">make_band_matrix</span><span class="p">(</span><span class="n">buckets</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="n">n_freqs</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">n_buckets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -253,6 +260,32 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">n_buckets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">m</span><span class="p">[:</span><span class="n">n_buckets</span><span class="p">]</span></div>
+
+
+<span class="k">def</span> <span class="nf">_compute_bucket_upper_bounds</span><span class="p">(</span><span class="n">n_buckets</span><span class="p">,</span> <span class="n">n_freqs</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">max_tries</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes bucket upper bounds, trying to compensate for float numerical errors.</span>
+
+<span class="sd">    If factor is None, the formula to get the smallest factor that is needded to get</span>
+<span class="sd">    the given ``n_buckets`` is ``factor = n_freqs ** (1 / (n_buckets - 1))``.</span>
+<span class="sd">    Unfortunately, this theoretical truth doesn&#39;t reflect in physical computation</span>
+<span class="sd">    due to float precision errors. Our hack here is to ask for the factor for a higher</span>
+<span class="sd">    number of buckets until we get a factor that is &quot;sufficient&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># TODO: This formula is not bullet proof. We tried to compensate for numerical</span>
+        <span class="c1">#  errors for reasonably small n_buckets and n_freqs</span>
+        <span class="k">for</span> <span class="n">excess</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_tries</span><span class="p">):</span>
+            <span class="n">factor</span> <span class="o">=</span> <span class="n">n_freqs</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_buckets</span> <span class="o">+</span> <span class="n">excess</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">bucket_upper_bounds</span> <span class="o">=</span> <span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span>
+                <span class="n">n_freqs</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">factor</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bucket_upper_bounds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">n_buckets</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">bucket_upper_bounds</span>
+        <span class="k">if</span> <span class="n">excess</span> <span class="o">==</span> <span class="n">max_tries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Maximum number of tries exceeded&#39;</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">decreasing_integer_geometric_sequence</span><span class="p">(</span><span class="n">n_freqs</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">factor</span><span class="p">)</span>
 
 
 <span class="c1"># A few default spectral projection matrices</span>
@@ -379,7 +412,7 @@
 <span class="c1"># TODO: Does the doc match what the function does?</span>
 <span class="c1"># TODO: Better name for this, to distinguish between expressing projection in projected sub-space or original space</span>
 <span class="c1">#   The following expresses it in the original space</span>
-<div class="viewcode-block" id="projection"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.projection">[docs]</a><span class="k">def</span> <span class="nf">projection</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">vectors</span><span class="p">):</span>
+<div class="viewcode-block" id="projection"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.projection">[docs]</a><span class="k">def</span> <span class="nf">projection</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">vectors</span><span class="p">,</span> <span class="n">mat_mult</span><span class="o">=</span><span class="n">DFLT_MATRIX_MULTI</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The vectors live in a k dimensional space S and the columns of the basis are vectors of the same</span>
 <span class="sd">    space spanning a subspace of S. Gives a representation of the projection of vector into the space</span>
@@ -387,24 +420,54 @@
 
 <span class="sd">    :param basis: an n-by-k array, a matrix whose vertical columns are the vectors of the basis</span>
 <span class="sd">    :param vectors: an m-by-k array, a vector to be represented in the basis</span>
+<span class="sd">    :param mat_mult: the function to multiply matrices</span>
 <span class="sd">    :return: an m-by-k array</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">matrix_mult</span><span class="p">(</span><span class="n">matrix_mult</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">basis</span><span class="p">),</span> <span class="n">basis</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">mat_mult</span><span class="p">(</span><span class="n">mat_mult</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">basis</span><span class="p">),</span> <span class="n">basis</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="reducing_proj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.reducing_proj">[docs]</a><span class="k">def</span> <span class="nf">reducing_proj</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">vectors</span><span class="p">):</span>
+<div class="viewcode-block" id="reducing_proj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.reducing_proj">[docs]</a><span class="k">def</span> <span class="nf">reducing_proj</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">vectors</span><span class="p">,</span> <span class="n">mat_mult</span><span class="o">=</span><span class="n">DFLT_MATRIX_MULTI</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;What we actually use to get fvs from spectras&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">matrix_mult</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">basis</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">mat_mult</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">basis</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_assert_spectrum_and_chk_size_match</span><span class="p">(</span><span class="n">spectrum_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">spectrum_size</span> <span class="o">==</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">chk_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;expected spectrum_size == int(1 + chk_size / 2): &#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">spectrum_size</span><span class="si">=}</span><span class="s1"> and </span><span class="si">{</span><span class="n">chk_size</span><span class="si">=}</span><span class="s1">&#39;</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_chk_size_to_spectrum_size</span><span class="p">(</span><span class="n">chk_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">chk_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_spectrum_size_to_chk_size</span><span class="p">(</span><span class="n">spectrum_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">spectrum_size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">spectrum_size</span> <span class="o">-</span> <span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">_get_spectrum_size_and_validate_against_chk_size</span><span class="p">(</span><span class="n">spectrum_size</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">chk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">spectrum_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">),</span> <span class="s1">&#39;either chk_size or spectrum size must be given&#39;</span>
+    <span class="k">if</span> <span class="n">spectrum_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">chk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">spectrum_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">chk_size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_assert_spectrum_and_chk_size_match</span><span class="p">(</span><span class="n">spectrum_size</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spectrum_size</span>
 
 
 <div class="viewcode-block" id="Projector"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.Projector">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Projector</span><span class="p">:</span>
     <span class="n">scalings_</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">DFLT_SCALINGS</span>
-    <span class="n">mat_mult</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">DFLT_MATRIX_MULTI</span>
+    <span class="n">mat_mult</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">DFLT_MATRIX_MULTI</span>
 
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
         <span class="c1"># return projection(self.scalings_, ascertain_array(X))</span>
-        <span class="k">return</span> <span class="n">reducing_proj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">,</span> <span class="n">ascertain_array</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">reducing_proj</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">,</span> <span class="n">ascertain_array</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">mat_mult</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat_mult</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">to_jdict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
@@ -425,7 +488,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_fitted</span><span class="p">():</span>
             <span class="k">raise</span> <span class="n">NotFittedError</span><span class="p">(</span>
                 <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> was not fitted yet.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
-            <span class="p">)</span></div>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">vector</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="SpectralProjector"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.SpectralProjector">[docs]</a><span class="nd">@dataclass</span>
@@ -433,9 +499,67 @@
     <span class="n">chk_fft</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">DFLT_CHK_FFT</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chk_size</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">chk_fft</span><span class="p">,</span> <span class="s1">&#39;chk_size&#39;</span><span class="p">,</span> <span class="kc">None</span>
-        <span class="p">)</span>  <span class="c1"># get chk_size from chk_fft if it has it</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;chk_size&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chk_size</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">chk_fft</span><span class="p">,</span> <span class="s1">&#39;chk_size&#39;</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="p">)</span>  <span class="c1"># get chk_size from chk_fft if it has it</span>
+
+    <span class="c1"># TODO: spectrum_size is elsewhere n_freqs (should we be consistent?)</span>
+<div class="viewcode-block" id="SpectralProjector.for_sizes"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.SpectralProjector.for_sizes">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">for_sizes</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">chk_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_features</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">spectrum_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">log_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes a projector for given (chunk or spectrum) and feature space size.</span>
+<span class="sd">        This is a convenience to get a projector given only the input</span>
+<span class="sd">        (chunk or spectrum) size, and optionally output (feature space) size.</span>
+<span class="sd">        That is, we only need minimal information about the data here, not to fit</span>
+<span class="sd">        on the data itself.</span>
+
+<span class="sd">        &gt;&gt;&gt; featurizer = SpectralProjector.for_sizes(chk_size=20)</span>
+<span class="sd">        &gt;&gt;&gt; featurizer.scalings_.shape</span>
+<span class="sd">        (4, 11)</span>
+<span class="sd">        &gt;&gt;&gt; SpectralProjector.for_sizes(chk_size=21).scalings_.shape</span>
+<span class="sd">        (4, 11)</span>
+<span class="sd">        &gt;&gt;&gt; SpectralProjector.for_sizes(chk_size=21, n_features=2).scalings_.shape</span>
+<span class="sd">        (2, 11)</span>
+<span class="sd">        &gt;&gt;&gt; SpectralProjector.for_sizes(spectrum_size=21).scalings_.shape</span>
+<span class="sd">        (5, 21)</span>
+
+<span class="sd">        &gt;&gt;&gt; featurizer = SpectralProjector.for_sizes(chk_size=4)</span>
+<span class="sd">        &gt;&gt;&gt; chk = [1, 2, 3, 4]</span>
+<span class="sd">        &gt;&gt;&gt; fv = featurizer(chk).round(decimals=3)</span>
+<span class="sd">        &gt;&gt;&gt; fv</span>
+<span class="sd">        array([2.401, 3.227])</span>
+
+<span class="sd">        &gt;&gt;&gt; spectrum = featurizer.spectras([chk])[0]</span>
+<span class="sd">        &gt;&gt;&gt; spectrum.round(decimals=2)</span>
+<span class="sd">        array([3.75, 2.7 , 0.75])</span>
+<span class="sd">        &gt;&gt;&gt; featurizer.scalings_.round(2)</span>
+<span class="sd">        array([[0.33, 0.33, 0.33],</span>
+<span class="sd">               [0.5 , 0.5 , 0.  ]])</span>
+<span class="sd">        &gt;&gt;&gt; fv == featurizer.mat_mult(featurizer.scalings_, spectrum).round(decimals=3)</span>
+<span class="sd">        array([ True,  True])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">spectrum_size</span> <span class="o">=</span> <span class="n">_get_spectrum_size_and_validate_against_chk_size</span><span class="p">(</span>
+            <span class="n">spectrum_size</span><span class="o">=</span><span class="n">spectrum_size</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span>
+        <span class="p">)</span>
+        <span class="c1"># TODO: Research some scientifically based default n_features based on spectrum</span>
+        <span class="n">n_features</span> <span class="o">=</span> <span class="n">n_features</span> <span class="ow">or</span> <span class="nb">min</span><span class="p">((</span><span class="mi">50</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">spectrum_size</span><span class="p">))))</span>
+        <span class="n">scalings_</span> <span class="o">=</span> <span class="n">logarithmic_bands_matrix</span><span class="p">(</span>
+            <span class="n">n_buckets</span><span class="o">=</span><span class="n">n_features</span><span class="p">,</span> <span class="n">n_freqs</span><span class="o">=</span><span class="n">spectrum_size</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="n">log_factor</span>
+        <span class="p">)</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">scalings_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">chk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">instance</span><span class="o">.</span><span class="n">chk_size</span> <span class="o">=</span> <span class="n">chk_size</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">spectrum_size</span> <span class="o">=</span> <span class="n">spectrum_size</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">chk_fft</span> <span class="o">=</span> <span class="n">mk_chk_fft</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="n">instance</span><span class="o">.</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">DFLT_WIN_FUNC</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
 
     <span class="k">def</span> <span class="nf">spectras</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chks</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">chk_fft</span><span class="p">(</span><span class="n">chk</span><span class="p">)</span> <span class="k">for</span> <span class="n">chk</span> <span class="ow">in</span> <span class="n">chks</span><span class="p">])</span>

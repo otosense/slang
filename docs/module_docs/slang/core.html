@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.core &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.core &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -73,8 +73,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>slang.core</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">slang.core</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/module_docs/slang/core.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -89,7 +89,7 @@
 <p>Core functionality</p>
 <dl class="py class">
 <dt id="slang.core.Snipper">
-<em class="property">class </em><code class="sig-prename descclassname">slang.core.</code><code class="sig-name descname">Snipper</code><span class="sig-paren">(</span><em class="sig-param">wf_to_chks: NewType.&lt;locals&gt;.new_type = &lt;function mk_chunker.&lt;locals&gt;.chunker&gt;</em>, <em class="sig-param">chk_to_fv: NewType.&lt;locals&gt;.new_type = &lt;function rms_zcr&gt;</em>, <em class="sig-param">fv_to_snip: NewType.&lt;locals&gt;.new_type = &lt;function rms_zcr_quantizer&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/core.html#Snipper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.core.Snipper" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">slang.core.</code><code class="sig-name descname">Snipper</code><span class="sig-paren">(</span><em class="sig-param">wf_to_chks: NewType.&lt;locals&gt;.new_type = functools.partial(&lt;function _matrix_of_chunks&gt;</em>, <em class="sig-param">chk_size=2048)</em>, <em class="sig-param">chk_to_fv: NewType.&lt;locals&gt;.new_type = &lt;function rms_zcr&gt;</em>, <em class="sig-param">fv_to_snip: NewType.&lt;locals&gt;.new_type = &lt;function rms_zcr_quantizer&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/core.html#Snipper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.core.Snipper" title="Permalink to this definition">¶</a></dt>
 <dd><p>A base class that implements the wf-&gt;chk-&gt;fv-&gt;snip pipeline.
 Default functions for wf_to_chk (a.k.a. chunker), chk_to_fv (a.k.a. featurizer) and fv_to_snip (a.k.a. nipper)
 are given, but usually the user should specify these, and usually these are learned from data.</p>

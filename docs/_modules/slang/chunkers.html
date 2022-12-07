@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.chunkers &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.chunkers &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -70,9 +70,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>slang.chunkers</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">slang.chunkers</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -86,10 +86,18 @@
 
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span><span class="p">,</span> <span class="n">chain</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="n">inf</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
 
 <span class="n">DFLT_CHK_SIZE</span> <span class="o">=</span> <span class="mi">2048</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+    <span class="n">NUMPY_PRESENT</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="p">(</span><span class="ne">ImportError</span><span class="p">,</span> <span class="ne">ModuleNotFoundError</span><span class="p">):</span>
+    <span class="n">NUMPY_PRESENT</span> <span class="o">=</span> <span class="kc">False</span>
 
 
 <div class="viewcode-block" id="fannout_chunker"><a class="viewcode-back" href="../../module_docs/slang/chunkers.html#slang.chunkers.fannout_chunker">[docs]</a><span class="k">def</span> <span class="nf">fannout_chunker</span><span class="p">(</span>
@@ -112,6 +120,8 @@
 <span class="sd">    :param extract_chunkable: The function that extracts the iterable to be chunked</span>
 <span class="sd">    :param extract_info: The function that extracts from the object the extra info to</span>
 <span class="sd">    yield for each chunk</span>
+<span class="sd">    :return: A generator of ``(info, chunk),...`` pairs or ``(chk_idx, (info, chunk))``</span>
+<span class="sd">    pairs.</span>
 
 <span class="sd">    Most of the time you&#39;ll be dealing with tuple or dicts as objects, so</span>
 <span class="sd">    ``operator.itemgetter`` is your friend for creating the extractors.</span>
@@ -146,6 +156,18 @@
 <span class="sd">    &gt;&gt;&gt; list(dict_chunker(objects))</span>
 <span class="sd">    [(&#39;alice&#39;, [1, 2]), (&#39;alice&#39;, [3, 4]), (&#39;bob&#39;, [5, 6])]</span>
 
+<span class="sd">    The output format is fixed to ``(info, chunk),...`` or ``(chk_idx, (info, chunk))``.</span>
+<span class="sd">    To get a different output, write egress function and apply it to output</span>
+<span class="sd">    systematically. For example:</span>
+
+<span class="sd">    &gt;&gt;&gt; from i2 import Pipe</span>
+<span class="sd">    &gt;&gt;&gt; egress = lambda tup: {&#39;tag&#39;: tup[0], &#39;chk&#39;: tup[1]}</span>
+<span class="sd">    &gt;&gt;&gt; new_dict_chunker = Pipe(dict_chunker, lambda x: map(egress, x))</span>
+<span class="sd">    &gt;&gt;&gt; assert list(new_dict_chunker(objects)) == [</span>
+<span class="sd">    ...     {&#39;tag&#39;: &#39;alice&#39;, &#39;chk&#39;: [1, 2]},</span>
+<span class="sd">    ...     {&#39;tag&#39;: &#39;alice&#39;, &#39;chk&#39;: [3, 4]},</span>
+<span class="sd">    ...     {&#39;tag&#39;: &#39;bob&#39;, &#39;chk&#39;: [5, 6]}</span>
+<span class="sd">    ... ]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
         <span class="n">iterable_to_chunk</span> <span class="o">=</span> <span class="n">extract_chunkable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -158,17 +180,34 @@
                 <span class="k">yield</span> <span class="n">chk_and_info</span></div>
 
 
+<span class="k">def</span> <span class="nf">_matrix_of_chunks</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">a</span><span class="p">[:</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">chk_size</span><span class="p">))],</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_chunk_with_zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="nb">iter</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span> <span class="o">*</span> <span class="n">chk_size</span><span class="p">))</span>
+
+
 <div class="viewcode-block" id="mk_chunker"><a class="viewcode-back" href="../../module_docs/slang/chunkers.html#slang.chunkers.mk_chunker">[docs]</a><span class="k">def</span> <span class="nf">mk_chunker</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="n">DFLT_CHK_SIZE</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">use_numpy_reshape</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Generator of (fixed size and fixed step) chunks of an iterable.</span>
-<span class="sd">    This function-making function will try to choose an optimized chunker for you depending on the parameters and</span>
-<span class="sd">    environment (if you have numpy and chk_size==chk_step, it&#39;s the fastest).</span>
+<span class="sd">    A fixed step chunker factory. Makes a function that takes an iterable and produces</span>
+<span class="sd">    fixed-size fixed-step chunks of it&#39;s elements.</span>
 
-<span class="sd">    Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the type that is yield.</span>
+<span class="sd">    This function-making function will try to choose an optimized chunker for you</span>
+<span class="sd">    depending on the parameters and environment (if you have numpy and</span>
+<span class="sd">    chk_size==chk_step, it&#39;s the fastest).</span>
+
+<span class="sd">    Will also add attributes that exhibit the parameters of the chunker.</span>
+
+<span class="sd">    Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the</span>
+<span class="sd">    type that is yield.</span>
 
 <span class="sd">    :param chk_size: Size of chunk (default 2048)</span>
-<span class="sd">    :param chk_step: Size of step (step of sliding window). If not specified, will be taken to be chk_size</span>
-<span class="sd">    :param use_numpy_reshape: If None (default), will use numpy (reshape) if numpy is importable.</span>
+<span class="sd">    :param chk_step: Size of step (step of sliding window). If not specified, will be</span>
+<span class="sd">    taken to be chk_size</span>
+<span class="sd">    :param use_numpy_reshape: If None (default), will use numpy (reshape) if numpy is</span>
+<span class="sd">    importable.</span>
 <span class="sd">        If True, will try to use numpy.reshape systematically.</span>
 <span class="sd">        If False, will not use numpy.reshape, even if numpy present.</span>
 <span class="sd">    :return: A generator of chunks (numpy.arrays, tuples, or lists, depending on the context)</span>
@@ -185,36 +224,37 @@
 <span class="sd">    &gt;&gt;&gt; chunker = mk_chunker(4, 2)</span>
 <span class="sd">    &gt;&gt;&gt; list(chunker(a))</span>
 <span class="sd">    [[0, 1, 2, 3], [2, 3, 4, 5]]</span>
+
+<span class="sd">    See that ``chunker`` has parameters describing it:</span>
+
+<span class="sd">    &gt;&gt;&gt; chunker.chk_size</span>
+<span class="sd">    4</span>
+<span class="sd">    &gt;&gt;&gt; chunker.chk_step</span>
+<span class="sd">    2</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_step</span> <span class="ow">or</span> <span class="n">chk_size</span>  <span class="c1"># default to chk_size == chk_step</span>
 
     <span class="k">if</span> <span class="n">chk_step</span> <span class="o">==</span> <span class="n">chk_size</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">use_numpy_reshape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">use_numpy_reshape</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">):</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">reshape</span>
-
+            <span class="k">if</span> <span class="n">NUMPY_PRESENT</span><span class="p">:</span>
                 <span class="n">use_numpy_reshape</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+            <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">use_numpy_reshape</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-                    <span class="k">raise</span>  <span class="c1"># make sure the user knows she doesn&#39;t have numpy</span>
+                    <span class="k">raise</span> <span class="ne">ModuleNotFoundError</span><span class="p">(</span>
+                        <span class="s2">&quot;You don&#39;t have numpy installed, so you can&#39;t a reshape chunker&quot;</span>
+                    <span class="p">)</span>
                 <span class="n">use_numpy_reshape</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="n">use_numpy_reshape</span><span class="p">:</span>
-
-            <span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
-                <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-                <span class="k">yield from</span> <span class="n">reshape</span><span class="p">(</span><span class="n">a</span><span class="p">[:</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="p">(</span><span class="n">n</span> <span class="o">%</span> <span class="n">chk_size</span><span class="p">))],</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">))</span>
-
+            <span class="n">chunker</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_matrix_of_chunks</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-
-            <span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
-                <span class="k">yield from</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="nb">iter</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span> <span class="o">*</span> <span class="n">chk_size</span><span class="p">))</span>
+            <span class="n">chunker</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_chunk_with_zip</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
+        <span class="n">chunker</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">fixed_step_chunker</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="n">chk_step</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
-            <span class="k">yield from</span> <span class="n">fixed_step_chunker</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">chk_size</span><span class="p">,</span> <span class="n">chk_step</span><span class="p">)</span>
+    <span class="c1"># Adding the chk_size and chk_step attributes to the chunker</span>
 
     <span class="n">chunker</span><span class="o">.</span><span class="n">chk_size</span> <span class="o">=</span> <span class="n">chk_size</span>
     <span class="n">chunker</span><span class="o">.</span><span class="n">chk_step</span> <span class="o">=</span> <span class="n">chk_step</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>numpy &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>numpy &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
@@ -70,9 +70,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Module code</a> &raquo;</li>
-      <li>numpy</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">numpy</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -95,7 +95,7 @@
 <span class="sd">----------------------------</span>
 <span class="sd">Documentation is available in two forms: docstrings provided</span>
 <span class="sd">with the code, and a loose standing reference guide, available from</span>
-<span class="sd">`the NumPy homepage &lt;https://www.scipy.org&gt;`_.</span>
+<span class="sd">`the NumPy homepage &lt;https://numpy.org&gt;`_.</span>
 
 <span class="sd">We recommend exploring the docstrings using</span>
 <span class="sd">`IPython &lt;https://ipython.org&gt;`_, an advanced Python shell with</span>
@@ -136,8 +136,6 @@
 
 <span class="sd">Available subpackages</span>
 <span class="sd">---------------------</span>
-<span class="sd">doc</span>
-<span class="sd">    Topical documentation on broadcasting, indexing, etc.</span>
 <span class="sd">lib</span>
 <span class="sd">    Basic functions used by several sub-packages.</span>
 <span class="sd">random</span>
@@ -150,8 +148,6 @@
 <span class="sd">    Polynomial tools</span>
 <span class="sd">testing</span>
 <span class="sd">    NumPy testing tools</span>
-<span class="sd">f2py</span>
-<span class="sd">    Fortran to Python Interface Generator.</span>
 <span class="sd">distutils</span>
 <span class="sd">    Enhancements to distutils with support for</span>
 <span class="sd">    Fortran compilers support and more.</span>
@@ -496,6 +492,11 @@
     <span class="c1"># We do this from python, since the C-module may not be reloaded and</span>
     <span class="c1"># it is tidier organized.</span>
     <span class="n">core</span><span class="o">.</span><span class="n">multiarray</span><span class="o">.</span><span class="n">_multiarray_umath</span><span class="o">.</span><span class="n">_reload_guard</span><span class="p">()</span>
+
+    <span class="c1"># Tell PyInstaller where to find hook-numpy.py</span>
+    <span class="k">def</span> <span class="nf">_pyinstaller_hooks_dir</span><span class="p">():</span>
+        <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+        <span class="k">return</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">with_name</span><span class="p">(</span><span class="s2">&quot;_pyinstaller&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())]</span>
 
 
 <span class="c1"># get the version using versioneer</span>

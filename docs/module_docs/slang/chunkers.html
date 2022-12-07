@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.chunkers &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.chunkers &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -73,8 +73,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>slang.chunkers</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">slang.chunkers</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/module_docs/slang/chunkers.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -103,7 +103,9 @@
 an iterable of chunks
 :param extract_chunkable: The function that extracts the iterable to be chunked
 :param extract_info: The function that extracts from the object the extra info to
-yield for each chunk</p>
+yield for each chunk
+:return: A generator of <code class="docutils literal notranslate"><span class="pre">(info,</span> <span class="pre">chunk),...</span></code> pairs or <code class="docutils literal notranslate"><span class="pre">(chk_idx,</span> <span class="pre">(info,</span> <span class="pre">chunk))</span></code>
+pairs.</p>
 <p>Most of the time you’ll be dealing with tuple or dicts as objects, so
 <code class="docutils literal notranslate"><span class="pre">operator.itemgetter</span></code> is your friend for creating the extractors.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
@@ -136,6 +138,19 @@ yield for each chunk</p>
 <span class="gp">... </span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">dict_chunker</span><span class="p">(</span><span class="n">objects</span><span class="p">))</span>
 <span class="go">[(&#39;alice&#39;, [1, 2]), (&#39;alice&#39;, [3, 4]), (&#39;bob&#39;, [5, 6])]</span>
+</pre></div>
+</div>
+<p>The output format is fixed to <code class="docutils literal notranslate"><span class="pre">(info,</span> <span class="pre">chunk),...</span></code> or <code class="docutils literal notranslate"><span class="pre">(chk_idx,</span> <span class="pre">(info,</span> <span class="pre">chunk))</span></code>.
+To get a different output, write egress function and apply it to output
+systematically. For example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">i2</span> <span class="kn">import</span> <span class="n">Pipe</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">egress</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;chk&#39;</span><span class="p">:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_dict_chunker</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">dict_chunker</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">map</span><span class="p">(</span><span class="n">egress</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">assert</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_dict_chunker</span><span class="p">(</span><span class="n">objects</span><span class="p">))</span> <span class="o">==</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="s1">&#39;alice&#39;</span><span class="p">,</span> <span class="s1">&#39;chk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="s1">&#39;alice&#39;</span><span class="p">,</span> <span class="s1">&#39;chk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;tag&#39;</span><span class="p">:</span> <span class="s1">&#39;bob&#39;</span><span class="p">,</span> <span class="s1">&#39;chk&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]}</span>
+<span class="gp">... </span><span class="p">]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -283,22 +298,32 @@ element of it plus cut off chunks whose maximum term index is the last term of i
 <dl class="py function">
 <dt id="slang.chunkers.mk_chunker">
 <code class="sig-prename descclassname">slang.chunkers.</code><code class="sig-name descname">mk_chunker</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">chk_size</span><span class="o">=</span><span class="default_value">2048</span></em>, <em class="sig-param"><span class="n">chk_step</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">use_numpy_reshape</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/chunkers.html#mk_chunker"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.chunkers.mk_chunker" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generator of (fixed size and fixed step) chunks of an iterable.
-This function-making function will try to choose an optimized chunker for you depending on the parameters and
-environment (if you have numpy and chk_size==chk_step, it’s the fastest).</p>
-<p>Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the type that is yield.</p>
+<dd><p>A fixed step chunker factory. Makes a function that takes an iterable and produces
+fixed-size fixed-step chunks of it’s elements.</p>
+<p>This function-making function will try to choose an optimized chunker for you
+depending on the parameters and environment (if you have numpy and
+chk_size==chk_step, it’s the fastest).</p>
+<p>Will also add attributes that exhibit the parameters of the chunker.</p>
+<p>Note though, that as a tradeoff, you may get numpy arrays, tuples, or lists as the
+type that is yield.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>chk_size</strong> – Size of chunk (default 2048)</p></li>
-<li><p><strong>chk_step</strong> – Size of step (step of sliding window). If not specified, will be taken to be chk_size</p></li>
-<li><p><strong>use_numpy_reshape</strong> – If None (default), will use numpy (reshape) if numpy is importable.
-If True, will try to use numpy.reshape systematically.
-If False, will not use numpy.reshape, even if numpy present.</p></li>
+<li><p><strong>chk_step</strong> – Size of step (step of sliding window). If not specified, will be</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A generator of chunks (numpy.arrays, tuples, or lists, depending on the context)</p>
+</dl>
+<p>taken to be chk_size
+:param use_numpy_reshape: If None (default), will use numpy (reshape) if numpy is
+importable.</p>
+<blockquote>
+<div><p>If True, will try to use numpy.reshape systematically.
+If False, will not use numpy.reshape, even if numpy present.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A generator of chunks (numpy.arrays, tuples, or lists, depending on the context)</p>
 </dd>
 </dl>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
@@ -313,6 +338,13 @@ If False, will not use numpy.reshape, even if numpy present.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">chunker</span> <span class="o">=</span> <span class="n">mk_chunker</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">list</span><span class="p">(</span><span class="n">chunker</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
 <span class="go">[[0, 1, 2, 3], [2, 3, 4, 5]]</span>
+</pre></div>
+</div>
+<p>See that <code class="docutils literal notranslate"><span class="pre">chunker</span></code> has parameters describing it:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">chunker</span><span class="o">.</span><span class="n">chk_size</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">chunker</span><span class="o">.</span><span class="n">chk_step</span>
+<span class="go">2</span>
 </pre></div>
 </div>
 </dd></dl>

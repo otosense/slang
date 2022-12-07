@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.featurizers &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.featurizers &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -70,9 +70,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>slang.featurizers</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">slang.featurizers</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -87,6 +87,10 @@
 <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">hanning</span><span class="p">,</span> <span class="n">kaiser</span><span class="p">,</span> <span class="nb">abs</span><span class="p">,</span> <span class="n">diff</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">std</span>
 <span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">rfft</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span><span class="p">,</span> <span class="n">partial</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sized</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">mul</span>
+
+<span class="kn">from</span> <span class="nn">dol</span> <span class="kn">import</span> <span class="n">Pipe</span>
 <span class="kn">from</span> <span class="nn">slang.stypes</span> <span class="kn">import</span> <span class="n">Chunk</span><span class="p">,</span> <span class="n">Chunks</span><span class="p">,</span> <span class="n">Featurizer</span>
 
 
@@ -110,29 +114,51 @@
     <span class="k">return</span> <span class="n">x</span></div>
 
 
-<span class="k">def</span> <span class="nf">mk_window_func</span><span class="p">(</span><span class="n">window_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="n">window_wf</span> <span class="o">=</span> <span class="n">window_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">wf_preproc</span><span class="p">(</span><span class="n">wf</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">window_wf</span> <span class="o">*</span> <span class="n">wf</span>
-
-    <span class="k">return</span> <span class="n">wf_preproc</span>
+<div class="viewcode-block" id="mk_window_func"><a class="viewcode-back" href="../../module_docs/slang/featurizers.html#slang.featurizers.mk_window_func">[docs]</a><span class="k">def</span> <span class="nf">mk_window_func</span><span class="p">(</span><span class="n">window_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Make a &#39;window function&#39;, which transforms input arrays through an elementsize</span>
+<span class="sd">    multiplication by a fixed vector&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="n">window_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
 
 <span class="n">mk_window_func</span><span class="o">.</span><span class="n">hanning</span> <span class="o">=</span> <span class="n">wraps</span><span class="p">(</span><span class="n">hanning</span><span class="p">)(</span><span class="n">partial</span><span class="p">(</span><span class="n">mk_window_func</span><span class="p">,</span> <span class="n">hanning</span><span class="p">))</span>
 <span class="n">mk_window_func</span><span class="o">.</span><span class="n">kaiser</span> <span class="o">=</span> <span class="n">wraps</span><span class="p">(</span><span class="n">kaiser</span><span class="p">)(</span><span class="n">partial</span><span class="p">(</span><span class="n">mk_window_func</span><span class="p">,</span> <span class="n">kaiser</span><span class="p">))</span>
 
 
+<span class="k">def</span> <span class="nf">_assert_size</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">Sized</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">error_type</span><span class="o">=</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">error_type</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;The size was expected to be </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s1"> but was </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span>
+
+
+<span class="c1"># https://github.com/otosense/slang/blob/2e6ccd208a9f1be0e1d46d134261c2e7807e84dc/slang/featurizers.py#L49</span>
+
+
 <div class="viewcode-block" id="mk_wf_to_spectr"><a class="viewcode-back" href="../../module_docs/slang/featurizers.html#slang.featurizers.mk_wf_to_spectr">[docs]</a><span class="k">def</span> <span class="nf">mk_wf_to_spectr</span><span class="p">(</span>
-    <span class="n">preproc</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fft_func</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span> <span class="n">postproc</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">,</span>
+    <span class="n">preproc</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fft_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span>
+    <span class="n">postproc</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">assert_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make a function that computes the spectrogram of a waveform</span>
 <span class="sd">    By spectrum, we mean the output of the pipeline:</span>
-<span class="sd">        `tile -&gt; preproc -&gt; fft -&gt; postproc -&gt; spectrum</span>
+<span class="sd">        `tile -&gt; preproc -&gt; [assert_size] -&gt; fft -&gt; postproc -&gt; spectrum</span>
 
-<span class="sd">    Because typically, we preprocess the input waveform (say, transform with a hanning function), and post process</span>
+<span class="sd">    Because typically, we preprocess the input waveform</span>
+<span class="sd">    (say, transform with a hanning function), and post process</span>
 <span class="sd">    the fft (say take the norm of the complex vector).</span>
 
+<span class="sd">    Adds a</span>
+
+<span class="sd">    :param preproc: Function to preprocess the array before computing the fft</span>
+<span class="sd">    :param fft_func: Function that computes the fft</span>
+<span class="sd">    :param postproc: Function post processing the fft array</span>
+<span class="sd">    :param assert_size: If an int is given, the returned ``wf_to_spectr`` function</span>
+<span class="sd">    will assert that the input array (or ``preproc(array)`` if ``preproc`` given) is of</span>
+<span class="sd">    that size before computing the fft.</span>
+
+<span class="sd">    :return: A ``wf_to_spectr`` function that computes the fft of a waveform (usually</span>
+<span class="sd">    a chunk of fixed size).</span>
 
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">    &gt;&gt;&gt; chk = np.ones(2048)  # the really interesting waveform we&#39;ll use as an example.</span>
@@ -155,23 +181,19 @@
 <span class="sd">    &gt;&gt;&gt; len(s)</span>
 <span class="sd">    1025</span>
 <span class="sd">    &gt;&gt;&gt; assert s[1] == 0  # the second value is zero (because beta=0.0: with the hanning window, we wouldn&#39;t have that!)</span>
-<span class="sd">    &gt;&gt;&gt;</span>
+
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">preproc</span><span class="p">):</span>
-
-        <span class="k">def</span> <span class="nf">wf_to_spectr</span><span class="p">(</span><span class="n">wf</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">postproc</span><span class="p">(</span><span class="n">fft_func</span><span class="p">(</span><span class="n">preproc</span><span class="p">(</span><span class="n">wf</span><span class="p">)))</span>
-
+        <span class="n">wf_to_spectr</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">preproc</span><span class="p">,</span> <span class="n">fft_func</span><span class="p">,</span> <span class="n">postproc</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-
-        <span class="k">def</span> <span class="nf">wf_to_spectr</span><span class="p">(</span><span class="n">wf</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">postproc</span><span class="p">(</span><span class="n">fft_func</span><span class="p">(</span><span class="n">wf</span><span class="p">))</span>
-
+        <span class="n">wf_to_spectr</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">fft_func</span><span class="p">,</span> <span class="n">postproc</span><span class="p">)</span>
+    <span class="n">wf_to_spectr</span><span class="o">.</span><span class="n">assert_size</span> <span class="o">=</span> <span class="n">assert_size</span>
     <span class="k">return</span> <span class="n">wf_to_spectr</span></div>
 
 
 <span class="k">def</span> <span class="nf">_mk_wf_to_spectr_w_hanning</span><span class="p">(</span>
-    <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fft_func</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span> <span class="n">postproc</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="nb">abs</span>
+    <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fft_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span> <span class="n">postproc</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">abs</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make a wf_to_spectr function that uses a hanning window preproc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -182,8 +204,8 @@
 <span class="k">def</span> <span class="nf">_mk_wf_to_spectr_w_kaiser</span><span class="p">(</span>
     <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="n">fft_func</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span>
-    <span class="n">postproc</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">,</span>
+    <span class="n">fft_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span>
+    <span class="n">postproc</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make a wf_to_spectr function that uses a kaiser window preproc.</span>
 
@@ -286,9 +308,9 @@
 
 <span class="k">def</span> <span class="nf">mk_spectral_moment_featurizer</span><span class="p">(</span>
     <span class="n">n_moments</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">preproc</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">fft_func</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span>
-    <span class="n">postproc</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">,</span>
+    <span class="n">preproc</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fft_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span>
+    <span class="n">postproc</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="n">wf_to_spectr</span> <span class="o">=</span> <span class="n">mk_wf_to_spectr</span><span class="p">(</span><span class="n">preproc</span><span class="p">,</span> <span class="n">fft_func</span><span class="p">,</span> <span class="n">postproc</span><span class="p">)</span>
     <span class="n">moments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_moments</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>

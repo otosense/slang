@@ -26,7 +26,7 @@ from slang.spectrop import (
     SpectralProjector,
     mk_chk_fft,
     geo_mat_11,
-    logarithmic_bands_matrix
+    logarithmic_bands_matrix,
 )
 
 from slang.snippers import (

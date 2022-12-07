@@ -45,7 +45,9 @@ def _assert_size(a: Sized, size: Optional[int] = None, error_type=ValueError):
         raise error_type(f'The size was expected to be {size} but was {len(a)}')
     return a
 
- # https://github.com/otosense/slang/blob/2e6ccd208a9f1be0e1d46d134261c2e7807e84dc/slang/featurizers.py#L49
+
+# https://github.com/otosense/slang/blob/2e6ccd208a9f1be0e1d46d134261c2e7807e84dc/slang/featurizers.py#L49
+
 
 def mk_wf_to_spectr(
     preproc: Callable = None,

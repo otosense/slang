@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sklearn.linear_model._base &mdash; slang 0.1.4 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>sklearn.linear_model._base &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -70,9 +70,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-      <li>sklearn.linear_model._base</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">sklearn.linear_model._base</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -827,7 +827,7 @@
 
 
 <span class="k">def</span> <span class="nf">_check_precomputed_gram_matrix</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">,</span> <span class="n">precompute</span><span class="p">,</span> <span class="n">X_offset</span><span class="p">,</span> <span class="n">X_scale</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">precompute</span><span class="p">,</span> <span class="n">X_offset</span><span class="p">,</span> <span class="n">X_scale</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-5</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Computes a single element of the gram matrix and compares it to</span>
 <span class="sd">    the corresponding element of the user supplied gram matrix.</span>
@@ -848,8 +848,10 @@
 <span class="sd">    X_scale : ndarray of shape (n_features,)</span>
 <span class="sd">        Array of feature scale factors used to normalize design matrix.</span>
 
-<span class="sd">    rtol : float, default=1e-7</span>
-<span class="sd">        Relative tolerance; see numpy.allclose.</span>
+<span class="sd">    rtol : float, default=None</span>
+<span class="sd">        Relative tolerance; see numpy.allclose</span>
+<span class="sd">        If None, it is set to 1e-4 for arrays of dtype numpy.float32 and 1e-7</span>
+<span class="sd">        otherwise.</span>
 
 <span class="sd">    atol : float, default=1e-5</span>
 <span class="sd">        absolute tolerance; see :func`numpy.allclose`. Note that the default</span>
@@ -871,6 +873,11 @@
 
     <span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
     <span class="n">actual</span> <span class="o">=</span> <span class="n">precompute</span><span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">]</span>
+
+    <span class="n">dtypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">precompute</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">expected</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">rtol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rtols</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-4</span> <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span> <span class="k">else</span> <span class="mf">1e-7</span> <span class="k">for</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">dtypes</span><span class="p">]</span>
+        <span class="n">rtol</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">rtols</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
