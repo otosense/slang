@@ -89,7 +89,7 @@ def make_band_matrix(buckets, n_freq=DFLT_INPUT_SIZE):
 
 
 def decreasing_integer_geometric_sequence(
-    start: int = DFLT_INPUT_SIZE, scale_factor=0.5
+        start: int = DFLT_INPUT_SIZE, scale_factor=0.5
 ) -> list:
     """Generate decreasing positive integers in by multiplying numbers by a constant (between 0 and 1) repeatedly.
     Numbers of ther sequence will all be integers and not repeat (so often not a true geometri sequence).
@@ -110,7 +110,7 @@ def decreasing_integer_geometric_sequence(
 
     """
     assert (
-        0 < scale_factor < 1
+            0 < scale_factor < 1
     ), "This geometric_sequence is meant for decreasing sequences only"
 
     def gen():
@@ -123,10 +123,12 @@ def decreasing_integer_geometric_sequence(
     return list(dict.fromkeys(gen()))
 
 
-# TODO: Continue algorithm further, filling more coarse coverage with static greedy rule, thus making n_buckets unbound
-# TODO: Make factor=None with n_buckets not None have the effect of choosing factor so n_buckets is exactly reached.
+# TODO: Continue algorithm further, filling more coarse coverage with static greedy
+#  rule, thus making n_buckets unbound
 def logarithmic_bands_matrix(
-    n_buckets=None, n_freqs: int = DFLT_INPUT_SIZE, factor: Optional[float] = None
+        n_buckets: Optional[int] = None,
+        n_freqs: int = DFLT_INPUT_SIZE,
+        factor: Optional[float] = None
 ) -> np.ndarray:
     """Makes a spectral projection matrix that puts more importance on low frequencies than high ones.
     Importance both in weight and in precision.
@@ -138,13 +140,14 @@ def logarithmic_bands_matrix(
     We can discuss what both mean at a later date.
 
     Important here is to understand my intent, to see how well I achieve it.
-    - The features "build on each other". That is, if you ask (within the same `(n_freqs, factor)` set)
-    for 7 features in your fv, the first 5 will be the same as if you asked for only 5. This makes it easier to compare
+    - The features "build on each other". That is, if you ask (within the same
+    `(n_freqs, factor)` set) for 7 features in your fv, the first 5 will be the same
+    as if you asked for only 5. This makes it easier to compare
     fvs between projects, and possibly even "add to existing features".
     - Note  that the first feature is always total energy.
     - Lower frequencies are given less importance -- both in precision and in weight.
-    - The linear algebraists that are listening will note what the vector space generated actually is,
-    compared to that created by disjoint bands.
+    - The linear algebraists that are listening will note what the vector space
+    generated actually is, compared to that created by disjoint bands.
 
     >>> print(*logarithmic_bands_matrix(n_freqs=8).tolist(), sep='\\n')
     [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125]
@@ -255,7 +258,7 @@ def ascertain_array(iterable):
 
 
 def chk_to_spectrum(
-    chk, chk_size, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC
+        chk, chk_size, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUDE_FUNC
 ):
     assert len(chk) == chk_size, (
         f"This function was made for chk_size={chk_size}. "
@@ -291,7 +294,7 @@ def mk_chk_fft(chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUD
     """
     if callable(window):
         assert (
-            chk_size is not None
+                chk_size is not None
         ), "chk_size must be a positive integer if window is a callable, or None"
         window = window(chk_size)
     elif window is None:
@@ -300,7 +303,7 @@ def mk_chk_fft(chk_size=None, window=DFLT_WIN_FUNC, amplitude_func=DFLT_AMPLITUD
         window = np.array(window)
         if chk_size is not None:
             assert (
-                len(window) == chk_size
+                    len(window) == chk_size
             ), f"chk_size ({chk_size}) and len(window) ({len(window)}) don't match"
 
     chk_spectrum = named_partial(
@@ -344,9 +347,10 @@ def reducing_proj(basis, vectors, mat_mult=DFLT_MATRIX_MULTI):
 
 def _assert_spectrum_and_chk_size_match(spectrum_size: int, chk_size: int):
     assert spectrum_size == int(1 + chk_size / 2), (
-                    f"expected spectrum_size == int(1 + chk_size / 2): "
-                    f"{spectrum_size=} and {chk_size=}"
-                )
+        f"expected spectrum_size == int(1 + chk_size / 2): "
+        f"{spectrum_size=} and {chk_size=}"
+    )
+
 
 def _chk_size_to_spectrum_size(chk_size: int) -> int:
     return int(1 + chk_size / 2)
@@ -357,9 +361,10 @@ def _spectrum_size_to_chk_size(spectrum_size: int) -> int:
         return 1
     return 2 * spectrum_size - 2
 
+
 def _get_spectrum_size_and_validate_against_chk_size(spectrum_size, chk_size):
     assert (
-        chk_size is not None or spectrum_size is not None
+            chk_size is not None or spectrum_size is not None
     ), "either chk_size or spectrum size must be given"
     if spectrum_size is None:
         if chk_size is not None:
@@ -402,6 +407,7 @@ class Projector:
     def __call__(self, vector):
         return self.transform([vector])[0]
 
+
 @dataclass
 class SpectralProjector(Projector):
     chk_fft: Callable = DFLT_CHK_FFT
@@ -415,12 +421,12 @@ class SpectralProjector(Projector):
     # TODO: spectrum_size is elsewhere n_freqs (should we be consistent?)
     @classmethod
     def for_sizes(
-        cls,
-        chk_size: Optional[int] = None,
-        n_features: Optional[int] = None,
-        *,
-        spectrum_size: Optional[int] = None,
-        log_factor: float = 2
+            cls,
+            chk_size: Optional[int] = None,
+            n_features: Optional[int] = None,
+            *,
+            spectrum_size: Optional[int] = None,
+            log_factor: Optional[float] = None
     ):
         """Makes a projector for given (chunk or spectrum) and feature space size.
         This is a convenience to get a projector given only the input
@@ -571,12 +577,12 @@ class TargettedVariancePCA(BaseEstimator, TransformerMixin):
 
 class SpectralProjectorUnsupervisedFitter(SpectralProjector, TargettedVariancePCA):
     def __init__(
-        self,
-        target_variance=0.95,
-        max_n_components=inf,
-        min_n_components=1,
-        scalings_=None,
-        chk_fft=DFLT_CHK_FFT,
+            self,
+            target_variance=0.95,
+            max_n_components=inf,
+            min_n_components=1,
+            scalings_=None,
+            chk_fft=DFLT_CHK_FFT,
     ):
         TargettedVariancePCA.__init__(
             self, target_variance, max_n_components, min_n_components
@@ -696,13 +702,13 @@ class PcaProjWithDelegation(Projector):
 
 
 def learn_spect_proj(
-    X,
-    y=None,
-    spectral_proj_name="pca",
-    clustering_meth="KMeans",
-    clustering_options=CLUSTERING_OPTIONS,
-    kwargs_feat=None,
-    kwargs_clust=None,
+        X,
+        y=None,
+        spectral_proj_name="pca",
+        clustering_meth="KMeans",
+        clustering_options=CLUSTERING_OPTIONS,
+        kwargs_feat=None,
+        kwargs_clust=None,
 ):
     """
     Function to learn each of the important spectral projection
@@ -719,7 +725,7 @@ def learn_spect_proj(
     kwargs_clust = kwargs_clust or {}
 
     assert (
-        clustering_meth in clustering_options
+            clustering_meth in clustering_options
     ), "clustering options must one of {}".format(
         ", ".join(map(str, clustering_options))
     )
@@ -849,11 +855,11 @@ def mk_pre_projection_from_indices(indices=None, input_size=DFLT_INPUT_SIZE):
 
 
 def learn_chain_proj_matrix(
-    X,
-    y=None,
-    chain=({"type": "pca", "args": {"n_components": 5}},),
-    indices=None,
-    input_size=1025,
+        X,
+        y=None,
+        chain=({"type": "pca", "args": {"n_components": 5}},),
+        indices=None,
+        input_size=1025,
 ):
     """
     A function successively learning a projections matrix on the residue of the previous one. The projections
@@ -894,11 +900,11 @@ def learn_chain_proj_matrix(
 
 
 def old_learn_chain_proj_matrix(
-    X,
-    y=None,
-    chain=({"type": "pca", "kwargs": {"n_components": 5}},),
-    indices=None,
-    input_size=DFLT_INPUT_SIZE,
+        X,
+        y=None,
+        chain=({"type": "pca", "kwargs": {"n_components": 5}},),
+        indices=None,
+        input_size=DFLT_INPUT_SIZE,
 ):
     freq_selection_matrix = None
     if indices is not None:
@@ -922,10 +928,10 @@ def old_learn_chain_proj_matrix(
 
 class GeneralProjectionLearner(BaseEstimator, TransformerMixin):
     def __init__(
-        self,
-        chain=({"type": "pca", "args": {"n_components": 5}},),
-        indices=None,
-        n_freq=1025,
+            self,
+            chain=({"type": "pca", "args": {"n_components": 5}},),
+            indices=None,
+            n_freq=1025,
     ):
         self.chain = chain
         self.indices = indices
@@ -948,11 +954,11 @@ class GeneralProjectionLearner(BaseEstimator, TransformerMixin):
 
 
 def make_buckets(
-    n_buckets=15,
-    freqs_weighting=lambda x: x,
-    freq_range=DFLT_FREQ_RANGE,
-    non_empty_bucket=True,
-    reverse=False,
+        n_buckets=15,
+        freqs_weighting=lambda x: x,
+        freq_range=DFLT_FREQ_RANGE,
+        non_empty_bucket=True,
+        reverse=False,
 ):
     """
     Create greedily buckets starting by aggregating lower frequencies, when the sum of
@@ -1074,7 +1080,7 @@ def make_buckets(
             # we don't remove the last if it is better not too or if we want non empty buckets
             # and remove it would violate that rule
             if total_diff_large < total_dif_small or (
-                len(bucket_idx) < 2 and non_empty_bucket
+                    len(bucket_idx) < 2 and non_empty_bucket
             ):
                 idx_bucket_list.append(bucket_idx)
             # otherwise remove last term
@@ -1088,7 +1094,7 @@ def make_buckets(
                 else:
                     pass
 
-    idx_bucket_list[-1] = freq_range[idx_bucket_list[-1][0] :]
+    idx_bucket_list[-1] = freq_range[idx_bucket_list[-1][0]:]
     if low_freq > 0:
         idx_bucket_list = [[i + low_freq for i in l] for l in idx_bucket_list]
 
@@ -1100,7 +1106,7 @@ def _plus_one_inverse(x):
 
 
 def frequency_weight_based_bands_matrix(
-    n_buckets=15, freqs_weighting=_plus_one_inverse, n_freq=1025, reverse=False
+        n_buckets=15, freqs_weighting=_plus_one_inverse, n_freq=1025, reverse=False
 ):
     """
     Get a projection matrix of disjoint bands based on a frequency weighting function.
@@ -1116,7 +1122,6 @@ def frequency_weight_based_bands_matrix(
         n_buckets, freqs_weighting, freq_range=(0, n_freq + 1), reverse=reverse
     )
     return make_band_matrix(buckets, n_freq=n_freq)
-
 
 # class GeneralProjectionLearner(BaseEstimator, TransformerMixin):
 #     def __init__(self, chain=({'type': 'pca', 'kwargs': {'n_components': 5}},), indices=None,
