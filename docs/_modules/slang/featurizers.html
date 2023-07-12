@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.featurizers &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.featurizers &mdash; slang 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -29,11 +29,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> slang
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            slang
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -70,7 +74,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">slang.featurizers</li>
       <li class="wy-breadcrumbs-aside">
@@ -101,21 +105,21 @@
 
 
 <div class="viewcode-block" id="tile_fft"><a class="viewcode-back" href="../../module_docs/slang/featurizers.html#slang.featurizers.tile_fft">[docs]</a><span class="k">def</span> <span class="nf">tile_fft</span><span class="p">(</span><span class="n">tile</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">DFLT_WIN_FUNC</span><span class="p">,</span> <span class="n">amp_function</span><span class="o">=</span><span class="nb">abs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute the power fft for a single tile</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the power fft for a single tile</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
         <span class="n">window</span> <span class="o">=</span> <span class="n">window</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tile</span><span class="p">))</span>
     <span class="n">fft_amplitudes</span> <span class="o">=</span> <span class="n">amp_function</span><span class="p">(</span><span class="n">rfft</span><span class="p">(</span><span class="n">tile</span> <span class="o">*</span> <span class="n">window</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">fft_amplitudes</span></div>
 
 
 <div class="viewcode-block" id="identity_func"><a class="viewcode-back" href="../../module_docs/slang/featurizers.html#slang.featurizers.identity_func">[docs]</a><span class="k">def</span> <span class="nf">identity_func</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The identify (a.k.a. transparent) function that returns it&#39;s input as is.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The identify (a.k.a. transparent) function that returns it&#39;s input as is.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">x</span></div>
 
 
 <div class="viewcode-block" id="mk_window_func"><a class="viewcode-back" href="../../module_docs/slang/featurizers.html#slang.featurizers.mk_window_func">[docs]</a><span class="k">def</span> <span class="nf">mk_window_func</span><span class="p">(</span><span class="n">window_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a &#39;window function&#39;, which transforms input arrays through an elementsize</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a &#39;window function&#39;, which transforms input arrays through an elementsize</span>
 <span class="sd">    multiplication by a fixed vector&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="n">window_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
@@ -140,7 +144,7 @@
     <span class="o">*</span><span class="p">,</span>
     <span class="n">assert_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a function that computes the spectrogram of a waveform</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a function that computes the spectrogram of a waveform</span>
 <span class="sd">    By spectrum, we mean the output of the pipeline:</span>
 <span class="sd">        `tile -&gt; preproc -&gt; [assert_size] -&gt; fft -&gt; postproc -&gt; spectrum</span>
 
@@ -184,7 +188,7 @@
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">preproc</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">preproc</span><span class="p">):</span>
         <span class="n">wf_to_spectr</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">preproc</span><span class="p">,</span> <span class="n">fft_func</span><span class="p">,</span> <span class="n">postproc</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">wf_to_spectr</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">fft_func</span><span class="p">,</span> <span class="n">postproc</span><span class="p">)</span>
@@ -195,7 +199,7 @@
 <span class="k">def</span> <span class="nf">_mk_wf_to_spectr_w_hanning</span><span class="p">(</span>
     <span class="n">window_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">fft_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span> <span class="n">postproc</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">abs</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a wf_to_spectr function that uses a hanning window preproc.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a wf_to_spectr function that uses a hanning window preproc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">preproc</span> <span class="o">=</span> <span class="n">mk_window_func</span><span class="o">.</span><span class="n">hanning</span><span class="p">(</span><span class="n">window_size</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">mk_wf_to_spectr</span><span class="p">(</span><span class="n">preproc</span><span class="p">,</span> <span class="n">fft_func</span><span class="p">,</span> <span class="n">postproc</span><span class="p">)</span>
@@ -207,7 +211,7 @@
     <span class="n">fft_func</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">rfft</span><span class="p">,</span>
     <span class="n">postproc</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a wf_to_spectr function that uses a kaiser window preproc.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a wf_to_spectr function that uses a kaiser window preproc.</span>
 
 <span class="sd">    The window_size should be set to the fixed tile (chunk) size you&#39;re using.</span>
 <span class="sd">    The beta size is set to 0.0. To know what to set, look it up. We&#39;re using numpy&#39;s kaiser function for that.</span>
@@ -362,7 +366,7 @@
 
 
 <div class="viewcode-block" id="moment"><a class="viewcode-back" href="../../module_docs/slang/featurizers.html#slang.featurizers.moment">[docs]</a><span class="k">def</span> <span class="nf">moment</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">moment</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the nth moment about the mean for a sample.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate the nth moment about the mean for a sample.</span>
 <span class="sd">    Taken from scipy.stats</span>
 
 <span class="sd">    Examples</span>

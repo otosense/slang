@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.core &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.core &mdash; slang 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -29,11 +29,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> slang
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            slang
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -70,7 +74,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">slang.core</li>
       <li class="wy-breadcrumbs-aside">
@@ -192,7 +196,7 @@
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">wf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_wf_gen</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_to_tag</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="n">wf</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span><span class="n">wf_callback</span><span class="p">),</span> <span class="s1">&#39;wf_callback needs to be callable.&#39;</span>
+            <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span><span class="n">wf_callback</span><span class="p">),</span> <span class="s1">&#39;wf_callback needs to be callable.&#39;</span>
 
             <span class="k">if</span> <span class="n">iterate_over_wf_callaback_output</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">wf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_wf_gen</span><span class="p">():</span>
@@ -243,7 +247,7 @@
 
 
 <div class="viewcode-block" id="Snipper"><a class="viewcode-back" href="../../module_docs/slang/core.html#slang.core.Snipper">[docs]</a><span class="k">class</span> <span class="nc">Snipper</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A base class that implements the wf-&gt;chk-&gt;fv-&gt;snip pipeline.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A base class that implements the wf-&gt;chk-&gt;fv-&gt;snip pipeline.</span>
 <span class="sd">    Default functions for wf_to_chk (a.k.a. chunker), chk_to_fv (a.k.a. featurizer) and fv_to_snip (a.k.a. nipper)</span>
 <span class="sd">    are given, but usually the user should specify these, and usually these are learned from data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -282,7 +286,7 @@
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Delegate method to wrapped store if not part of wrapper store methods&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Delegate method to wrapped store if not part of wrapper store methods&quot;&quot;&quot;</span>
         <span class="n">attr_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_delegations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">attr_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span>

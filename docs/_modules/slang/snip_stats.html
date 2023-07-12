@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.snip_stats &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.snip_stats &mdash; slang 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -29,11 +29,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> slang
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            slang
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -70,7 +74,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">slang.snip_stats</li>
       <li class="wy-breadcrumbs-aside">
@@ -158,7 +162,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">var_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Variance: E[X**2] - E[X]**2 (https://en.wikipedia.org/wiki/Variance)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Variance: E[X**2] - E[X]**2 (https://en.wikipedia.org/wiki/Variance)&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum2_</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_</span> <span class="o">**</span> <span class="mi">2</span>  <span class="c1">#</span>
 
     <span class="k">def</span> <span class="nf">inverse_frequency_for_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
@@ -243,7 +247,7 @@
 <span class="c1"># TODO: Fillna is not additive smoothing, so should make it so?</span>
 <span class="k">class</span> <span class="nc">TagSnipStats</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snips</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        :param snips: The snips to analyze</span>
 <span class="sd">        :param tags: The corresponding tags (one per snip)</span>
@@ -448,7 +452,7 @@
 
 
 <div class="viewcode-block" id="BayesFactors"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.BayesFactors">[docs]</a><span class="k">class</span> <span class="nc">BayesFactors</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;BayesFactors classifier with sklearn-like interface. predict_probas are the log2 of the bayes factor.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;BayesFactors classifier with sklearn-like interface. predict_probas are the log2 of the bayes factor.</span>
 <span class="sd">    It is sklearn-like, but to avoid depending on sklearn, it isn&#39;t a subclass of BaseEstimator and ClassifierMixin.</span>
 <span class="sd">    It just has the essentials of the classifier: a `fit`, a `predict_proba` and a derived `predict` method, and</span>
 <span class="sd">    a `classes_` attribute that indices the columns of the `predict_proba` matrix.</span>
@@ -491,7 +495,7 @@
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">scores_for_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">snips</span><span class="p">)</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">classes_</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
 
 <div class="viewcode-block" id="BayesFactors.predict"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.BayesFactors.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">snips</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Predict class labels for each snip of snips sequence.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">snips</span><span class="p">)</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -551,7 +555,7 @@
 
 
 <div class="viewcode-block" id="tag_slice_iter_from_slices_of_tag_dict"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.tag_slice_iter_from_slices_of_tag_dict">[docs]</a><span class="k">def</span> <span class="nf">tag_slice_iter_from_slices_of_tag_dict</span><span class="p">(</span><span class="n">slices_of_tag</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get an iterator of (tag, (bt, tt)) pairs</span>
 <span class="sd">    :param slices_of_tag: a {tag: [(bt, tt),...], ...} dict listing slices annotated by tags</span>
 <span class="sd">    :return: a tag, (bt, tt) iterator</span>
@@ -594,7 +598,7 @@
 <div class="viewcode-block" id="df_of_snip_count_for_tag"><a class="viewcode-back" href="../../module_docs/slang/snip_stats.html#slang.snip_stats.df_of_snip_count_for_tag">[docs]</a><span class="k">def</span> <span class="nf">df_of_snip_count_for_tag</span><span class="p">(</span>
     <span class="n">snip_count_for_tag</span><span class="p">,</span> <span class="n">snips_to_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fillna</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag_order</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A df representation of snip_count_for_tag</span>
 <span class="sd">    :param snip_count_for_tag: {tag: {snip: count, ...},...} dict</span>
 <span class="sd">    :param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)</span>
@@ -647,7 +651,7 @@
     <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Multiplot of snip count bars for each tag (in a different row). First row is the total count for each snip.</span>
 <span class="sd">    :param snip_count_for_tag: {tag: {snip: count, ...},...} nested dict</span>
 <span class="sd">    :param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)</span>
@@ -719,7 +723,7 @@
     <span class="n">ylabel_fontsize</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">ylabel_rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Multiplot of snip count bars for each tag (in a different row). First row is the total count for each snip.</span>
 <span class="sd">    :param snip_count_for_tag: {tag: {snip: count, ...},...} nested dict</span>
 <span class="sd">    :param snips_to_str: A function that transforms snip lists into strings (mapping each snip to a character)</span>

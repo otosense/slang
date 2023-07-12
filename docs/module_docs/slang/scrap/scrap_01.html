@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.scrap.scrap_01 &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>slang.scrap.scrap_01 &mdash; slang 0.1.6 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -32,11 +32,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> slang
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            slang
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -73,7 +77,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">slang.scrap.scrap_01</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/module_docs/slang/scrap/scrap_01.rst.txt" rel="nofollow"> View page source</a>
@@ -103,8 +107,9 @@ distribution function</p>
 <p>It is often seen in Bayesian inference and order statistics.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">beta</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.beta</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -143,8 +148,9 @@ n an integer &gt;= 0 and p is in the interval [0,1]. (n may be
 input as a float, but it is truncated to an integer in use)</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">binomial</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.binomial</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -240,8 +246,9 @@ resulting distribution is chi-square (see Notes).  This distribution
 is often used in hypothesis testing.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">chisquare</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.chisquare</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -309,8 +316,9 @@ x^{k/2 - 1} e^{-x/2},\]</div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">choice</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.choice</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -401,8 +409,9 @@ is a conjugate prior of a multinomial distribution in Bayesian
 inference.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">dirichlet</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.dirichlet</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -493,8 +502,9 @@ the size of raindrops measured over many rainstorms <a href="#id79"><span class=
 between page requests to Wikipedia <a href="#id80"><span class="problematic" id="id11">[2]_</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">exponential</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.exponential</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -552,8 +562,9 @@ that arises in ANOVA tests, and is the ratio of two chi-square
 variates.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">f</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.f</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -635,8 +646,9 @@ level.</p>
 “theta”), where both parameters are &gt; 0.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">gamma</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.gamma</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -721,8 +733,9 @@ supported on the positive integers, <code class="docutils literal notranslate"><
 <p>where <cite>p</cite> is the probability of success of an individual trial.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">geometric</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.geometric</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -763,16 +776,17 @@ with the probability of an individual success equal to 0.35:</p>
 
 <dl class="py function">
 <dt id="slang.scrap.scrap_01.get_state">
-<code class="sig-prename descclassname">slang.scrap.scrap_01.</code><code class="sig-name descname">get_state</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slang.scrap.scrap_01.get_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">slang.scrap.scrap_01.</code><code class="sig-name descname">get_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">legacy</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#slang.scrap.scrap_01.get_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a tuple representing the internal state of the generator.</p>
 <p>For more details, see <cite>set_state</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>legacy</strong> (<em>bool</em><em>, </em><em>optional</em>) – Flag indicating to return a legacy tuple state when the BitGenerator
-is MT19937, instead of a dict.</p>
+is MT19937, instead of a dict. Raises ValueError if the underlying
+bit generator is not an instance of MT19937.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p><strong>out</strong> – The returned tuple has the following items:</p>
+<dd class="field-even"><p><p><strong>out</strong> – If legacy is True, the returned tuple has the following items:</p>
 <ol class="arabic simple">
 <li><p>the string ‘MT19937’.</p></li>
 <li><p>a 1-D array of 624 unsigned integer keys.</p></li>
@@ -807,8 +821,9 @@ scale.  For more information on the Gumbel distribution, see
 Notes and References below.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">gumbel</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.gumbel</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -922,8 +937,10 @@ a bad selection), and <cite>nsample</cite> (number of items sampled, which is le
 than or equal to the sum <code class="docutils literal notranslate"><span class="pre">ngood</span> <span class="pre">+</span> <span class="pre">nbad</span></code>).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">hypergeometric</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.hypergeometric</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1020,8 +1037,9 @@ difference between two independent, identically distributed exponential
 random variables.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">laplace</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.laplace</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1112,8 +1130,9 @@ the probability density function:</p>
 parameters, loc (location or mean, also median), and scale (&gt;0).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">logistic</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.logistic</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1198,8 +1217,9 @@ deviation are not the values for the distribution itself, but of the
 underlying normal distribution it is derived from.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">lognormal</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.lognormal</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1314,8 +1334,9 @@ function.</p>
 shape parameter, 0 &lt;= <code class="docutils literal notranslate"><span class="pre">p</span></code> &lt; 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">logseries</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.logseries</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1406,8 +1427,9 @@ distribution represents <cite>n</cite> such experiments.  Its values,
 outcome was <code class="docutils literal notranslate"><span class="pre">i</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">multinomial</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.multinomial</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1489,8 +1511,10 @@ covariance matrix.  These parameters are analogous to the mean
 squared) of the one-dimensional normal distribution.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">multivariate_normal</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.multivariate_normal</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1622,8 +1646,10 @@ parameters, <cite>n</cite> successes and <cite>p</cite> probability of success w
 is &gt; 0 and <cite>p</cite> is in the interval [0, 1].</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">negative_binomial</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.negative_binomial</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1660,7 +1686,7 @@ occurred before a total of n successes was reached.</p>
 probability of success, <span class="math notranslate nohighlight">\(N+n\)</span> is the number of trials, and
 <span class="math notranslate nohighlight">\(\Gamma\)</span> is the gamma function. When <span class="math notranslate nohighlight">\(n\)</span> is an integer,
 <span class="math notranslate nohighlight">\(\frac{\Gamma(N+n)}{N!\Gamma(n)} = \binom{N+n-1}{N}\)</span>, which is
-the more common form of this term in the the pmf. The negative
+the more common form of this term in the pmf. The negative
 binomial distribution gives the probability of N failures given n
 successes, with a success on the last trial.</p>
 <p>If one throws a die repeatedly until the third time a “1” appears,
@@ -1701,8 +1727,10 @@ single success after drilling 5 wells, after 6 wells, etc.?</p>
 the <span class="math notranslate nohighlight">\(\chi^2\)</span> distribution.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">noncentral_chisquare</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.noncentral_chisquare</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1787,8 +1815,10 @@ freedom in denominator), where both parameters &gt; 1.
 <cite>nonc</cite> is the non-centrality parameter.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">noncentral_f</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.noncentral_f</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1875,8 +1905,9 @@ by a large number of tiny, random disturbances, each with its own
 unique distribution <a href="#id82"><span class="problematic" id="id45">[2]_</span></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">normal</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.normal</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1956,7 +1987,8 @@ the probability density function:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Two-by-four array of samples from N(3, 6.25):</p>
+<p>Two-by-four array of samples from the normal distribution with
+mean 3 and standard deviation 2.5:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="go">array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random</span>
 <span class="go">       [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random</span>
@@ -1986,8 +2018,9 @@ this distribution, 80 percent of the weights are in the lowest
 remaining 80 percent of the range.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">pareto</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.pareto</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2075,8 +2108,10 @@ density function:</p>
 first index.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">permutation</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.permutation</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2124,8 +2159,9 @@ randomly.</p>
 for large N.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">poisson</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.poisson</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2250,8 +2286,9 @@ the specified dtype in the “half-open” interval [<cite>low</cite>, <cite>hig
 <cite>high</cite> is None (the default), then results are from [0, <cite>low</cite>).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">integers</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.randint</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2334,8 +2371,10 @@ other NumPy functions like <cite>numpy.zeros</cite> and <cite>numpy.ones</cite>.
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">standard_normal</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.standard_normal</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <p>If positive int_like arguments are provided, <cite>randn</cite> generates an array
 of shape <code class="docutils literal notranslate"><span class="pre">(d0,</span> <span class="pre">d1,</span> <span class="pre">...,</span> <span class="pre">dn)</span></code>, filled
@@ -2376,14 +2415,18 @@ no parameters were supplied.</p>
 </dl>
 </div>
 <p class="rubric">Notes</p>
-<p>For random samples from <span class="math notranslate nohighlight">\(N(\mu, \sigma^2)\)</span>, use:</p>
-<p><code class="docutils literal notranslate"><span class="pre">sigma</span> <span class="pre">*</span> <span class="pre">np.random.randn(...)</span> <span class="pre">+</span> <span class="pre">mu</span></code></p>
+<p>For random samples from the normal distribution with mean <code class="docutils literal notranslate"><span class="pre">mu</span></code> and
+standard deviation <code class="docutils literal notranslate"><span class="pre">sigma</span></code>, use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">...</span><span class="p">)</span> <span class="o">+</span> <span class="n">mu</span>
+</pre></div>
+</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">()</span>
 <span class="go">2.1923875335537315  # random</span>
 </pre></div>
 </div>
-<p>Two-by-four array of samples from N(3, 6.25):</p>
+<p>Two-by-four array of samples from the normal distribution with
+mean 3 and standard deviation 2.5:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">3</span> <span class="o">+</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 <span class="go">array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random</span>
 <span class="go">       [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random</span>
@@ -2482,8 +2525,9 @@ the output of <cite>random_sample</cite> by <cite>(b-a)</cite> and add <cite>a</
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">random</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.random</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2532,8 +2576,9 @@ case a single float is returned).</p>
 Rayleigh.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">rayleigh</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.rayleigh</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2600,24 +2645,6 @@ meters?</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="slang.scrap.scrap_01.seed">
-<code class="sig-prename descclassname">slang.scrap.scrap_01.</code><code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#slang.scrap.scrap_01.seed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reseed a legacy MT19937 BitGenerator</p>
-<p class="rubric">Notes</p>
-<p>This is a convenience, legacy function.</p>
-<p>The best practice is to <strong>not</strong> reseed a BitGenerator, rather to
-recreate a new one. This method is here for legacy reasons.
-This example demonstrates best practice.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">MT19937</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">RandomState</span><span class="p">,</span> <span class="n">SeedSequence</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rs</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">SeedSequence</span><span class="p">(</span><span class="mi">123456789</span><span class="p">)))</span>
-<span class="go"># Later, you want to restart the stream</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">rs</span> <span class="o">=</span> <span class="n">RandomState</span><span class="p">(</span><span class="n">MT19937</span><span class="p">(</span><span class="n">SeedSequence</span><span class="p">(</span><span class="mi">987654321</span><span class="p">)))</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
 <dt id="slang.scrap.scrap_01.set_state">
 <code class="sig-prename descclassname">slang.scrap.scrap_01.</code><code class="sig-name descname">set_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span></em><span class="sig-paren">)</span><a class="headerlink" href="#slang.scrap.scrap_01.set_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the internal state of the generator from a tuple.</p>
@@ -2677,8 +2704,9 @@ multi-dimensional array. The order of sub-arrays is changed but
 their contents remains the same.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">shuffle</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.shuffle</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2723,8 +2751,10 @@ instance instead; please see the <span class="xref std std-ref">random-quick-sta
 <p>Also known as the Lorentz distribution.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">standard_cauchy</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.standard_cauchy</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2797,8 +2827,10 @@ Wolfram Web Resource.
 with a scale parameter of 1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">standard_exponential</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.standard_exponential</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2835,8 +2867,10 @@ single value is returned.</p>
 shape (sometimes designated “k”) and scale=1.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">standard_gamma</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.standard_gamma</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2910,8 +2944,10 @@ the probability density function:</p>
 <dd><p>Draw samples from a standard Normal distribution (mean=0, stdev=1).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">standard_normal</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the
+<cite>~numpy.random.Generator.standard_normal</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2937,7 +2973,8 @@ single sample if <code class="docutils literal notranslate"><span class="pre">si
 </dl>
 </div>
 <p class="rubric">Notes</p>
-<p>For random samples from <span class="math notranslate nohighlight">\(N(\mu, \sigma^2)\)</span>, use one of:</p>
+<p>For random samples from the normal distribution with mean <code class="docutils literal notranslate"><span class="pre">mu</span></code> and
+standard deviation <code class="docutils literal notranslate"><span class="pre">sigma</span></code>, use one of:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mu</span> <span class="o">+</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">size</span><span class="o">=...</span><span class="p">)</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="o">=...</span><span class="p">)</span>
 </pre></div>
@@ -2958,7 +2995,8 @@ single sample if <code class="docutils literal notranslate"><span class="pre">si
 <span class="go">(3, 4, 2)</span>
 </pre></div>
 </div>
-<p>Two-by-four array of samples from <span class="math notranslate nohighlight">\(N(3, 6.25)\)</span>:</p>
+<p>Two-by-four array of samples from the normal distribution with
+mean 3 and standard deviation 2.5:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="mi">3</span> <span class="o">+</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="go">array([[-4.49401501,  4.00950034, -1.81814867,  7.29718677],   # random</span>
 <span class="go">       [ 0.39924804,  4.68456316,  4.99394529,  4.84057254]])  # random</span>
@@ -2976,8 +3014,9 @@ large, the result resembles that of the standard normal
 distribution (<cite>standard_normal</cite>).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">standard_t</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.standard_t</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3085,8 +3124,9 @@ limit right. Unlike the other distributions, these parameters
 directly define the shape of the pdf.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">triangular</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.triangular</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3155,8 +3195,9 @@ any value within the given interval is equally likely to be drawn
 by <cite>uniform</cite>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">uniform</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.uniform</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3249,8 +3290,9 @@ circle.  It may be thought of as the circular analogue of the normal
 distribution.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">vonmises</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.vonmises</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3334,8 +3376,9 @@ because there is an inverse relationship between the time to cover a
 unit distance and distance covered in unit time.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">wald</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.wald</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3409,8 +3452,9 @@ shape parameter <cite>a</cite>.</p>
 <span class="math notranslate nohighlight">\(\lambda\)</span> is just <span class="math notranslate nohighlight">\(X = \lambda(-ln(U))^{1/a}\)</span>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">weibull</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.weibull</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3505,8 +3549,9 @@ frequency of an item is inversely proportional to its rank in a
 frequency table.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>New code should use the <code class="docutils literal notranslate"><span class="pre">zipf</span></code> method of a <code class="docutils literal notranslate"><span class="pre">default_rng()</span></code>
-instance instead; please see the <span class="xref std std-ref">random-quick-start</span>.</p>
+<p>New code should use the <cite>~numpy.random.Generator.zipf</cite>
+method of a <cite>~numpy.random.Generator</cite> instance instead;
+please see the <span class="xref std std-ref">random-quick-start</span>.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

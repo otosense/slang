@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.util &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.util &mdash; slang 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -29,11 +29,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> slang
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            slang
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -70,7 +74,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">slang.util</li>
       <li class="wy-breadcrumbs-aside">
@@ -101,7 +105,7 @@
 
 
 <div class="viewcode-block" id="mk_callable"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.mk_callable">[docs]</a><span class="k">def</span> <span class="nf">mk_callable</span><span class="p">(</span><span class="n">call_func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A class decorator that adds a __call__ method. Specialized for sklearn models.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class decorator that adds a __call__ method. Specialized for sklearn models.</span>
 
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">    &gt;&gt;&gt; from sklearn.decomposition import PCA</span>
@@ -161,7 +165,7 @@
                     <span class="sa">f</span><span class="s2">&quot;nor &#39;single_METHOD_NAME&#39; where METHOD_NAME is a method of the class: </span><span class="si">{</span><span class="n">call_func_str</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">callable</span><span class="p">(</span>
+            <span class="k">assert</span> <span class="nb">callable</span><span class="p">(</span>
                 <span class="n">call_func</span>
             <span class="p">),</span> <span class="sa">f</span><span class="s1">&#39;call_func must be callable but was </span><span class="si">{</span><span class="n">call_func</span><span class="si">}</span><span class="s1">&#39;</span>
             <span class="bp">cls</span><span class="o">.</span><span class="fm">__call__</span> <span class="o">=</span> <span class="n">call_func</span>
@@ -203,7 +207,7 @@
 
 
 <div class="viewcode-block" id="row_euclidean_distance"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.row_euclidean_distance">[docs]</a><span class="k">def</span> <span class="nf">row_euclidean_distance</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Euclidean distance between aligned rows of A. An array of length len(A) (==len(B)).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Euclidean distance between aligned rows of A. An array of length len(A) (==len(B)).</span>
 
 <span class="sd">    &gt;&gt;&gt; import numpy as np</span>
 <span class="sd">    &gt;&gt;&gt; A = np.arange(5 * 16).reshape((5, 16))</span>
@@ -230,7 +234,7 @@
 
 
 <div class="viewcode-block" id="lazyprop"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.lazyprop">[docs]</a><span class="k">class</span> <span class="nc">lazyprop</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A descriptor implementation of lazyprop (cached property) from David Beazley&#39;s &quot;Python Cookbook&quot; book.</span>
 <span class="sd">    It&#39;s</span>
 <span class="sd">    &gt;&gt;&gt; class Test:</span>
@@ -273,7 +277,7 @@
 
 
 <div class="viewcode-block" id="balanced_sample_maker"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.balanced_sample_maker">[docs]</a><span class="k">def</span> <span class="nf">balanced_sample_maker</span><span class="p">(</span><span class="n">key_to_tag</span><span class="p">,</span> <span class="n">max_n_keys_per_tag</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">random</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;making a sample of the data (when you want to just test quickly)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;making a sample of the data (when you want to just test quickly)</span>
 
 <span class="sd">    &gt;&gt;&gt; mk_sample = balanced_sample_maker(key_to_tag=lambda k: k.split(&#39;/&#39;)[0],</span>
 <span class="sd">    ...                                   max_n_keys_per_tag=2,</span>
@@ -356,7 +360,7 @@
 
 
 <div class="viewcode-block" id="ArithmeDict"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.ArithmeDict">[docs]</a><span class="k">class</span> <span class="nc">ArithmeDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A dict, with arithmetic.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A dict, with arithmetic.</span>
 <span class="sd">    A unary operator is just applied to all values.</span>
 <span class="sd">    When a dict operates with a number, the operation is applied to each value of the dict.</span>
 <span class="sd">    When a dict operates with another dict, the keys are aligned and the operation applied to the aligned values.</span>
@@ -489,7 +493,7 @@
 <div class="viewcode-block" id="running_mean_gen"><a class="viewcode-back" href="../../module_docs/slang/util.html#slang.util.running_mean_gen">[docs]</a><span class="k">def</span> <span class="nf">running_mean_gen</span><span class="p">(</span>
     <span class="n">it</span><span class="p">,</span> <span class="n">chk_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">chk_step</span><span class="o">=</span><span class="mi">1</span>
 <span class="p">):</span>  <span class="c1"># TODO: A version of this with chk_step as well</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Running mean (moving average) on iterator.</span>
 <span class="sd">    Note: When input it is list-like, ut.stats.smooth.sliders version of running_mean is 4 times more efficient with</span>
 <span class="sd">    big (but not too big, because happens in RAM) inputs.</span>

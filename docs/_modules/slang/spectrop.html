@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.spectrop &mdash; slang 0.1.5 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.spectrop &mdash; slang 0.1.6 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -29,11 +29,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> slang
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            slang
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -70,7 +74,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">slang.spectrop</li>
       <li class="wy-breadcrumbs-aside">
@@ -113,7 +117,7 @@
 
 
 <div class="viewcode-block" id="make_band_matrix_row"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.make_band_matrix_row">[docs]</a><span class="k">def</span> <span class="nf">make_band_matrix_row</span><span class="p">(</span><span class="n">list_entries</span><span class="p">,</span> <span class="n">row_len</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Makes a row for the spectral bucket matrix. The row is zero everywhere except on the entries of index in</span>
 <span class="sd">    list_entries where it is 1 / len(list_entries)</span>
 
@@ -136,7 +140,7 @@
 
 
 <div class="viewcode-block" id="make_band_matrix"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.make_band_matrix">[docs]</a><span class="k">def</span> <span class="nf">make_band_matrix</span><span class="p">(</span><span class="n">buckets</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="n">DFLT_INPUT_SIZE</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Given a list of n list of indices, make a matrix of size n by n_freq where the entries of row k are 0</span>
 <span class="sd">    everywhere except at the index in the k list of buckets, where the entries are the inverse of the length</span>
 <span class="sd">    of that bucket</span>
@@ -175,7 +179,7 @@
 <div class="viewcode-block" id="decreasing_integer_geometric_sequence"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.decreasing_integer_geometric_sequence">[docs]</a><span class="k">def</span> <span class="nf">decreasing_integer_geometric_sequence</span><span class="p">(</span>
     <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DFLT_INPUT_SIZE</span><span class="p">,</span> <span class="n">scale_factor</span><span class="o">=</span><span class="mf">0.5</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Generate decreasing positive integers in by multiplying numbers by a constant (between 0 and 1) repeatedly.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate decreasing positive integers in by multiplying numbers by a constant (between 0 and 1) repeatedly.</span>
 <span class="sd">    Numbers of ther sequence will all be integers and not repeat (so often not a true geometri sequence).</span>
 <span class="sd">    All sequences will end with 1.</span>
 <span class="sd">    An error will be raised if scale_factor is not between 0 and 1 (exclusive).</span>
@@ -214,7 +218,7 @@
     <span class="n">n_freqs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DFLT_INPUT_SIZE</span><span class="p">,</span>
     <span class="n">factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Makes a spectral projection matrix that puts more importance on low frequencies than high ones.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes a spectral projection matrix that puts more importance on low frequencies than high ones.</span>
 <span class="sd">    Importance both in weight and in precision.</span>
 <span class="sd">    By a factor of 2 by default, but can be any amount.</span>
 <span class="sd">    Note that the factor here is the inverse of the geometric factor of decreasing_integer_geometric_sequence.</span>
@@ -263,7 +267,7 @@
 
 
 <span class="k">def</span> <span class="nf">_compute_bucket_upper_bounds</span><span class="p">(</span><span class="n">n_buckets</span><span class="p">,</span> <span class="n">n_freqs</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">max_tries</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Computes bucket upper bounds, trying to compensate for float numerical errors.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Computes bucket upper bounds, trying to compensate for float numerical errors.</span>
 
 <span class="sd">    If factor is None, the formula to get the smallest factor that is needded to get</span>
 <span class="sd">    the given ``n_buckets`` is ``factor = n_freqs ** (1 / (n_buckets - 1))``.</span>
@@ -297,7 +301,7 @@
 
 
 <div class="viewcode-block" id="instantiate_class_and_inject_attributes"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.instantiate_class_and_inject_attributes">[docs]</a><span class="k">def</span> <span class="nf">instantiate_class_and_inject_attributes</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    instantiates a class with the given kwargs, picking those arguments that are in the signature of cls to</span>
 <span class="sd">    use for the __init__, and adding attributes to the constructed object with the remaining.</span>
 <span class="sd">    :param cls: class to insantiate</span>
@@ -335,7 +339,7 @@
 
 
 <div class="viewcode-block" id="ascertain_array"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.ascertain_array">[docs]</a><span class="k">def</span> <span class="nf">ascertain_array</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Getting an array from an iterable&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getting an array from an iterable&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">iterable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">ndarray</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">iterable</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
@@ -361,7 +365,7 @@
 
 
 <div class="viewcode-block" id="mk_chk_fft"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.mk_chk_fft">[docs]</a><span class="k">def</span> <span class="nf">mk_chk_fft</span><span class="p">(</span><span class="n">chk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">DFLT_WIN_FUNC</span><span class="p">,</span> <span class="n">amplitude_func</span><span class="o">=</span><span class="n">DFLT_AMPLITUDE_FUNC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make a chk_fft function that will compute the fft (with given amplitude and window).</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make a chk_fft function that will compute the fft (with given amplitude and window).</span>
 <span class="sd">    Note that this output chk_fft function will enforce a fixed chk_size (given explicitly, or through the</span>
 <span class="sd">    size of the window (if window is given as an array)</span>
 
@@ -378,7 +382,7 @@
 <span class="sd">    &gt;&gt;&gt; ff = pickle.loads(pickle.dumps(f))</span>
 <span class="sd">    &gt;&gt;&gt; assert np.allclose(ff(chk), ff(chk))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">chk_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">),</span> <span class="s1">&#39;chk_size must be a positive integer if window is a callable, or None&#39;</span>
@@ -413,7 +417,7 @@
 <span class="c1"># TODO: Better name for this, to distinguish between expressing projection in projected sub-space or original space</span>
 <span class="c1">#   The following expresses it in the original space</span>
 <div class="viewcode-block" id="projection"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.projection">[docs]</a><span class="k">def</span> <span class="nf">projection</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">vectors</span><span class="p">,</span> <span class="n">mat_mult</span><span class="o">=</span><span class="n">DFLT_MATRIX_MULTI</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The vectors live in a k dimensional space S and the columns of the basis are vectors of the same</span>
 <span class="sd">    space spanning a subspace of S. Gives a representation of the projection of vector into the space</span>
 <span class="sd">    spanned by basis in term of the basis.</span>
@@ -427,7 +431,7 @@
 
 
 <div class="viewcode-block" id="reducing_proj"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.reducing_proj">[docs]</a><span class="k">def</span> <span class="nf">reducing_proj</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">vectors</span><span class="p">,</span> <span class="n">mat_mult</span><span class="o">=</span><span class="n">DFLT_MATRIX_MULTI</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;What we actually use to get fvs from spectras&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;What we actually use to get fvs from spectras&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">mat_mult</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">basis</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
 
 
@@ -462,7 +466,7 @@
 
 <div class="viewcode-block" id="Projector"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.Projector">[docs]</a><span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">Projector</span><span class="p">:</span>
-    <span class="n">scalings_</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">DFLT_SCALINGS</span>
+    <span class="n">scalings_</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">DFLT_SCALINGS</span><span class="p">)</span>
     <span class="n">mat_mult</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">DFLT_MATRIX_MULTI</span>
 
     <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
@@ -514,7 +518,7 @@
         <span class="n">spectrum_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">log_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Makes a projector for given (chunk or spectrum) and feature space size.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Makes a projector for given (chunk or spectrum) and feature space size.</span>
 <span class="sd">        This is a convenience to get a projector given only the input</span>
 <span class="sd">        (chunk or spectrum) size, and optionally output (feature space) size.</span>
 <span class="sd">        That is, we only need minimal information about the data here, not to fit</span>
@@ -796,7 +800,7 @@
     <span class="n">kwargs_feat</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">kwargs_clust</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function to learn each of the important spectral projection</span>
 
 <span class="sd">    :param X: the fvs, an array of size n*k</span>
@@ -893,7 +897,7 @@
 
 
 <div class="viewcode-block" id="residue"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.residue">[docs]</a><span class="k">def</span> <span class="nf">residue</span><span class="p">(</span><span class="n">scalings</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    find the residue of each of vectors after projection in basis</span>
 
 <span class="sd">    residues will be vectors in the original space (same number of dimensions)</span>
@@ -923,7 +927,7 @@
 
 
 <div class="viewcode-block" id="keep_only_indices"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.keep_only_indices">[docs]</a><span class="k">def</span> <span class="nf">keep_only_indices</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">input_size</span><span class="o">=</span><span class="n">DFLT_INPUT_SIZE</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Makes a matrix which when a spectra is multiplied with it, only the entires in the list indices are kept</span>
 <span class="sd">    :param indices: a list of indices to keep</span>
 <span class="sd">    :param input_size: the total number of frequencies in the spectra</span>
@@ -947,7 +951,7 @@
     <span class="n">indices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">input_size</span><span class="o">=</span><span class="mi">1025</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A function successively learning a projections matrix on the residue of the previous one. The projections</span>
 <span class="sd">    matrices are then concatenated and return as one single projection matrix. Note that the final projection</span>
 <span class="sd">    matrix may not produce fvs of the size the sum of the components of each part, i.e., care must be taken</span>
@@ -1031,11 +1035,11 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 <div class="viewcode-block" id="GeneralProjectionLearner.transform"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.GeneralProjectionLearner.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Projection within projected space (reduces dimensions)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Projection within projected space (reduces dimensions)&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scalings_</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GeneralProjectionLearner.project"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.GeneralProjectionLearner.project">[docs]</a>    <span class="k">def</span> <span class="nf">project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Projection within original space (remains same dimensions, no reduction)&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Projection within original space (remains same dimensions, no reduction)&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">)</span></div></div>
 
 
@@ -1046,7 +1050,7 @@
     <span class="n">non_empty_bucket</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create greedily buckets starting by aggregating lower frequencies, when the sum of</span>
 <span class="sd">    the frequencies values so far exceed the number of buckets created times the target</span>
 <span class="sd">    average value for a single bucket, a new bucket is created with or without the last</span>
@@ -1194,7 +1198,7 @@
 <div class="viewcode-block" id="frequency_weight_based_bands_matrix"><a class="viewcode-back" href="../../module_docs/slang/spectrop.html#slang.spectrop.frequency_weight_based_bands_matrix">[docs]</a><span class="k">def</span> <span class="nf">frequency_weight_based_bands_matrix</span><span class="p">(</span>
     <span class="n">n_buckets</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">freqs_weighting</span><span class="o">=</span><span class="n">_plus_one_inverse</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="mi">1025</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a projection matrix of disjoint bands based on a frequency weighting function.</span>
 
 <span class="sd">    &gt;&gt;&gt; assert frequency_weight_based_bands_matrix(3, n_freq=9).tolist() == [</span>
