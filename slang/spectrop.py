@@ -378,7 +378,7 @@ def _get_spectrum_size_and_validate_against_chk_size(spectrum_size, chk_size):
 
 @dataclass
 class Projector:
-    scalings_: np.ndarray = field(default_factory=DFLT_SCALINGS.copy)
+    scalings_: np.ndarray = field(default_factory=lambda: DFLT_SCALINGS)
     mat_mult: Callable = DFLT_MATRIX_MULTI
 
     def transform(self, X):
