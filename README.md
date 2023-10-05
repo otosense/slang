@@ -1,19 +1,3 @@
-- [Slang: Light weight tools to build signal languages](#slang--light-weight-tools-to-build-signal-languages)
-  * [A story to paint the horizon](#a-story-to-paint-the-horizon)
-  * [Okay, but what does a pipeline look like in slang](#okay--but-what-does-a-pipeline-look-like-in-slang)
-- [Sound Language](#sound-language)
-- [Structural and Syntactical Pattern Recognition](#structural-and-syntactical-pattern-recognition)
-- [Semantic Structure](#semantic-structure)
-- [Acoustics Structure](#acoustics-structure)
-  * [Alphabetization](#alphabetization)
-  * [Snips network](#snips-network)
-- [Snips Annotations](#snips-annotations)
-  * [Relationship between Annotations and the Syntactic Approach](#relationship-between-annotations-and-the-syntactic-approach)
-- [Modeling](#modeling)
-- [References](#references)
-
-<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
 `Slang` stands for "Signal LANGuage". It is meant to build signal ML systems that translate streams of signals to streams of interpretable and more importantly, actionable information. 
 
 How is it similar and how is it different to other known approaches to this signal ML problem ? We'll try to clarify that here. 
