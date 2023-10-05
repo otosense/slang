@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sklearn.linear_model._base &mdash; slang 0.1.6 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>sklearn.linear_model._base &mdash; slang 0.1.7 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
@@ -927,7 +927,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span>
 
-    <span class="k">if</span> <span class="n">sparse</span><span class="o">.</span><span class="n">isspmatrix</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sparse</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
         <span class="c1"># copy is not needed here as X is not modified inplace when X is sparse</span>
         <span class="n">precompute</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">X_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">X_scale</span> <span class="o">=</span> <span class="n">_preprocess_data</span><span class="p">(</span>
