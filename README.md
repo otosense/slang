@@ -1,4 +1,4 @@
-`Slang` stands for "Signal LANGuage". It is meant to build signal ML systems that translate streams of signals to streams of interpretable and more importantly, actionable information. 
+`slang` stands for "Signal LANGuage". It is meant to build signal ML systems that translate streams of signals to streams of interpretable and, more importantly, actionable information. 
 
 How is it similar and how is it different to other known approaches to this signal ML problem ? We'll try to clarify that here. 
 The main idea is in the name: Signal **Language**. That is, the methods used gravitate around mapping the data too language-like data and using language models to solve problems. 
@@ -25,7 +25,3 @@ What `slang` is designed to do is to learn such a signal codec as MIDI for a giv
 
 
 You can read more about this in this [Ideas on `slang`](https://github.com/otosense/slang/wiki/Ideas-on-%60slang%60) wiki.
-[21] C. Yu, D. H. Ballard, “On the integration of grounding language and learning objects”, AAAI, 2004. 
-
-[22] S-C. Zhu, D. Mumford, “A stochastic Grammar of Images”, 
-Foundations and trends in Computer Vision and Graphics, 2006
