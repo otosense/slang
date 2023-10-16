@@ -1,4 +1,4 @@
-`slang` stands for "Signal LANGuage". It is meant to build signal ML systems that translate streams of signals to streams of interpretable and, more importantly, actionable information. 
+`slang` stands for "Signal LANGuage". It is a framework to build signal ML systems that translate streams of signals to streams of interpretable and, more importantly, actionable information. 
 
 How is it similar and how is it different to other known approaches to this signal ML problem ? We'll try to clarify that here. 
 The main idea is in the name: Signal **Language**. That is, the methods used gravitate around mapping the data too language-like data and using language models to solve problems. 
