@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>slang.spectrop &mdash; slang 0.1.9 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>slang.spectrop &mdash; slang 0.1.10 documentation</title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
@@ -367,7 +367,7 @@ and <cite>n_features</cite> is the number of features.</p></li>
 
 <dl class="py class">
 <dt id="slang.spectrop.Projector">
-<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">Projector</code><span class="sig-paren">(</span><em class="sig-param">scalings_: numpy.ndarray = &lt;factory&gt;</em>, <em class="sig-param">mat_mult: Callable = &lt;function dot at 0x7fb470d993a0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#Projector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.Projector" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">Projector</code><span class="sig-paren">(</span><em class="sig-param">scalings_: numpy.ndarray = &lt;factory&gt;</em>, <em class="sig-param">mat_mult: Callable = &lt;function dot at 0x7f5e8b4eb430&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#Projector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.Projector" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
 <dt id="slang.spectrop.Projector.mat_mult">
 <code class="sig-name descname">mat_mult</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slang.spectrop.Projector.mat_mult" title="Permalink to this definition">¶</a></dt>
@@ -472,7 +472,7 @@ If <cite>out</cite> is given, then it is returned.</p>
 <dl class="py class">
 <dt id="slang.spectrop.SpectralProjector">
 <em class="property">class </em><code class="sig-prename descclassname">slang.spectrop.</code><code class="sig-name descname">SpectralProjector</code><span class="sig-paren">(</span><em class="sig-param">scalings_: numpy.ndarray = &lt;factory&gt;</em>, <em class="sig-param">mat_mult: Callable = &lt;function dot&gt;</em>, <em class="sig-param">chk_fft: Callable = functools.partial(&lt;function chk_to_spectrum&gt;</em>, <em class="sig-param">chk_size=2048</em>, <em class="sig-param">window=array([0.00000000e+00</em>, <em class="sig-param">2.35539484e-06</em>, <em class="sig-param">9.42155716e-06</em>, <em class="sig-param">...</em>, <em class="sig-param">9.42155716e-06</em>, <em class="sig-param">2.35539484e-06</em>, <em class="sig-param">0.00000000e+00])</em>, <em class="sig-param">amplitude_func=&lt;ufunc 'absolute'&gt;)</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/slang/spectrop.html#SpectralProjector"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#slang.spectrop.SpectralProjector" title="Permalink to this definition">¶</a></dt>
-<dd><p>SpectralProjector(<a href="#id1"><span class="problematic" id="id2">scalings_</span></a>: numpy.ndarray = &lt;factory&gt;, mat_mult: Callable = &lt;function dot at 0x7fb470d993a0&gt;, chk_fft: Callable = functools.partial(&lt;function chk_to_spectrum at 0x7fb45ed46790&gt;, chk_size=2048, window=array([0.00000000e+00, 2.35539484e-06, 9.42155716e-06, …,
+<dd><p>SpectralProjector(<a href="#id1"><span class="problematic" id="id2">scalings_</span></a>: numpy.ndarray = &lt;factory&gt;, mat_mult: Callable = &lt;function dot at 0x7f5e8b4eb430&gt;, chk_fft: Callable = functools.partial(&lt;function chk_to_spectrum at 0x7f5e78ec1a60&gt;, chk_size=2048, window=array([0.00000000e+00, 2.35539484e-06, 9.42155716e-06, …,
 9.42155716e-06, 2.35539484e-06, 0.00000000e+00]), amplitude_func=&lt;ufunc ‘absolute’&gt;))</p>
 <dl class="py method">
 <dt id="slang.spectrop.SpectralProjector.for_sizes">
