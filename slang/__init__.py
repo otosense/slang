@@ -3,7 +3,10 @@ Tools to transform signals into a structured language.
 """
 from slang.core import KvDataSource, Snipper
 
-from slang.util import snips_to_str as dflt_snips_to_str
+from slang.util import (
+    snips_to_str as dflt_snips_to_str,
+    str_to_snips as dflt_str_to_snips,
+)
 from slang.util import ddir
 
 from slang.chunkers import (
@@ -40,3 +43,6 @@ from slang.snippers import (
     KMeansFvToSnipDist,
     DfltFvToSnip,
 )
+
+from slang.settings import SLANG_DATA_DIR
+from slang.stores import local_snips_store
