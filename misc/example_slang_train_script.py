@@ -22,7 +22,7 @@ def example_slang_train(
     try:
         n_unik_tags = len(dacc.tags)
         n_sounds = len(dacc.tag_counts.values())
-        _clog(f"{n_unik_tags=} {n_sounds=}")
+        _clog(f'{n_unik_tags=} {n_sounds=}')
     except Exception:
         pass
 
@@ -61,10 +61,10 @@ def example_slang_train(
             fv_to_snip={'n_clusters': n_unik_tags * 5},
         )
 
-        _clog(f"fit_chk_to_fv")
+        _clog(f'fit_chk_to_fv')
         snipper = snipper.fit_chk_to_fv(dacc.chk_tag_pairs(snipper.wf_to_chks))
 
-        _clog(f"fit_fv_to_snip")
+        _clog(f'fit_fv_to_snip')
         # fit on (fv, tag) pairs
         snipper = snipper.fit_fv_to_snip(
             dacc.fv_tag_pairs(snipper.wf_to_chks, snipper.chk_to_fv)
