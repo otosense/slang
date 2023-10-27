@@ -435,7 +435,6 @@ def running_mean_gen(
     else:
         it = iter(it)
         if chk_size > 1:
-
             c = 0
             fifo = deque([], maxlen=chk_size)
             for i, x in enumerate(it, 1):
@@ -458,3 +457,17 @@ def running_mean_gen(
 def running_mean(arr, chk_size):
     c = np.cumsum(np.insert(arr, 0, [0]))
     return (c[chk_size:] - c[:-chk_size]) / chk_size
+
+
+def pickle_load(filepath):
+    import pickle
+
+    with open(filepath, 'rb') as f:
+        return pickle.load(f)
+
+
+def pickle_dump(filepath, obj):
+    import pickle
+
+    with open(filepath, 'wb') as f:
+        return pickle.dump(obj, f)

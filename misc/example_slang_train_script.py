@@ -1,19 +1,25 @@
+from odat.mdat.freesounds import mk_dacc
+import numpy as np
+from functools import partial
+from i2 import FuncFactory
+from slang import local_snips_store
+from slang.util import pickle_load, pickle_dump
+
+
 def example_slang_train(
-    dacc, 
-    *, 
-    wf_to_chks=2028, 
-    chk_to_fv=50, 
-    fv_to_snip=250, 
-    save_to='last_snipper', 
-    verbose=True
+    dacc,
+    *,
+    wf_to_chks=2028,
+    chk_to_fv=50,
+    fv_to_snip=250,
+    save_to='last_snipper',
+    verbose=True,
 ):
     from slang import mk_chunker
     from slang.snippers import LdaChkToFv, PcaChkToFv, KMeansFvToSnip
     from slang import mk_chk_fft
     from i2 import Pipe
     from functools import partial
-    from pathlib import Path
-    import pickle
     from lkj import clog, print_progress
 
     _clog = clog(verbose, log_func=print_progress)
@@ -51,8 +57,7 @@ def example_slang_train(
 
     def save_snipper(snipper, save_to=save_to):
         clog(f"Saving to {save_to}")
-        with open(save_to, 'wb') as f:
-            pickle.dump(snipper, f)
+        pickle_dump(snipper, save_to)
 
     try:
         snipper = ClassificationSnipper(
@@ -88,8 +93,14 @@ def example_slang_train(
     return snipper
 
 
+def mk_train_dacc():
+    return mk_dacc(audio_key='audio_train/', annots_key='train_post_competition.csv')
+
+
 def train_snipper(
-    mk_dacc='odat.mdat.freesounds.mk_dacc', save_to='last_snipper', verbose=True, 
+    mk_dacc='odat.mdat.freesounds.mk_dacc',
+    save_to='last_snipper',
+    verbose=True,
     *,
     dacc_kwargs=(),
 ):
@@ -101,6 +112,7 @@ def train_snipper(
 
     if isinstance(dacc_kwargs, str):
         import json
+
         dacc_kwargs = json.loads(dacc_kwargs)
     dacc_kwargs = dict(dacc_kwargs)
     dacc = mk_dacc(**dacc_kwargs)
@@ -110,7 +122,49 @@ def train_snipper(
     return snipper
 
 
+def resolve_resource(resource):
+    if isinstance(resource, FuncFactory):
+        resource_factory = resource
+        resource = resource_factory()
+    return resource
+
+
+def compute_snips(
+    snipper=FuncFactory(partial(pickle_load, 'a_snipper.pkl')),
+    dacc=FuncFactory(mk_train_dacc),
+    snips_store=FuncFactory(partial(local_snips_store, 'freesounds_train')),
+    *,
+    verbose=True,
+):
+    from lkj import clog, print_progress
+
+    _clog = clog(verbose, log_func=print_progress)
+
+    _clog('-------------------------------------------')
+    _clog('Resolving resources...')
+    snipper = resolve_resource(snipper)
+    dacc = resolve_resource(dacc)
+    snips_store = resolve_resource(dacc)
+    _clog(f'Resources: {snipper=} {dacc=} {snips_store=}')
+    _clog('-------------------------------------------')
+    _clog('Looping through audio, computing and saving snips, and learning scores')
+    n = len(dacc.wfs)
+    for i, (k, wf) in enumerate(dacc.wfs.items(), 1):
+        _clog(f'({i}/{n}) processing {k} ({len(wf)=})')
+        snips = np.array(list(snipper(wf)))
+        snips_store[k] = snips
+        snipper
+
+
+# _clog(f"fit_snip_to_score")
+# snipper = snipper.fit_snip_to_score(  # fit on (snip tag) pairs
+#     (
+#         (snipper.fv_to_snip(fv), tags)
+#         for fv, tags in dacc.fv_tag_pairs(snipper.wf_to_chks, snipper.chk_to_fv)
+#     )
+# )
+
 if __name__ == '__main__':
     from argh import dispatch_command
 
-    dispatch_command(train_snipper)
+    dispatch_command(compute_snips)
